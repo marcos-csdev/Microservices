@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Microservies.CouponAPI.Models
+namespace Microservices.CouponAPI.Models
 {
     public class CouponModel
     {
@@ -10,9 +10,9 @@ namespace Microservies.CouponAPI.Models
         public string CouponCode { get; set; } = string.Empty;
         public double Discount { get; set; }
         /// <summary>
-        /// Minimum expenses so the coupon can be used
+        /// Minimum expense to use the coupon
         /// </summary>
-        public int MinAmount { get; set; } 
+        public int MinExpense { get; set; } 
         public DateTime LastUpdated { get; set; }
 
     }

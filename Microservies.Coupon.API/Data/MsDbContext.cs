@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microservies.CouponAPI.Models;
+using Microservices.CouponAPI.Models;
 
-namespace Microservies.CouponAPI.Data
+namespace Microservices.CouponAPI.Data
 {
     public class MsDbContext : DbContext
     {
@@ -9,7 +9,7 @@ namespace Microservies.CouponAPI.Data
         {
         }
 
-        DbSet<CouponModel> Coupons { get; set; }
+        public DbSet<CouponModel> Coupons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace Microservies.CouponAPI.Data
                     Id = 1,
                     CouponCode = "10OFF",
                     Discount = 10,
-                    MinAmount = 20,
+                    MinExpense = 20,
                 });
 
             modelBuilder.Entity<CouponModel>().HasData(
@@ -30,7 +30,7 @@ namespace Microservies.CouponAPI.Data
                     Id = 2,
                     CouponCode = "20OFF",
                     Discount = 20,
-                    MinAmount = 40,
+                    MinExpense = 40,
                 });
         }
     }

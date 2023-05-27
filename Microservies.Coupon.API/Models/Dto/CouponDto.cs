@@ -1,4 +1,4 @@
-﻿namespace Microservies.CouponAPI.Models.Dto
+﻿namespace Microservices.CouponAPI.Models.Dto
 {
     public class CouponDto
     {

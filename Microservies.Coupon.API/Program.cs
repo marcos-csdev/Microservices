@@ -1,4 +1,4 @@
-using Microservies.CouponAPI.Data;
+using Microservices.CouponAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
