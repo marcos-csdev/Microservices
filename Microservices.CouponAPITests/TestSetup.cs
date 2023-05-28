@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Microservices.CouponAPITests
 {
-    public abstract class TestSetup : IDisposable
+    public class TestSetup : IDisposable
     {
         protected readonly HttpClient? HttpClient;
 
@@ -36,6 +36,14 @@ namespace Microservices.CouponAPITests
                     option.UseSqlServer(context.Configuration.GetConnectionString("DefaultConnection")));
                     });
 
+                    /*public static IHostBuilder CreateHostBuilder(string[] args) =>
+                    Host.CreateDefaultBuilder(args)
+                        .ConfigureLogging(
+                            logging =>
+                            {
+
+                            })
+                        .ConfigureAppConfiguration;*/
 
                     whb.ConfigureTestServices(sc => sc.Add(serviceDescriptors));
                 }).CreateClient();
@@ -53,7 +61,6 @@ namespace Microservices.CouponAPITests
             GC.SuppressFinalize(this);
         }
 
-        public abstract void AddEntityChange(object newEntity, EntityState entityState);
 
         private void ReplaceDbContext(IServiceCollection serviceCollection,
                                       string newConnectionString)
@@ -70,14 +77,6 @@ namespace Microservices.CouponAPITests
 
 
 
-        /*public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureLogging(
-                logging =>
-                {
-
-                })
-            .ConfigureAppConfiguration;*/
 
 
 

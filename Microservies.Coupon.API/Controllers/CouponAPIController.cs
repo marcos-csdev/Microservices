@@ -1,7 +1,7 @@
 ﻿
+using AutoMapper;
 using Microservices.CouponAPI.Models.Dto;
 using Microservices.CouponAPI.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservices.CouponAPI.Controllers
@@ -11,6 +11,7 @@ namespace Microservices.CouponAPI.Controllers
     public class CouponAPIController : APIBaseController
     {
         private ICouponRepository _couponRepository;
+
         public CouponAPIController(Serilog.ILogger logger, ICouponRepository couponRepository) : base(logger)
         {
             _couponRepository = couponRepository;
@@ -21,6 +22,9 @@ namespace Microservices.CouponAPI.Controllers
         {
             try
             {
+                throw new NotImplementedException();
+                ControllerResponse = new ResponseDto();
+
                 var couponDtos = await _couponRepository.GetCouponsAsync();
 
                 ControllerResponse.Result = couponDtos!;
@@ -39,6 +43,7 @@ namespace Microservices.CouponAPI.Controllers
         {
             if (couponId == 0) return BadRequest();
 
+            ControllerResponse = new ResponseDto();
             try
             {
                 var couponDto = await _couponRepository.GetCouponByIdAsync(couponId);
@@ -58,6 +63,7 @@ namespace Microservices.CouponAPI.Controllers
         {
             if (couponDto == null) return BadRequest();
 
+            ControllerResponse = new ResponseDto();
             try
             {
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
@@ -78,6 +84,7 @@ namespace Microservices.CouponAPI.Controllers
         {
             if (couponDto == null) return BadRequest();
 
+            ControllerResponse = new ResponseDto();
             try
             {
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
@@ -97,6 +104,7 @@ namespace Microservices.CouponAPI.Controllers
         {
             if (couponId == 0) return BadRequest();
 
+            ControllerResponse = new ResponseDto();
             try
             {
                 var hasBeenDeleted = await _couponRepository.DeleteCouponAsync(couponId);

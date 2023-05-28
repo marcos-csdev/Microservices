@@ -1,17 +1,35 @@
+using Microservices.CouponAPI;
 using Microservices.CouponAPI.Data;
+using Microservices.CouponAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddDbContext<MsDbContext>(option =>
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+//=================Adding AutoMapper========================
+var mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+//=================Adding AutoMapper========================
+
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//=================Adding Serilog========================
+builder.Host.UseSerilog((fileContext, loggingConfig) =>
+    loggingConfig.WriteTo.File("log.log", rollingInterval: RollingInterval.Day)
+);
 
 var app = builder.Build();
 
@@ -40,7 +58,7 @@ void ApplyPendingMigrations()
     {
         var _db = scope.ServiceProvider.GetRequiredService<MsDbContext>();
 
-        if( _db.Database.GetPendingMigrations().Count() > 0)
+        if (_db.Database.GetPendingMigrations().Count() > 0)
         {
             _db.Database.Migrate();
 

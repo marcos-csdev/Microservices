@@ -1,4 +1,5 @@
 ﻿
+using AutoMapper;
 using Microservices.CouponAPI.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 
