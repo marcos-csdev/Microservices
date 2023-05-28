@@ -68,22 +68,27 @@ namespace Microservices.CouponAPI.Repositories
         {
             if(couponDto == null) return EntityState.Unchanged;
 
-            var dbCoupon = _mapper.Map<CouponModel>(couponDto);
+            var mappedCoupon = _mapper.Map<CouponModel>(couponDto);
+
+            var dbCoupon = await GetDbCouponByIdAsync(mappedCoupon.Id);
 
             EntityEntry entityEntry = null!;
             //Create
-            if(couponDto.Id == 0)
+            if(dbCoupon is null)
             {
-                entityEntry = await _dbContext.Coupons.AddAsync(dbCoupon);
+                entityEntry = await _dbContext.Coupons.AddAsync(mappedCoupon);
             }
             else//Update
             {
-                entityEntry = _dbContext.Coupons.Update(dbCoupon);
+                entityEntry = _dbContext.Coupons.Update(mappedCoupon);
             }
+
+            //entityEntry gets its value changed after SaveChangesAsync
+            var state = entityEntry.State;
 
             await _dbContext.SaveChangesAsync();
 
-            return entityEntry.State;
+            return state;
         }
     }
 }

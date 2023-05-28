@@ -20,14 +20,27 @@ namespace Microservices.CouponAPITests
             }
         }
 
-        public static IServiceProvider SetService<TClass>(IServiceCollection serviceCollection) where TClass : class
+        public static IServiceProvider GetServiceProvider<TInterface, TService>( IServiceCollection serviceCollection)
+            where TInterface : class
+            where TService : class, TInterface
         {
-            serviceCollection.AddSingleton<TClass>();
+            serviceCollection.AddTransient<TInterface, TService>();
             _serviceScope = serviceCollection.BuildServiceProvider().CreateScope();
-            var serviceProvider = _serviceScope.ServiceProvider.GetRequiredService<TClass>();
+            var serviceProvider = _serviceScope.ServiceProvider.GetRequiredService<TInterface>();
 
             return (IServiceProvider)serviceProvider;
 
+        }
+
+        public static IServiceCollection SetDefaultServiceDIContainer<TInterface, TService>()
+            where TInterface : class
+            where TService : class, TInterface
+        {
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddTransient<TInterface, TService>();
+
+            return serviceCollection;
         }
 
         /*private static IServiceCollection GetSomeService() where TService : class

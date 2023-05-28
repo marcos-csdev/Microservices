@@ -3,6 +3,7 @@ using AutoMapper;
 using Microservices.CouponAPI.Models.Dto;
 using Microservices.CouponAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Microservices.CouponAPI.Controllers
 {
@@ -17,12 +18,11 @@ namespace Microservices.CouponAPI.Controllers
             _couponRepository = couponRepository;
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                throw new NotImplementedException();
                 ControllerResponse = new ResponseDto();
 
                 var couponDtos = await _couponRepository.GetCouponsAsync();
@@ -38,7 +38,7 @@ namespace Microservices.CouponAPI.Controllers
             return Ok(ControllerResponse.Result);
         }
 
-        [HttpGet("{couponId}")]
+        [HttpGet("GetById/{couponId}")]
         public async Task<IActionResult> GetCouponById(int couponId)
         {
             if (couponId == 0) return BadRequest();
@@ -59,16 +59,18 @@ namespace Microservices.CouponAPI.Controllers
         }
 
         [HttpPost]
+        [Route("Create")]
         public async Task<IActionResult> Create([FromBody] CouponDto couponDto)
         {
             if (couponDto == null) return BadRequest();
 
-            ControllerResponse = new ResponseDto();
             try
             {
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
 
-                ControllerResponse.Result = newCoupon;
+                ControllerResponse = new ResponseDto(true, newCoupon.ToString(), "Success");
+
+                return Created(nameof(Create), ControllerResponse);
 
             }
             catch (Exception ex)
@@ -76,10 +78,11 @@ namespace Microservices.CouponAPI.Controllers
                 LogError(ex);
             }
 
-            return Created(nameof(Create), ControllerResponse.Result);
+            return Problem(ControllerResponse.DisplayMessage, nameof(Create));
         }
 
         [HttpPut]
+        [Route("Update")]
         public async Task<IActionResult> Update([FromBody] CouponDto couponDto)
         {
             if (couponDto == null) return BadRequest();
@@ -99,7 +102,8 @@ namespace Microservices.CouponAPI.Controllers
             return Accepted(ControllerResponse.Result);
         }
 
-        [HttpDelete("{couponId}")]
+        [HttpDelete]
+        [Route("Remove/{couponId}")]
         public async Task<IActionResult> Remove(int couponId)
         {
             if (couponId == 0) return BadRequest();

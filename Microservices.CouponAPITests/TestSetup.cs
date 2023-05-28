@@ -8,12 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace Microservices.CouponAPITests
 {
@@ -30,22 +30,25 @@ namespace Microservices.CouponAPITests
 
                 HttpClient = webApplicationFactory.WithWebHostBuilder(whb =>
                 {
+                    var connectionString = "";
                     whb.ConfigureServices((context, services) =>
                     {
+                        services.RemoveAll(typeof(MsDbContext));
+
+                        connectionString =          context.Configuration.GetConnectionString("DefaultConnection");
+
                         services.AddDbContext<MsDbContext>(option =>
-                    option.UseSqlServer(context.Configuration.GetConnectionString("DefaultConnection")));
+                            option.UseSqlServer(connectionString));
+
+                        services.AddLogging(configure =>
+                            configure.AddSerilog());
                     });
 
-                    /*public static IHostBuilder CreateHostBuilder(string[] args) =>
-                    Host.CreateDefaultBuilder(args)
-                        .ConfigureLogging(
-                            logging =>
-                            {
-
-                            })
-                        .ConfigureAppConfiguration;*/
-
-                    whb.ConfigureTestServices(sc => sc.Add(serviceDescriptors));
+                    whb.ConfigureTestServices(services =>
+                    {
+                        //Add specific service here
+                        services.Add(serviceDescriptors);
+                    });
                 }).CreateClient();
             }
             catch (Exception ex)
@@ -61,33 +64,10 @@ namespace Microservices.CouponAPITests
             GC.SuppressFinalize(this);
         }
 
-
-        private void ReplaceDbContext(IServiceCollection serviceCollection,
-                                      string newConnectionString)
-        {
-            serviceCollection.RemoveAll(typeof(MsDbContext));
-            serviceCollection.AddDbContext<MsDbContext>();
-        }
-
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposing) HttpClient?.Dispose();
         }
-
-
-
-
-
-
-
-        
-
-        
-
-
-
-
 
     }
 }

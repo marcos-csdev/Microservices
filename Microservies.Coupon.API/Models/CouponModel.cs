@@ -13,7 +13,6 @@ namespace Microservices.CouponAPI.Models
         /// Minimum expense to use the coupon
         /// </summary>
         public int MinExpense { get; set; } 
-        public DateTime LastUpdated { get; set; }
 
     }
 }
