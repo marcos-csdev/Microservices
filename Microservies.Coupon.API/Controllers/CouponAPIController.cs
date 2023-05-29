@@ -26,8 +26,7 @@ namespace Microservices.CouponAPI.Controllers
                 ControllerResponse = new ResponseDto();
 
                 var couponDtos = await _couponRepository.GetCouponsAsync();
-
-                ControllerResponse.Result = couponDtos!;
+                ControllerResponse = new ResponseDto(true, couponDtos, "Success");
 
             }
             catch (Exception ex)
@@ -35,7 +34,7 @@ namespace Microservices.CouponAPI.Controllers
                 LogError(ex);
             }
 
-            return Ok(ControllerResponse.Result);
+            return Ok(ControllerResponse);
         }
 
         [HttpGet("GetById/{couponId}")]
@@ -48,14 +47,16 @@ namespace Microservices.CouponAPI.Controllers
             {
                 var couponDto = await _couponRepository.GetCouponByIdAsync(couponId);
 
-                ControllerResponse.Result = couponDto;
+                if (couponDto is null) return NotFound("The provided coupon was not found");
+
+                ControllerResponse = new ResponseDto(true, couponDto, "Success");
             }
             catch (Exception ex)
             {
                 LogError(ex);
             }
 
-            return Ok(ControllerResponse.Result);
+            return Ok(ControllerResponse);
         }
 
         [HttpPost]
@@ -91,15 +92,14 @@ namespace Microservices.CouponAPI.Controllers
             try
             {
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
-
-                ControllerResponse.Result = newCoupon;
+                ControllerResponse = new ResponseDto(true, couponDto, "Success");
             }
             catch (Exception ex)
             {
                 LogError(ex);
             }
 
-            return Accepted(ControllerResponse.Result);
+            return Accepted(ControllerResponse);
         }
 
         [HttpDelete]
@@ -112,8 +112,7 @@ namespace Microservices.CouponAPI.Controllers
             try
             {
                 var hasBeenDeleted = await _couponRepository.DeleteCouponAsync(couponId);
-
-                ControllerResponse.Result = hasBeenDeleted;
+                ControllerResponse = new ResponseDto(true, hasBeenDeleted, "Success");
 
             }
             catch (Exception ex)
@@ -121,7 +120,7 @@ namespace Microservices.CouponAPI.Controllers
                 LogError(ex);
             }
 
-            return Accepted(ControllerResponse.Result);
+            return Accepted(ControllerResponse);
         }
     }
 

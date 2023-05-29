@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,22 +13,21 @@ namespace Microservices.CouponAPITests
     {
         private static IServiceScope? _serviceScope = null!;
 
-
-        public void Dispose()
+        public static IServiceProvider GetServiceProvider<TInterface, TService>(IServiceCollection serviceCollection)
+        where TInterface : class
+        where TService : class, TInterface
         {
-            if (_serviceScope is not null)
+
+            /*var mappingConfig = new MapperConfiguration(mc =>
             {
-                _serviceScope.Dispose();
-            }
-        }
+                mc.AddProfile(new SourceMappingProfile());
+            });
+            mappingConfig.CreateMapper();*/
+            serviceCollection.AddAutoMapper(typeof(Program));
 
-        public static IServiceProvider GetServiceProvider<TInterface, TService>( IServiceCollection serviceCollection)
-            where TInterface : class
-            where TService : class, TInterface
-        {
             serviceCollection.AddTransient<TInterface, TService>();
             _serviceScope = serviceCollection.BuildServiceProvider().CreateScope();
-            var serviceProvider = _serviceScope.ServiceProvider.GetRequiredService<TInterface>();
+            var serviceProvider = _serviceScope.ServiceProvider.GetRequiredService<TService>();
 
             return (IServiceProvider)serviceProvider;
 
@@ -43,19 +44,15 @@ namespace Microservices.CouponAPITests
             return serviceCollection;
         }
 
-        /*private static IServiceCollection GetSomeService() where TService : class
+        public void Dispose()
         {
-            var serviceCollection = new ServiceCollection();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            serviceCollection.AddSingleton<TService>();
-            //ReplaceDbContext(serviceCollection, newConnectionString);
-            var scope = serviceCollection.BuildServiceProvider().CreateScope();
-            var testInstance = scope.ServiceProvider.GetService<TTestType>();
-
-            if (testInstance == null) return;
-
-            SetTestInstance(testInstance);
-
-        }*/
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing) _serviceScope?.Dispose();
+        }
     }
 }

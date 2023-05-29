@@ -30,19 +30,21 @@ namespace Microservices.CouponAPITests
 
                 HttpClient = webApplicationFactory.WithWebHostBuilder(whb =>
                 {
-                    var connectionString = "";
                     whb.ConfigureServices((context, services) =>
                     {
                         services.RemoveAll(typeof(MsDbContext));
 
-                        connectionString =          context.Configuration.GetConnectionString("DefaultConnection");
+                        var connectionString =          context.Configuration.GetConnectionString("DefaultConnection");
 
                         services.AddDbContext<MsDbContext>(option =>
                             option.UseSqlServer(connectionString));
 
                         services.AddLogging(configure =>
                             configure.AddSerilog());
+
+
                     });
+
 
                     whb.ConfigureTestServices(services =>
                     {

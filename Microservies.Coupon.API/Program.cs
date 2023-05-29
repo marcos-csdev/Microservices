@@ -8,10 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+//=================Adding DbContext========================
 builder.Services.AddDbContext<MsDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+//=================Adding DbContext========================
 
 //=================Adding AutoMapper========================
 var mapper = MappingConfig.RegisterMaps().CreateMapper();
@@ -28,8 +30,9 @@ builder.Services.AddSwaggerGen();
 
 //=================Adding Serilog========================
 builder.Host.UseSerilog((fileContext, loggingConfig) =>
-    loggingConfig.WriteTo.File("log.log", rollingInterval: RollingInterval.Day)
+    loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day)
 );
+//=================Adding Serilog========================
 
 var app = builder.Build();
 

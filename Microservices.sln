@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{71
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPI", "Microservies.Coupon.API\Microservices.CouponAPI.csproj", "{B2DFCE2C-21F9-4074-AC31-9D32C25C39FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.CouponAPITests", "Microservices.CouponAPITests\Microservices.CouponAPITests.csproj", "{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPITests", "Microservices.CouponAPITests\Microservices.CouponAPITests.csproj", "{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.Web", "Microservices.Web\Microservices.Web.csproj", "{C23DC29B-4B63-467F-A3F6-91FADE76D469}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +31,17 @@ Global
 		{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B2DFCE2C-21F9-4074-AC31-9D32C25C39FA} = {7181306C-EDCE-4795-85FF-F3495CC80D82}
+		{C23DC29B-4B63-467F-A3F6-91FADE76D469} = {7181306C-EDCE-4795-85FF-F3495CC80D82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {117C8C03-F09A-4DE4-B533-F17255BE0B06}
