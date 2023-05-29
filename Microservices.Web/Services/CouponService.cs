@@ -6,6 +6,7 @@ namespace Microservices.Web.Services
 {
     public class CouponService : BaseService, ICouponService
     {
+
         public CouponService(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
         {
         }
@@ -18,7 +19,7 @@ namespace Microservices.Web.Services
             {
                 ApiType = StaticDetails.ApiType.POST,
                 Data = entityDto,
-                Url = $"{StaticDetails.ProductAPIBase}/api/products",
+                Url = $"{StaticDetails.CouponAPIBase}/api/coupons",
                 Token = ""
             };
             //SendAsync may return null
@@ -33,7 +34,7 @@ namespace Microservices.Web.Services
             var request = new RequestDto
             {
                 ApiType = StaticDetails.ApiType.GET,
-                Url = $"{StaticDetails.ProductAPIBase}api/products",
+                Url = $"{StaticDetails.CouponAPIBase}api/coupons",
                 Token = ""
             };
 
@@ -49,7 +50,7 @@ namespace Microservices.Web.Services
             var request = new RequestDto
             {
                 ApiType = StaticDetails.ApiType.GET,
-                Url = $"{StaticDetails.ProductAPIBase}/api/products/{id}",
+                Url = $"{StaticDetails.CouponAPIBase}/api/coupons/{id}",
                 Token = ""
             };
 
@@ -64,7 +65,7 @@ namespace Microservices.Web.Services
             var request = new RequestDto
             {
                 ApiType = StaticDetails.ApiType.DELETE,
-                Url = $"{StaticDetails.ProductAPIBase}/api/products/{id}",
+                Url = $"{StaticDetails.CouponAPIBase}/api/coupons/{id}",
                 Token = ""
             };
 
@@ -81,7 +82,7 @@ namespace Microservices.Web.Services
             {
                 ApiType = StaticDetails.ApiType.PUT,
                 Data = entityDto,
-                Url = $"{StaticDetails.ProductAPIBase}/api/products{id}",
+                Url = $"{StaticDetails.CouponAPIBase}/api/coupons{id}",
                 Token = ""
             };
 

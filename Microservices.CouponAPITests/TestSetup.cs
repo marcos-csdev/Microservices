@@ -1,4 +1,5 @@
 ﻿using Microservices.CouponAPI.Data;
+using Microservices.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -19,14 +20,14 @@ namespace Microservices.CouponAPITests
 {
     public class TestSetup : IDisposable
     {
-        protected readonly HttpClient? HttpClient;
+        public readonly HttpClient? HttpClient;
 
-        protected TestSetup(IServiceCollection serviceDescriptors)
+        public TestSetup(IServiceCollection serviceDescriptors)
         {
 
             try
             {
-                var webApplicationFactory = new WebApplicationFactory<Program>();
+                var webApplicationFactory = new WebApplicationFactory<Web.Program>();
 
                 HttpClient = webApplicationFactory.WithWebHostBuilder(whb =>
                 {

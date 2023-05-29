@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Microservices.CouponAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/coupons")]
     [ApiController]
     public class CouponAPIController : APIBaseController
     {
@@ -18,7 +18,7 @@ namespace Microservices.CouponAPI.Controllers
             _couponRepository = couponRepository;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try

@@ -1,15 +1,16 @@
-﻿using Microservices.CouponAPI.Models.Dto;
+﻿
+using Microservices.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Microservices.CouponAPI.Controllers
+namespace Microservices.Web.Controllers
 {
-    public class APIBaseController : ControllerBase
+    public class BaseController : Controller
     {
 
         protected ResponseDto ControllerResponse;
         protected Serilog.ILogger Logger;
 
-        public APIBaseController(Serilog.ILogger logger)
+        public BaseController(Serilog.ILogger logger)
         {
             ControllerResponse = new ResponseDto();
             Logger = logger;

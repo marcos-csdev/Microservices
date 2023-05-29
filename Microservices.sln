@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPI", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPITests", "Microservices.CouponAPITests\Microservices.CouponAPITests.csproj", "{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.Web", "Microservices.Web\Microservices.Web.csproj", "{C23DC29B-4B63-467F-A3F6-91FADE76D469}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Web", "Microservices.Web\Microservices.Web.csproj", "{C23DC29B-4B63-467F-A3F6-91FADE76D469}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

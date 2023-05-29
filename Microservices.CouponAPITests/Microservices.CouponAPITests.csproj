@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microservices.Web\Microservices.Web.csproj" />
     <ProjectReference Include="..\Microservies.Coupon.API\Microservices.CouponAPI.csproj" />
   </ItemGroup>
 
