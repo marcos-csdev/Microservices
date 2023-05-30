@@ -1,9 +1,6 @@
 using Microservices.Web.Services;
 using Microservices.Web.Services.Abstractions;
 using Microservices.Web.Utility;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Microservices.Web
