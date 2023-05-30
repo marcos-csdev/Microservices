@@ -8,8 +8,8 @@ using Microservices.Web.Services.Abstractions;
 using Microservices.CouponAPITests;
 using Microservices.Web.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
+using NUnit.Framework;
 
 namespace Microservices.CouponAPITests.Services
 {
@@ -37,7 +37,7 @@ namespace Microservices.CouponAPITests.Services
         }
 
 
-        [Fact]
+        [Test]
         public void GetHomeResource_HttpResponse_ShouldReturn200OK()
         {
             // Arrange
