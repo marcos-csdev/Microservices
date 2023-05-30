@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microservices.Web.Services;
+using Microservices.Web.Services.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System;
@@ -9,50 +11,22 @@ using System.Threading.Tasks;
 
 namespace Microservices.CouponAPITests
 {
-    public class ProviderFactory : IDisposable
+    public class ProviderFactory
     {
-        private static IServiceScope? _serviceScope = null!;
 
-        public static IServiceProvider GetServiceProvider<TInterface, TService>(IServiceCollection serviceCollection)
-        where TInterface : class
-        where TService : class, TInterface
+        public static ICouponService SetCouponServiceProvider(IServiceCollection serviceCollection, IServiceScope scope)
         {
 
-            /*var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new SourceMappingProfile());
-            });
-            mappingConfig.CreateMapper();*/
-            serviceCollection.AddAutoMapper(typeof(Program));
+            serviceCollection.AddHttpClient<ICouponService, CouponService>();
+            serviceCollection.AddTransient<ICouponService, CouponService>();
 
-            serviceCollection.AddTransient<TInterface, TService>();
-            _serviceScope = serviceCollection.BuildServiceProvider().CreateScope();
-            var serviceProvider = _serviceScope.ServiceProvider.GetRequiredService<TService>();
+            
+            var service = scope.ServiceProvider.GetService<ICouponService>();
 
-            return (IServiceProvider)serviceProvider;
-
+            return service!;
         }
 
-        public static IServiceCollection SetDefaultServiceDIContainer<TInterface, TService>()
-            where TInterface : class
-            where TService : class, TInterface
-        {
-            var serviceCollection = new ServiceCollection();
 
-            serviceCollection.AddTransient<TInterface, TService>();
-
-            return serviceCollection;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing) _serviceScope?.Dispose();
-        }
+        
     }
 }

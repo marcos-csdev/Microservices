@@ -1,28 +1,21 @@
 ﻿using Microservices.CouponAPI.Data;
-using Microservices.Web;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Microservices.CouponAPITests
 {
-    public class TestSetup : IDisposable
+    public abstract class TestSetup : IDisposable
     {
-        public readonly HttpClient? HttpClient;
+        public HttpClient? HttpClient { get; private set; }
 
-        public TestSetup(IServiceCollection serviceDescriptors)
+        public void SetupService<TInterface, TService>()
+            where TInterface : class
+            where TService : class, TInterface
         {
 
             try
@@ -35,7 +28,7 @@ namespace Microservices.CouponAPITests
                     {
                         services.RemoveAll(typeof(MsDbContext));
 
-                        var connectionString =          context.Configuration.GetConnectionString("DefaultConnection");
+                        var connectionString = context.Configuration.GetConnectionString("DefaultConnection");
 
                         services.AddDbContext<MsDbContext>(option =>
                             option.UseSqlServer(connectionString));
@@ -46,11 +39,11 @@ namespace Microservices.CouponAPITests
 
                     });
 
-
-                    whb.ConfigureTestServices(services =>
+                    whb.ConfigureTestServices((services) =>
                     {
-                        //Add specific service here
-                        services.Add(serviceDescriptors);
+                        SetServiceDIContainer<TInterface, TService>();
+
+                        //ConfigureTestServices<TInterface, TService>(services);
                     });
                 }).CreateClient();
             }
@@ -60,6 +53,12 @@ namespace Microservices.CouponAPITests
                 Console.WriteLine($"Exception message: {ex.Message}");
             }
         }
+
+
+        protected abstract TService SetServiceDIContainer<TInterface, TService>()
+            where TInterface : class
+            where TService : class, TInterface;
+        
 
         public void Dispose()
         {
