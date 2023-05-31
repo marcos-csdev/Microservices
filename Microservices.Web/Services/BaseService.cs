@@ -83,26 +83,25 @@ namespace Microservices.Web.Services
 
         private static void SetRequestHttpVerb(RequestDto apiRequest, HttpRequestMessage message)
         {
-            switch (apiRequest.ApiType)
+            _ = apiRequest.ApiType switch
             {
-                case StaticDetails.ApiType.POST:
-                    message.Method = HttpMethod.Post;
-                    break;
-                case StaticDetails.ApiType.PUT:
-                    message.Method = HttpMethod.Put;
-                    break;
-                case StaticDetails.ApiType.DELETE:
-                    message.Method = HttpMethod.Delete;
-                    break;
-                default:
-                    message.Method = HttpMethod.Get;
-                    break;
-            }
+                StaticDetails.ApiType.POST =>
+                    message.Method = HttpMethod.Post,
+
+                StaticDetails.ApiType.PUT =>
+                    message.Method = HttpMethod.Put,
+
+                StaticDetails.ApiType.DELETE =>
+                    message.Method = HttpMethod.Delete,
+
+                _ =>
+                    message.Method = HttpMethod.Get,
+            };
         }
 
         public void Dispose()
         {
-            GC.SuppressFinalize(true);
+            GC.SuppressFinalize(this);
         }
 
     }

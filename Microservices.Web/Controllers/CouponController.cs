@@ -17,7 +17,7 @@ namespace Microservices.Web.Controllers
 
         public async Task<IActionResult> CouponIndex()
         {
-            List<CouponDto> list = null!;
+            List<CouponDto> list;
 
             try
             {
@@ -26,7 +26,7 @@ namespace Microservices.Web.Controllers
 
                 if (response is not null && response.IsSuccess)
                 {
-                    list = JsonConvert.DeserializeObject<List<CouponDto>>(response.Result.ToString()!)!;
+                    list = JsonConvert.DeserializeObject<List<CouponDto>>(response.Result?.ToString()!)!;
                 }
             }
             catch (Exception ex)

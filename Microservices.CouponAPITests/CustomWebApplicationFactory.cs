@@ -13,7 +13,7 @@ using Serilog;
 
 namespace Microservices.CouponAPITests
 {
-    public abstract class CustomWebApplicationFactory<TServiceInterface> : WebApplicationFactory<Web.Program>
+    public abstract class CustomWebApplicationFactory<TServiceInterface> : WebApplicationFactory<Web.Program> where TServiceInterface : class
     {
         protected HttpClient? HttpClient { get; private set; }
         protected IServiceScope? Scope = null!;
@@ -39,7 +39,7 @@ namespace Microservices.CouponAPITests
 
         }
 
-        private void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
+        private static void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
         {
             services.RemoveAll(typeof(MsDbContext));
 

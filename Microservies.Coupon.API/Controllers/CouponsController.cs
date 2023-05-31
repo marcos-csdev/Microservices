@@ -3,7 +3,6 @@ using AutoMapper;
 using Microservices.CouponAPI.Models.Dto;
 using Microservices.CouponAPI.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Microservices.CouponAPI.Controllers
 {
@@ -11,7 +10,7 @@ namespace Microservices.CouponAPI.Controllers
     [ApiController]
     public class CouponAPIController : APIBaseController
     {
-        private ICouponRepository _couponRepository;
+        private readonly ICouponRepository _couponRepository;
 
         public CouponAPIController(Serilog.ILogger logger, ICouponRepository couponRepository) : base(logger)
         {
