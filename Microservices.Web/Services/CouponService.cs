@@ -18,7 +18,7 @@ namespace Microservices.Web.Services
             var request = new RequestDto
             {
                 ApiType = StaticDetails.ApiType.POST,
-                Data = entityDto,
+                Body = entityDto,
                 Url = $"{StaticDetails.CouponAPIBase}/api/coupons",
                 Token = ""
             };
@@ -81,7 +81,7 @@ namespace Microservices.Web.Services
             var request = new RequestDto
             {
                 ApiType = StaticDetails.ApiType.PUT,
-                Data = entityDto,
+                Body = entityDto,
                 Url = $"{StaticDetails.CouponAPIBase}/api/coupons{id}",
                 Token = ""
             };

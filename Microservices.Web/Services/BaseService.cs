@@ -25,7 +25,9 @@ namespace Microservices.Web.Services
                 var client = HttpClientFactory.CreateClient("MSCouponAPI");
 
                 var appType = "application/json";
-                var message = SetRequestMessage(apiRequest, appType, client);
+
+                client.DefaultRequestHeaders.Clear();
+                var message = SetRequestMessage(apiRequest, appType);
 
                 var apiResponse = await client.SendAsync(message);
                 var apiContent = await apiResponse.Content.ReadAsStringAsync();
@@ -62,26 +64,25 @@ namespace Microservices.Web.Services
             }
         }
 
-        private static HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType, HttpClient client)
+        private static HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType)
         {
             var message = new HttpRequestMessage();
             message.Headers.Add("Accept", appType);
             message.RequestUri = new Uri(apiRequest.Url);
 
-            client.DefaultRequestHeaders.Clear();
+            SetRequestHttpVerb(apiRequest, message);
 
-            SetApiRequestMethod(apiRequest, message);
-
-            if (apiRequest.Data is not null)
+            //request will have a body on create/update
+            if (apiRequest.Body is not null)
             {
-                var serializedJson = JsonConvert.SerializeObject(apiRequest);
+                var serializedJson = JsonConvert.SerializeObject(apiRequest.Body);
                 message.Content = new StringContent(serializedJson, Encoding.UTF8, appType);
             }
 
             return message;
         }
 
-        private static void SetApiRequestMethod(RequestDto apiRequest, HttpRequestMessage message)
+        private static void SetRequestHttpVerb(RequestDto apiRequest, HttpRequestMessage message)
         {
             switch (apiRequest.ApiType)
             {
@@ -99,8 +100,6 @@ namespace Microservices.Web.Services
                     break;
             }
         }
-
-        
 
         public void Dispose()
         {

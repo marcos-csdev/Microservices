@@ -17,7 +17,7 @@ namespace Microservices.CouponAPITests
     {
         protected HttpClient? HttpClient { get; private set; }
         protected IServiceScope? Scope = null!;
-        protected readonly TServiceInterface Service;
+        protected TServiceInterface? Service;
 
         public CustomWebApplicationFactory()
         {
@@ -31,11 +31,10 @@ namespace Microservices.CouponAPITests
 
                 whb.ConfigureTestServices(services =>
                 {
-                    SetServiceProvider(Scope);
+                    Service = SetServiceProvider(Scope);
                 });
             }).CreateClient();
 
-            Service = SetServiceProvider(Scope);
         }
 
         private void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)

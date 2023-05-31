@@ -7,7 +7,7 @@ namespace Microservices.Web.Models
     {
         public ApiType ApiType { get; set; } = ApiType.GET;
         public string Url { get; set; } = null!;
-        public object Data { get; set; } = null!;
+        public object Body { get; set; } = null!;
         public string Token { get; set; } = null!;
     }
 }

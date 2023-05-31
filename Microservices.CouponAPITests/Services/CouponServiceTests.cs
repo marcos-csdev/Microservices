@@ -3,6 +3,7 @@ using Microservices.Web.Services.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microservices.CouponAPITests.Services
 {
@@ -21,6 +22,10 @@ namespace Microservices.CouponAPITests.Services
         public async Task GetAllEntitiesAsync_Coupons_Found()
         {
             // Arrange
+            if(Service is null)
+            {
+                Assert.Fail("There was a problem setting up the CouponService provider");
+            }
 
             var coupons = await Service.GetAllEntitiesAsync<ResponseDto>();
 
