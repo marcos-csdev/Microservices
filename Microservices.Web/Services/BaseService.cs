@@ -26,7 +26,6 @@ namespace Microservices.Web.Services
 
                 var appType = "application/json";
 
-                client.DefaultRequestHeaders.Clear();
                 var message = SetRequestMessage(apiRequest, appType);
 
                 var apiResponse = await client.SendAsync(message);

@@ -24,13 +24,15 @@ namespace Microservices.CouponAPITests
 
             HttpClient = WithWebHostBuilder(whb =>
             {
-                whb.ConfigureServices((context, services) =>
+                //not needed in the current service dependency situation
+                /*whb.ConfigureServices((context, services) =>
                 {
                     ConfigureServices(context, services);
-                });
+                });*/
 
                 whb.ConfigureTestServices(services =>
                 {
+                    Scope = services.BuildServiceProvider().CreateScope();
                     Service = SetServiceProvider(Scope);
                 });
             }).CreateClient();
@@ -49,7 +51,6 @@ namespace Microservices.CouponAPITests
             services.AddLogging(configure =>
                 configure.AddSerilog());
 
-            Scope = services.BuildServiceProvider().CreateScope();
 
 
         }
