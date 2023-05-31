@@ -30,6 +30,7 @@ namespace Microservices.CouponAPI.Controllers
 
             }
             catch (Exception ex)
+
             {
                 LogError(ex);
             }

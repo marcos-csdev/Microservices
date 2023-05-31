@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentAssertions.Common;
+using Microservices.CouponAPI.Repositories;
 using Microservices.Web.Services;
 using Microservices.Web.Services.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Microservices.CouponAPITests
 {
-    public class ProviderFactory
+    public class ServiceProviderFactory
     {
         public static ICouponService SetCouponServiceProvider(IServiceScope scope)
         {
@@ -21,14 +22,12 @@ namespace Microservices.CouponAPITests
             serviceCollection.AddHttpClient<ICouponService, CouponService>();
             serviceCollection.AddTransient<ICouponService, CouponService>();
 
-            scope = serviceCollection.BuildServiceProvider().CreateScope();
-
             var service = scope.ServiceProvider.GetService<ICouponService>();
 
             return service!;
         }
-
-
         
+
+
     }
 }

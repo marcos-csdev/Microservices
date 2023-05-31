@@ -8,16 +8,13 @@ namespace Microservices.CouponAPITests.Services
 {
     public class CouponServiceTests : CustomWebApplicationFactory<ICouponService>
     {
-        private readonly ICouponService _couponService;
-
         protected override ICouponService SetServiceProvider(IServiceScope scope)
         {
-            return ProviderFactory.SetCouponServiceProvider(Scope!);
+            return ServiceProviderFactory.SetCouponServiceProvider(Scope!);
         }
 
         public CouponServiceTests() : base()
         {
-            _couponService = SetServiceProvider(Scope!);
         }
 
         [Fact]
@@ -25,7 +22,7 @@ namespace Microservices.CouponAPITests.Services
         {
             // Arrange
 
-            var coupons = await _couponService.GetAllEntitiesAsync<ResponseDto>();
+            var coupons = await Service.GetAllEntitiesAsync<ResponseDto>();
 
             coupons?.IsSuccess.Should().BeTrue();
 
