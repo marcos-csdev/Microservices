@@ -19,8 +19,10 @@ namespace Microservices.Web
 
             //=================Adding Serilog========================
             builder.Host.UseSerilog((fileContext, loggingConfig) =>
-                loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day)
-            );
+            {
+                loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+                loggingConfig.MinimumLevel.Debug();
+            });
             //=================Adding Serilog========================
             builder.Services.AddHttpClient<ICouponService, CouponService>();
             builder.Services.AddScoped<ICouponService, CouponService>();

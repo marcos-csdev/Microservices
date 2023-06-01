@@ -1,11 +1,11 @@
 ﻿using Microservices.Web.Models;
+using Microservices.Web.Models.Factories;
 using Microservices.Web.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Microservices.Web.Controllers
 {
-    [Route("api/[controller]")]
     public class CouponController : BaseController
     {
         private readonly ICouponService _couponService;
@@ -17,7 +17,7 @@ namespace Microservices.Web.Controllers
 
         public async Task<IActionResult> CouponIndex()
         {
-            List<CouponDto> list;
+            List<CouponDto>? list = null;
 
             try
             {
@@ -34,7 +34,43 @@ namespace Microservices.Web.Controllers
                 LogError(ex);
             }
 
+            return View(list);
+        }
+
+        public async Task<IActionResult> CouponCreate()
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CouponCreate(CouponDto couponDto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    
+                    var response = await _couponService.AddEntityAsync<ResponseDto, CouponDto>(couponDto);
+                    if(response is not null && response.IsSuccess)
+                    {
+                        return RedirectToAction(nameof(CouponIndex));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+            return View(couponDto);
         }
     }
 }

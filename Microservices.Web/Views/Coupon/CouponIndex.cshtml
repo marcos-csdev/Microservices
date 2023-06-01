@@ -1,42 +1,66 @@
-﻿@model Microservices.Web.Models.CouponDto
+﻿@model IList<CouponDto>
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-white">Coupons List</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
 
-@{
-    ViewData["Title"] = "CouponIndex";
-}
+            @*<li class="nav-item">
+                <a class="nav-link " asp-area="" asp-controller="Coupon" asp-action="CouponIndex">Coupon</a>
+            </li>*@
+            <div class="col-6 text-end">
+                <a class="btn btn-outline-primary" asp-area="" asp-controller="Coupon" asp-action="CouponCreate"><i class="bi bi-plus-square"></i> Create New Coupon</a>
 
-<h1>CouponIndex</h1>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Coupon Code
+                    </th>
+                    <th>
+                        Discount Amount
+                    </th>
+                    <th>
+                        Minimum Expense
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
 
-<div>
-    <h4>CouponDto</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CouponCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CouponCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Discount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Discount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MinExpense)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MinExpense)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+                    <tr>
+                        <td>
+                            @item.CouponCode
+                        </td>
+                        <td>
+                            @item.Discount.ToString("c")
+                        </td>
+                        <td>
+                            @item.MinExpense
+                        </td>
+                        <td>
+                            <a class="btn btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+
 </div>
