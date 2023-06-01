@@ -1,4 +1,5 @@
 ﻿using Microservices.Web.Models;
+using Microservices.Web.Models.Factories;
 using Microservices.Web.Services.Abstractions;
 using Microservices.Web.Utility;
 using Newtonsoft.Json;
@@ -36,27 +37,24 @@ namespace Microservices.Web.Services
             }
             catch(ArgumentNullException ex)
             {
-                var dto = new ResponseDto
-                {
-                    DisplayMessage = "API reponse could not be deserialized into JSON",
-                    ErrorMessages = new List<string> { ex.Message },
-                    IsSuccess = false
-                };
-                var response = JsonConvert.SerializeObject(dto);
+                var responseDto = ResponseDtoFactory.CreateResponseDto(
+                    "API reponse could not be deserialized into JSON", 
+                    new List<string> { ex.Message }, 
+                    false);
+                
+                var response = JsonConvert.SerializeObject(responseDto);
                 var apiResponseDto = JsonConvert.DeserializeObject<T>(response);
 
                 return apiResponseDto;
             }
             catch (Exception ex)
             {
-                var dto = new ResponseDto
-                {
-                    DisplayMessage = "Error",
-                    ErrorMessages = new List<string> { ex.Message },
-                    IsSuccess = false
-                };
-
-                var response = JsonConvert.SerializeObject(dto);
+                var responseDto = ResponseDtoFactory.CreateResponseDto(
+                    "Error", 
+                    new List<string> { ex.Message }, 
+                    false);
+                
+                var response = JsonConvert.SerializeObject(responseDto);
                 var apiResponseDto = JsonConvert.DeserializeObject<T>(response);
 
                 return apiResponseDto;
