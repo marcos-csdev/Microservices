@@ -12,9 +12,6 @@
             <div class="col-6">
             </div>
 
-            @*<li class="nav-item">
-                <a class="nav-link " asp-area="" asp-controller="Coupon" asp-action="CouponIndex">Coupon</a>
-            </li>*@
             <div class="col-6 text-end">
                 <a class="btn btn-outline-primary" asp-area="" asp-controller="Coupon" asp-action="CouponCreate"><i class="bi bi-plus-square"></i> Create New Coupon</a>
 
@@ -50,7 +47,7 @@
                             @item.MinExpense
                         </td>
                         <td>
-                            <a class="btn btn-danger">
+                            <a class="btn btn-danger" asp-action="CouponRemove" asp-route-couponId="@item.Id">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>

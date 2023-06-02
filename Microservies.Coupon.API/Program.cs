@@ -65,15 +65,13 @@ namespace Microservices.CouponAPI
             //applies the update-database command when the project runs
             void ApplyPendingMigrations()
             {
-                using (var scope = app.Services.CreateScope())
+                using var scope = app.Services.CreateScope();
+                var _db = scope.ServiceProvider.GetRequiredService<MsDbContext>();
+
+                if (_db.Database.GetPendingMigrations().Any())
                 {
-                    var _db = scope.ServiceProvider.GetRequiredService<MsDbContext>();
+                    _db.Database.Migrate();
 
-                    if (_db.Database.GetPendingMigrations().Count() > 0)
-                    {
-                        _db.Database.Migrate();
-
-                    }
                 }
             }
         }

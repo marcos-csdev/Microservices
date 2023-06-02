@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPITest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Web", "Microservices.Web\Microservices.Web.csproj", "{C23DC29B-4B63-467F-A3F6-91FADE76D469}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.AuthAPI", "Microservices.AuthAPI\Microservices.AuthAPI.csproj", "{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +48,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B2DFCE2C-21F9-4074-AC31-9D32C25C39FA} = {7181306C-EDCE-4795-85FF-F3495CC80D82}
 		{C23DC29B-4B63-467F-A3F6-91FADE76D469} = {7181306C-EDCE-4795-85FF-F3495CC80D82}
+		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC} = {7181306C-EDCE-4795-85FF-F3495CC80D82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {117C8C03-F09A-4DE4-B533-F17255BE0B06}

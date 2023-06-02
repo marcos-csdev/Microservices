@@ -10,7 +10,7 @@ namespace Microservices.CouponAPI.Repositories
     public class CouponRepository : ICouponRepository
     {
         private readonly MsDbContext _dbContext;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public CouponRepository(MsDbContext dbContext, IMapper mapper)
         {
@@ -72,7 +72,7 @@ namespace Microservices.CouponAPI.Repositories
 
             var dbCoupon = await GetDbCouponByIdAsync(mappedCoupon.Id);
 
-            EntityEntry entityEntry = null!;
+            EntityEntry entityEntry;
             //Create
             if(dbCoupon is null)
             {
