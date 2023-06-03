@@ -1,3 +1,4 @@
+using Microservices.AuthAPI;
 using Microservices.AuthAPI.Data;
 using Microservices.AuthAPI.Models;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,13 @@ builder.Services.AddDbContext<MsDbContext>(option =>
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 //=================Configuring Token========================
+
+
+//=================Adding AutoMapper========================
+var mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+//=================Adding AutoMapper========================
 
 //=================Adding Identity========================
 //EntityFrameworkStores connects the identity framework with the db context
