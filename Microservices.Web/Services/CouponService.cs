@@ -44,7 +44,7 @@ namespace Microservices.Web.Services
             if (id < 1) return null;
 
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.GET, 
-                $"{StaticDetails.CouponAPIBase}api/coupons/{id}");
+                $"{StaticDetails.CouponAPIBase}api/coupons/GetById/{id}");
 
             var response = await SendAsync<T>(request);
 

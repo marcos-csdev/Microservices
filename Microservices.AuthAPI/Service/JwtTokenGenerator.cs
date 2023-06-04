@@ -11,6 +11,7 @@ namespace Microservices.AuthAPI.Service
     public class JwtTokenGenerator : IJwtTokenGenerator
     {
         private readonly JwtOptions _jwtOptions;
+        //IOptions is used here as JwtOptions is placed in the DI as a token configuration, not a service
         public JwtTokenGenerator(IOptions<JwtOptions> jwtOptions)
         {
             _jwtOptions = jwtOptions.Value;
@@ -21,9 +22,6 @@ namespace Microservices.AuthAPI.Service
 
             var secretKey = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
 
-            //claims are pieces of information asserted about a subject.
-            //a jwtToken can contain a claim called "name" that asserts that the name of the user authenticating is "John Doe".
-            //In a JWT, a claim appears as a name/value pair where the name is always a string and the value can be any JSON value.
             //in the following case, the user "claims" that those are its name, id and email
             var claims = new List<Claim>
             {
@@ -45,6 +43,7 @@ namespace Microservices.AuthAPI.Service
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            //the token can be decoded back into an object at https://jwt.io/
             var stringToken = tokenHandler.WriteToken(token);
 
             return stringToken;
