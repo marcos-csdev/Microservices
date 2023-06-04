@@ -1,8 +1,11 @@
 using Microservices.AuthAPI;
 using Microservices.AuthAPI.Data;
 using Microservices.AuthAPI.Models;
+using Microservices.AuthAPI.Service;
+using Microservices.AuthAPI.Service.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,10 +38,25 @@ builder.Services.AddIdentity<MSUser, IdentityRole>()
     .AddDefaultTokenProviders();
 //=================Adding Identity========================
 
+
+//=================Adding Services========================
+builder.Services.AddScoped<IJwtTokenGenerator,  JwtTokenGenerator>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+//=================Adding Services========================
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+//=================Adding Serilog========================
+builder.Host.UseSerilog((fileContext, loggingConfig) =>
+{
+    loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+    loggingConfig.MinimumLevel.Debug();
+});
+//=================Adding Serilog========================
 
 var app = builder.Build();
 

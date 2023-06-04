@@ -4,8 +4,8 @@ namespace Microservices.AuthAPI.Service.Abstractions
 {
     public interface IAuthService
     {
-        Task<MSUserDto> Register(RegistrationRequestDto registrationRequestDto);
+        Task<string> Register(RegistrationRequestDto registrationRequestDto);
 
-        Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto);
+        Task<LoginResponseDto?> Login(LoginRequestDto loginRequestDto);
     }
 }

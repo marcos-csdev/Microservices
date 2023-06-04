@@ -14,19 +14,35 @@ namespace Microservices.AuthAPI.Service
         private readonly MsDbContext _dbContext;
         private readonly UserManager<MSUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+
         private readonly IMapper _mapper;
 
-        public AuthService(MsDbContext dbContext, UserManager<MSUser> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper)
+        public AuthService(MsDbContext dbContext, UserManager<MSUser> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IJwtTokenGenerator jwtTokenGenerator)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
             _mapper = mapper;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        public Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
+        public async Task<LoginResponseDto?> Login(LoginRequestDto loginRequestDto)
         {
-            throw new NotImplementedException();
+            var userRetrieved = await _dbContext.MSUsers.FirstOrDefaultAsync(user => user.UserName == loginRequestDto.UserName);
+
+            if (userRetrieved is null) return null;
+
+            var isValid = await _userManager.CheckPasswordAsync(userRetrieved, loginRequestDto.Password);
+
+            var jwtToken = _jwtTokenGenerator.GenerateToken(userRetrieved);
+
+            var userDto = _mapper.Map<MSUserDto>(userRetrieved);
+
+            var response = LoginResponseDtoFactory.Create(userDto, jwtToken);
+
+            return response;
         }
 
         public async Task<string> Register(RegistrationRequestDto registrationRequestDto)
@@ -37,29 +53,19 @@ namespace Microservices.AuthAPI.Service
                 registrationRequestDto.Email.ToUpper(), registrationRequestDto.Name,
                 registrationRequestDto.Phone);
 
-            try
+            var userCreated = await _userManager.CreateAsync(user, registrationRequestDto.Password);
+
+            if (userCreated.Succeeded)
             {
-                var userCreated = await _userManager.CreateAsync(user, registrationRequestDto.Password);
+                var userFound = await _dbContext.MSUsers.FirstOrDefaultAsync(user => user.Email == registrationRequestDto.Email);
 
-                if (userCreated.Succeeded)
-                {
-                    var userFound = await _dbContext.MSUsers.FirstOrDefaultAsync(user => user.Email == registrationRequestDto.Email);
+                var userDto = _mapper.Map<MSUserDto>(userFound);
 
-                    var userDto = _mapper.Map<MSUserDto>(userFound);
-
-                    return "";
-                }
-                else
-                {
-                    return userCreated.Errors.FirstOrDefault()!.Description;
-                }
-
-
+                return "";
             }
-            catch (Exception)
+            else
             {
-                throw;
-
+                return userCreated.Errors.FirstOrDefault()!.Description;
             }
 
         }
