@@ -19,17 +19,17 @@ namespace Microservices.AuthAPI.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<EntityState> DeleteUserAsync(string email)
+        public async Task<bool> DeleteUserAsync(string email)
         {
             var user = await GetDbUserByEmailAsync(email);
 
-            if (user is null) return EntityState.Unchanged;
+            if (user is null) return false;
 
             var deletedUser = _dbContext.Users.Remove(user);
 
             await _dbContext.SaveChangesAsync();
 
-            return deletedUser.State;
+            return deletedUser.State != EntityState.Unchanged;
 
         }
         

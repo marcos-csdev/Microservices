@@ -37,6 +37,8 @@ namespace Microservices.AuthAPI.Service
 
             var isValid = await _userManager.CheckPasswordAsync(userRetrieved, loginRequestDto.Password);
 
+            if (isValid == false) return null;
+
             var jwtToken = _jwtTokenGenerator.GenerateToken(userRetrieved);
 
             var userDto = _mapper.Map<MSUserDto>(userRetrieved);
@@ -56,29 +58,22 @@ namespace Microservices.AuthAPI.Service
 
             var userCreated = await _userManager.CreateAsync(user, registrationRequestDto.Password);
 
-            if (userCreated.Succeeded)
-            {
-                var userFound = await _userRepository.GetDbUserByEmailAsync(registrationRequestDto.Email);
-
-                var userDto = _mapper.Map<MSUserDto>(userFound);
-
-                return "";
-            }
-            else
+            if (userCreated.Succeeded == false)
             {
                 return userCreated.Errors.FirstOrDefault()!.Description;
             }
 
+            return "";
         }
 
         public async Task<bool> AssignRole(string email, string roleName)
         {
             var user = await _userRepository.GetDbUserByEmailAsync(email);
 
-            if(user is null) return false;
+            if (user is null) return false;
 
             //if role doesnt exist, create it
-            if(! await _roleManager.RoleExistsAsync(roleName))
+            if (!await _roleManager.RoleExistsAsync(roleName))
             {
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
             }
@@ -89,15 +84,13 @@ namespace Microservices.AuthAPI.Service
 
         }
 
-        public async Task<EntityState> RemoveUser(string email)
+        public async Task<bool> RemoveUser(string email)
         {
-            var userFound = _userRepository.GetDbUserByEmailAsync(email);
+            var userFound = await _userRepository.GetDbUserByEmailAsync(email);
 
-            if (userFound is null) return EntityState.Unchanged;
+            if (userFound is null) return false;
 
             var isUserDeleted = await _userRepository.DeleteUserAsync(email);
-
-
 
             return isUserDeleted;
         }

@@ -9,6 +9,6 @@ namespace Microservices.AuthAPI.Service.Abstractions
 
         Task<LoginResponseDto?> Login(LoginRequestDto loginRequestDto);
         Task<bool> AssignRole(string email, string roleName);
-        Task<EntityState> RemoveUser(string email);
+        Task<bool> RemoveUser(string email);
     }
 }

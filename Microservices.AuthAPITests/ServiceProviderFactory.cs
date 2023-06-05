@@ -16,12 +16,10 @@ namespace Microservices.AuthAPI.Tests
 {
     public class ServiceProviderFactory
     {
-        public static IAuthService SetAuthServiceProvider(IServiceScope scope)
+        public static IAuthService SetAuthServiceProvider(IServiceCollection serviceCollection, IServiceScope scope)
         {
-            var serviceCollection = new ServiceCollection();
-
-            serviceCollection.AddScoped<IUserRepository, UserRepository>();
-            serviceCollection.AddScoped<IAuthService, AuthService>();
+            serviceCollection.AddTransient<IUserRepository, UserRepository>();
+            serviceCollection.AddTransient<IAuthService, AuthService>();
 
             var service = scope.ServiceProvider.GetService<IAuthService>();
 

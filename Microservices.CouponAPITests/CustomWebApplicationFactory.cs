@@ -48,6 +48,7 @@ namespace Microservices.Coupon.Web.Tests
             if (disposing)
             {
                 Scope?.Dispose();
+
                 HttpClient?.Dispose();
             }
 

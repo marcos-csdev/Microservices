@@ -30,8 +30,9 @@ namespace Microservices.AuthAPI.Tests
 
                 whb.ConfigureTestServices(services =>
                 {
+
                     Scope = services.BuildServiceProvider().CreateScope();
-                    Service = SetServiceProvider(Scope);
+                    Service = SetServiceProvider(services, Scope);
                 });
             }).CreateClient();
 
@@ -44,14 +45,14 @@ namespace Microservices.AuthAPI.Tests
             var connectionString = context.Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<MsDbContext>(option =>
-                option.UseSqlServer(connectionString));
+                option.UseSqlServer(connectionString), ServiceLifetime.Scoped);
 
             services.AddLogging(configure =>
                 configure.AddSerilog());
 
         }
 
-        protected abstract TServiceInterface SetServiceProvider(IServiceScope scope);
+        protected abstract TServiceInterface SetServiceProvider(IServiceCollection services, IServiceScope scope);
 
 
         protected new void Dispose()
@@ -63,6 +64,7 @@ namespace Microservices.AuthAPI.Tests
             if (disposing)
             {
                 Scope?.Dispose();
+
                 HttpClient?.Dispose();
             }
 

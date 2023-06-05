@@ -18,17 +18,17 @@ namespace Microservices.CouponAPI.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<EntityState> DeleteCouponAsync(int couponId)
+        public async Task<bool> DeleteCouponAsync(int couponId)
         {
             var coupon = await GetDbCouponByIdAsync(couponId);
 
-            if (coupon == null) return EntityState.Unchanged;
+            if (coupon == null) return false;
 
             var deletedCoupon = _dbContext.Coupons.Remove(coupon);
 
             await _dbContext.SaveChangesAsync();
 
-            return deletedCoupon.State;
+            return deletedCoupon.State != EntityState.Unchanged;
 
         }
         private async Task<CouponModel?> GetDbCouponByIdAsync(int couponId)
@@ -66,9 +66,9 @@ namespace Microservices.CouponAPI.Repositories
             return couponsDto;
         }
 
-        public async Task<EntityState> UpsertCouponAsync(CouponDto couponDto)
+        public async Task<bool> UpsertCouponAsync(CouponDto couponDto)
         {
-            if(couponDto is null) return EntityState.Unchanged;
+            if(couponDto is null) return false;
 
             var mappedCoupon = _mapper.Map<CouponModel>(couponDto);
 
@@ -85,12 +85,10 @@ namespace Microservices.CouponAPI.Repositories
                 entityEntry = _dbContext.Coupons.Update(mappedCoupon);
             }
 
-            //entityEntry gets its value changed after SaveChangesAsync
-            var state = entityEntry.State;
 
             await _dbContext.SaveChangesAsync();
 
-            return state;
+            return entityEntry.State != EntityState.Unchanged;
         }
     }
 }

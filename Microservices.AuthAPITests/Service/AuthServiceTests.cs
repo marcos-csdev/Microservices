@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Common;
 using Microservices.AuthAPI.Models.Dto;
 using Microservices.AuthAPI.Service;
 using Microservices.AuthAPI.Service.Abstractions;
@@ -15,52 +16,54 @@ using Xunit;
 
 namespace Microservices.AuthAPI.Service.Tests
 {
-    public class AuthServiceTests:CustomWebApplicationFactory<IAuthService> 
+    [Collection("Database tests")]
+    public class AuthServiceTests : CustomWebApplicationFactory<IAuthService>
     {
 
-        protected override IAuthService SetServiceProvider(IServiceScope scope)
-        {
-            return ServiceProviderFactory.SetAuthServiceProvider(scope);
-        }
 
-
+        private static RegistrationRequestDto _user = null!;
         /*public void LoginTest()
         {
             throw new NotImplementedException();
         }*/
 
-        [Fact]
-        public async void RegisterTest_Registration_Successful()
+        public AuthServiceTests() : base()
         {
-            if(Service is null) Assert.Fail("There was a problem setting up the Auth Service");
-
-            var user = new RegistrationRequestDto
+            _user = new RegistrationRequestDto
             {
                 Email = "test@email.com",
                 Name = "Test",
                 Password = "P@ssw0rd",
                 Phone = "555-555-5555"
             };
+        }
 
-            var createdUser = await Service.Register(user);
+        protected override IAuthService SetServiceProvider(IServiceCollection services, IServiceScope scope)
+        {
+
+            return ServiceProviderFactory.SetAuthServiceProvider(services, scope);
+        }
+
+        [Fact]
+        public async Task RegisterTest_Registration_Successful()
+        {
+            if (Service is null) Assert.Fail("There was a problem setting up the Auth Service");
+
+            var createdUser = await Service.Register(_user);
 
             createdUser.Should().BeEmpty();
 
-
-
-            var isUserRemoved = await RemoveUser(user.Email);
-
-            isUserRemoved.Should().NotBe(EntityState.Unchanged);
-
         }
 
-        private async Task<EntityState> RemoveUser(string email)
+        [Fact]
+        public async Task RemoveUser()
         {
-            if (Service is null) return EntityState.Unchanged;
+            if (Service is null) Assert.Fail("There was a problem setting up the Auth Service");
 
-            var userRemoved = await Service.RemoveUser(email);
+            var isSuccessful = await Service.RemoveUser(_user.Email);
+            isSuccessful.Should().BeTrue();
 
-            return EntityState.Deleted;
+
         }
 
     }
