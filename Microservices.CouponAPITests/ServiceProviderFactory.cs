@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microservices.CouponAPITests
+namespace Microservices.Coupon.Web.Tests
 {
     public class ServiceProviderFactory
     {

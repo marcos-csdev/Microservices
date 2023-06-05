@@ -1,10 +1,13 @@
+using AutoMapper;
 using Microservices.AuthAPI;
 using Microservices.AuthAPI.Data;
 using Microservices.AuthAPI.Models;
+using Microservices.AuthAPI.Repositories;
 using Microservices.AuthAPI.Service;
 using Microservices.AuthAPI.Service.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 namespace Microservices.AuthAPI
 {
@@ -30,9 +33,12 @@ namespace Microservices.AuthAPI
 
 
             //=================Adding AutoMapper========================
-            var mapper = MappingConfig.RegisterMaps().CreateMapper();
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            var mapper = mapperConfig.CreateMapper();
             builder.Services.AddSingleton(mapper);
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             //=================Adding AutoMapper========================
 
             //=================Adding Identity========================
@@ -45,6 +51,7 @@ namespace Microservices.AuthAPI
 
             //=================Adding Services========================
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             //=================Adding Services========================

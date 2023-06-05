@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{71
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPI", "Microservies.Coupon.API\Microservices.CouponAPI.csproj", "{B2DFCE2C-21F9-4074-AC31-9D32C25C39FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPITests", "Microservices.CouponAPITests\Microservices.CouponAPITests.csproj", "{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Coupon.Web.Tests", "Microservices.CouponAPITests\Microservices.Coupon.Web.Tests.csproj", "{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Web", "Microservices.Web\Microservices.Web.csproj", "{C23DC29B-4B63-467F-A3F6-91FADE76D469}"
 EndProject

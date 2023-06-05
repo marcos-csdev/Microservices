@@ -41,12 +41,14 @@ namespace Microservices.CouponAPI.Repositories
             return coupon;
         }
 
-        public async Task<CouponDto> GetCouponByIdAsync(int couponId)
+        public async Task<CouponDto?> GetCouponByIdAsync(int couponId)
         {
             if (couponId < 1) return null!;
 
             var coupon = await _dbContext.Coupons
                 .FirstOrDefaultAsync(c => c.Id == couponId);
+
+            if(coupon is null) return null!;
 
             var couponDto = _mapper.Map<CouponDto>(coupon);
 
@@ -66,7 +68,7 @@ namespace Microservices.CouponAPI.Repositories
 
         public async Task<EntityState> UpsertCouponAsync(CouponDto couponDto)
         {
-            if(couponDto == null) return EntityState.Unchanged;
+            if(couponDto is null) return EntityState.Unchanged;
 
             var mappedCoupon = _mapper.Map<CouponModel>(couponDto);
 

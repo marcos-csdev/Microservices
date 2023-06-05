@@ -6,7 +6,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 
-namespace Microservices.CouponAPITests.Services
+namespace Microservices.Coupon.Web.Tests.Services
 {
     public class CouponServiceTests : CustomWebApplicationFactory<ICouponService>
     {

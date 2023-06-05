@@ -1,4 +1,5 @@
 ﻿using Microservices.CouponAPI.Data;
+using Microservices.Web;
 using Microservices.Web.Services.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,9 +12,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Microservices.CouponAPITests
+namespace Microservices.Coupon.Web.Tests
 {
-    public abstract class CustomWebApplicationFactory<TServiceInterface> : WebApplicationFactory<Web.Program> where TServiceInterface : class
+    public abstract class CustomWebApplicationFactory<TServiceInterface> : WebApplicationFactory<Program> where TServiceInterface : class
     {
         protected HttpClient? HttpClient { get; private set; }
         protected IServiceScope? Scope = null!;

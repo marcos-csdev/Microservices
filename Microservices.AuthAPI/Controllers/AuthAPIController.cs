@@ -2,6 +2,7 @@
 using Microservices.AuthAPI.Service.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace Microservices.AuthAPI.Controllers
 {
@@ -54,6 +55,25 @@ namespace Microservices.AuthAPI.Controllers
                 LogError(ex);
 
                 return BadRequest("An unexpected error happened during the user login");
+            }
+        }
+
+        [HttpPost("assign role")]
+        public async Task<IActionResult> AssignRole(string email, string roleName)
+        {
+            try
+            {
+                var isRoleAssigned = await _authService.AssignRole(email, roleName);
+
+                if(isRoleAssigned == false) return BadRequest(isRoleAssigned);
+
+                return Ok(isRoleAssigned);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+
+                return Problem("An unexpected error happened during the role assignment");
             }
         }
     }
