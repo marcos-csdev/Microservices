@@ -7,7 +7,7 @@ This project was created to demonstrate development skills, including:
 - DI
 - Repository pattern
 - API
-- And much more
+- And more
 
 
 ## Installation
