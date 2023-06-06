@@ -32,6 +32,14 @@ namespace Microservices.CouponAPI.Data
                     Discount = 20,
                     MinExpense = 40,
                 });
+            modelBuilder.Entity<CouponModel>().HasData(
+                new CouponModel()
+                {
+                    Id = 3,
+                    CouponCode = "30OFF",
+                    Discount = 30,
+                    MinExpense = 90,
+                });
         }
     }
 }

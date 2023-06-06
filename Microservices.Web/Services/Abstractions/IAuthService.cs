@@ -1,6 +1,6 @@
 ﻿using Microservices.Web.Models;
 
-namespace Microservices.Web.Services
+namespace Microservices.Web.Services.Abstractions
 {
     public interface IAuthService
     {
