@@ -50,6 +50,8 @@ namespace Microservices.AuthAPI
 
 
             //=================Adding Services========================
+            builder.Services.AddScoped<IUserManagerService, UserManagerService>(); 
+            builder.Services.AddScoped<IRoleManagerService, RoleManagerService>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
