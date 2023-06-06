@@ -58,7 +58,7 @@ namespace Microservices.AuthAPI.Controllers
             }
         }
 
-        [HttpPost("assign role")]
+        [HttpPost("assignRole")]
         public async Task<IActionResult> AssignRole(string email, string roleName)
         {
             try

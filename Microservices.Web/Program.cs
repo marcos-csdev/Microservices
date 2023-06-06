@@ -13,7 +13,8 @@ namespace Microservices.Web
 
 
             //CouponAPIKey is stored at a user secret file
-            StaticDetails.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPIUrl"]!;
+            StaticDetails.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"]!;
+            StaticDetails.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"]!;
 
             // Add services to the container.
 
@@ -25,7 +26,11 @@ namespace Microservices.Web
             });
             //=================Adding Serilog========================
             builder.Services.AddHttpClient<ICouponService, CouponService>();
+            builder.Services.AddHttpClient<IAuthService, AuthService>();
+
+            builder.Services.AddScoped<IBaseService, BaseService>();
             builder.Services.AddScoped<ICouponService, CouponService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddControllersWithViews();
 
