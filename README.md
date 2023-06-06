@@ -17,6 +17,7 @@ In order to create the database, please run
 ```bash
   add-migration InitialMigration
 ```
+The databse will be auto updated when you run the AuthAPI project.
     
 ## Running Tests
 
