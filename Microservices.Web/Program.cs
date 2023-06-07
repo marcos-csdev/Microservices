@@ -11,12 +11,9 @@ namespace Microservices.Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-
-            //CouponAPIKey is stored at a user secret file
             StaticDetails.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"]!;
             StaticDetails.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"]!;
 
-            // Add services to the container.
 
             //=================Adding Serilog========================
             builder.Host.UseSerilog((fileContext, loggingConfig) =>
@@ -25,6 +22,9 @@ namespace Microservices.Web
                 loggingConfig.MinimumLevel.Debug();
             });
             //=================Adding Serilog========================
+
+
+            // Add services to the container.
             builder.Services.AddHttpClient<ICouponService, CouponService>();
             builder.Services.AddHttpClient<IAuthService, AuthService>();
 
@@ -54,6 +54,16 @@ namespace Microservices.Web
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.Use(async (context, next) =>
+            {
+                if (context.Response.StatusCode == 404)
+                {
+                    
+                    context.Request.Path = "/Home";
+                    await next();
+                }
+            });
 
             app.Run();
         }

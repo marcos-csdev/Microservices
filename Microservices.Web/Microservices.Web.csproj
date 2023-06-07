@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>e670f1d3-c21b-4ba2-917e-9ebe99bb96dc</UserSecretsId>
+    <PackageProjectUrl>http://localhost:5004</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
