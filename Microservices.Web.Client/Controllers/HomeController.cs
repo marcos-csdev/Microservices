@@ -1,8 +1,8 @@
-﻿using Microservices.Web.Models;
+﻿using Microservices.Web.Client.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Microservices.Web.Controllers
+namespace Microservices.Web.Client.Controllers
 {
     public class HomeController : BaseController
     {

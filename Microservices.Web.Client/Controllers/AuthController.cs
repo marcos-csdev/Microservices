@@ -1,9 +1,9 @@
-﻿using Microservices.Web.Models;
-using Microservices.Web.Models.Factories;
-using Microservices.Web.Services.Abstractions;
+﻿using Microservices.Web.Client.Models;
+using Microservices.Web.Client.Models.Factories;
+using Microservices.Web.Client.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Microservices.Web.Controllers
+namespace Microservices.Web.Client.Controllers
 {
     public class AuthController : BaseController
     {
