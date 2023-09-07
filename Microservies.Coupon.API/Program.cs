@@ -20,17 +20,6 @@ namespace Microservices.CouponAPI
         }
     }
 
-    class Program
-    {
-        static void Main()
-        {
-            // create an instance with data type string 
-            Student<string> studentName = new Student<string>("Avicii");
-
-            // create an instance with data type int
-            Student<int> studentId = new Student<int>(23);
-        }
-    }
     public class Program
     {
         public static void Main(string[] args)

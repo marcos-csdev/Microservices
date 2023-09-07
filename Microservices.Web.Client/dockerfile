@@ -21,3 +21,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0-preview
 WORKDIR /App
 COPY --from=base-image /App/out .
 ENTRYPOINT ["dotnet", "Microservices.Web.Client.dll"]
+#CMD ["dotnet","run"]

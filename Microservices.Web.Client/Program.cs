@@ -13,9 +13,6 @@ namespace Microservices.Web.Client
 
             StaticDetails.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"]!;
             StaticDetails.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"]!;
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddHttpContextAccessor();
 
             // Add services to the container.
             builder.Services.AddHttpClient();
@@ -26,6 +23,8 @@ namespace Microservices.Web.Client
             builder.Services.AddScoped<ICouponService, CouponService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
+
+
             //=================Adding Serilog========================
             builder.Host.UseSerilog((fileContext, loggingConfig) =>
             {
@@ -34,6 +33,8 @@ namespace Microservices.Web.Client
             });
             //=================Adding Serilog========================
 
+            builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
