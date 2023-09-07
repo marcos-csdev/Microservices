@@ -1,7 +1,7 @@
 
 # Microservices Demo Project
 
-This project was created to demonstrate development skills, including:
+This was created as a porfolio project, to show skills such as:
 - Object orientation
 - Generics
 - DI
