@@ -15,13 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPI", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Coupon.Web.Tests", "Microservices.CouponAPITests\Microservices.Coupon.Web.Tests.csproj", "{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Web", "Microservices.Web\Microservices.Web.csproj", "{C23DC29B-4B63-467F-A3F6-91FADE76D469}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.AuthAPI", "Microservices.AuthAPI\Microservices.AuthAPI.csproj", "{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.AuthAPI.Tests", "Microservices.AuthAPITests\Microservices.AuthAPI.Tests.csproj", "{55FCC8BE-9A2C-4C7A-BC8D-085C192BFFC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.Web.Client", "Microservices.Web.Client\Microservices.Web.Client.csproj", "{E24EB385-B9C7-48BE-A76A-C062D9CDC05A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Web.Client", "Microservices.Web.Client\Microservices.Web.Client.csproj", "{E24EB385-B9C7-48BE-A76A-C062D9CDC05A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +35,6 @@ Global
 		{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06DBD44B-7B17-4FC9-B45C-3D3A0A5E6099}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C23DC29B-4B63-467F-A3F6-91FADE76D469}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,7 +53,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B2DFCE2C-21F9-4074-AC31-9D32C25C39FA} = {7181306C-EDCE-4795-85FF-F3495CC80D82}
-		{C23DC29B-4B63-467F-A3F6-91FADE76D469} = {E546E7D7-A768-4C24-9FE4-BBCBD1D4F20C}
 		{2EA4187E-5467-4B75-9EE7-C481F4CB17FC} = {7181306C-EDCE-4795-85FF-F3495CC80D82}
 		{E24EB385-B9C7-48BE-A76A-C062D9CDC05A} = {E546E7D7-A768-4C24-9FE4-BBCBD1D4F20C}
 	EndGlobalSection

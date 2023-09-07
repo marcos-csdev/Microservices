@@ -1,6 +1,5 @@
-﻿using Microservices.CouponAPI.Data;
-using Microservices.Web;
-using Microservices.Web.Services.Abstractions;
+﻿using Microservices.CouponAPI;
+using Microservices.CouponAPI.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

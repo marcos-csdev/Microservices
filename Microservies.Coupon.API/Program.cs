@@ -5,6 +5,32 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 namespace Microservices.CouponAPI
 {
+    using System;
+    // define a generics class named Student
+    public class Student<T>
+    {
+        // define a variable of type T 
+        public T data;
+
+        // define a constructor of the Student class 
+        public Student(T data)
+        {
+            this.data = data;
+            Console.WriteLine("Data passed: " + this.data);
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            // create an instance with data type string 
+            Student<string> studentName = new Student<string>("Avicii");
+
+            // create an instance with data type int
+            Student<int> studentId = new Student<int>(23);
+        }
+    }
     public class Program
     {
         public static void Main(string[] args)

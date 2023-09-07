@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using FluentAssertions.Common;
 using Microservices.CouponAPI.Repositories;
-using Microservices.Web.Services;
-using Microservices.Web.Services.Abstractions;
+using Microservices.Web.Client.Services;
+using Microservices.Web.Client.Services.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System;
 using System.Collections.Generic;
 using System.Linq;

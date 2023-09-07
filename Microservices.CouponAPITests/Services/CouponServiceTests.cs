@@ -1,5 +1,5 @@
-﻿using Microservices.Web.Models;
-using Microservices.Web.Services.Abstractions;
+﻿using Microservices.Web.Client.Models;
+using Microservices.Web.Client.Services.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using FluentAssertions;

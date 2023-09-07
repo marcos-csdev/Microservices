@@ -20,7 +20,7 @@ namespace Microservices.AuthAPI.Tests
 
         public CustomWebApplicationFactory()
         {
-
+            
             HttpClient = WithWebHostBuilder(whb =>
             {
                 whb.ConfigureServices((context, services) =>
