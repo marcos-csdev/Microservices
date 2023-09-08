@@ -13,9 +13,10 @@ namespace Microservices.Web.Client
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
 
             // Add HttpClient, set API Base URLs and add corresponding service wrappers
-            //builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient();
             builder.Services.AddHttpClient<ICouponService, CouponService>();
             builder.Services.AddHttpClient<IAuthService, AuthService>();
 
@@ -34,7 +35,6 @@ namespace Microservices.Web.Client
             });
             //=================Adding Serilog========================
 
-            //builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
