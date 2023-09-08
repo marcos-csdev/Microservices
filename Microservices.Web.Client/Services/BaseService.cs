@@ -21,6 +21,7 @@ namespace Microservices.Web.Client.Services
 
         public async Task<T?> SendAsync<T>(RequestDto apiRequest)
         {
+            string apiContent= "";
             try
             {
                 var client = HttpClientFactory.CreateClient("MSCouponAPI");
@@ -30,35 +31,44 @@ namespace Microservices.Web.Client.Services
                 var message = SetRequestMessage(apiRequest, appType);
 
                 var apiResponse = await client.SendAsync(message);
-                var apiContent = await apiResponse.Content.ReadAsStringAsync();
+                apiContent = await apiResponse.Content.ReadAsStringAsync();
                 var deserializedResponse = JsonConvert.DeserializeObject<T>(apiContent);
 
                 return deserializedResponse;
             }
-            catch(ArgumentNullException ex)
+            catch(JsonSerializationException ex)
             {
-                var responseDto = ResponseDtoFactory.CreateResponseDto(
-                    "API reponse could not be deserialized into JSON", 
-                    new List<string> { ex.Message }, 
-                    false);
-                
-                var response = JsonConvert.SerializeObject(responseDto);
-                var apiResponseDto = JsonConvert.DeserializeObject<T>(response);
+                var message = !string.IsNullOrWhiteSpace(apiContent) ? apiContent : ex.Message;
+
+                var apiResponseDto = CreateResponseDto<T>(new string[] { message });
 
                 return apiResponseDto;
             }
             catch (Exception ex)
             {
-                var responseDto = ResponseDtoFactory.CreateResponseDto(
-                    "Error", 
-                    new List<string> { ex.Message }, 
-                    false);
-                
-                var response = JsonConvert.SerializeObject(responseDto);
-                var apiResponseDto = JsonConvert.DeserializeObject<T>(response);
+                var apiResponseDto = CreateResponseDto<T>(new string[] { ex.Message });
 
                 return apiResponseDto;
             }
+        }
+
+        private static T? CreateResponseDto<T>(string[] messages) 
+        {
+            var messageList = new List<string>();
+            messageList.AddRange(messages);
+
+            var responseDto = ResponseDtoFactory.CreateResponseDto(
+                    "Error",
+                    messageList,
+                    false);
+
+            var response = JsonConvert.SerializeObject(responseDto);
+
+            if(response is null) return default(T);
+
+            var apiResponseDto = JsonConvert.DeserializeObject<T>(response);
+
+            return apiResponseDto!;
         }
 
         private static HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType)
