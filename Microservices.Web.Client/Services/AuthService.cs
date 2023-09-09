@@ -35,7 +35,7 @@ namespace Microservices.Web.Client.Services
 
             if (apiRequest is null) return null;
 
-            var request = await _baseService.SendAsync<ResponseDto>(apiRequest);
+            var request = await _baseService.SendAsync(apiRequest);
 
             return request;
         }
@@ -47,7 +47,7 @@ namespace Microservices.Web.Client.Services
 
             if (apiRequest is null) return null;
 
-            var request = await _baseService.SendAsync<ResponseDto>(apiRequest);
+            var request = await _baseService.SendAsync(apiRequest);
 
             return request;
         }

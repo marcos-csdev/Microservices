@@ -4,6 +4,7 @@ using Microservices.Web.Client.Services.Abstractions;
 using Microservices.Web.Client.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Microservices.Web.Client.Controllers
 {
@@ -15,15 +16,25 @@ namespace Microservices.Web.Client.Controllers
         {
             _authService = authService;
         }
+
         [HttpGet]
         public IActionResult Login(string userName, string password)
         {
-            var loginRequest = LoginRequestDtoFactory.Create(userName, password);
+            LoginRequestDto loginRequest;
+            try
+            {
+                loginRequest = LoginRequestDtoFactory.Create(userName, password);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                return View(ControllerResponse);
+            }
 
             return View(loginRequest);
         }
 
-        private List<SelectListItem> PopulateSelectList()
+        private static List<SelectListItem> PopulateSelectList()
         {
             var roleList = new List<SelectListItem>()
             {
@@ -43,8 +54,6 @@ namespace Microservices.Web.Client.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            
-
             ViewBag.RoleList = PopulateSelectList();
 
             return View();
@@ -53,37 +62,48 @@ namespace Microservices.Web.Client.Controllers
         public async Task<IActionResult> Register(RegistrationRequestDto registrationRequest)
         {
 
-            if(ModelState.IsValid)
+            try
             {
-                var responseDto = await _authService.RegisterAsync(registrationRequest);
-                //if role has not been defined, assume its a customer
-                if (responseDto is not null && responseDto.IsSuccess) 
+                if (ModelState.IsValid)
                 {
-                    if (string.IsNullOrWhiteSpace(responseDto.Role))
+                    var responseDto = await _authService.RegisterAsync(registrationRequest);
+                    //if role has not been defined, assume its a customer
+                    if (responseDto is not null && responseDto.IsSuccess)
                     {
-                        responseDto.Role = StaticDetails.RoleCustomer;
-                    }
-                    else
-                    {
-                        var assignRole = await _authService.AssignRoleAsync(registrationRequest);
-
-                        if (assignRole is not null && assignRole.IsSuccess)
+                        if (string.IsNullOrWhiteSpace(responseDto.Role))
                         {
-                            TempData["success"] = "Registration successful";
-                            return RedirectToAction(nameof(Login));
+                            responseDto.Role = StaticDetails.RoleCustomer;
                         }
+                        else
+                        {
+                            var assignRole = await _authService.AssignRoleAsync(registrationRequest);
+
+                            if (assignRole is null || assignRole.IsSuccess == false)
+                            {
+                                ViewBag.RoleList = PopulateSelectList();
+                                return View(registrationRequest);
+                            }
+                        }
+
+                        TempData["success"] = "Registration successful";
+                        return RedirectToAction(nameof(Login));
                     }
                 }
+
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                return View(ControllerResponse);
             }
 
             ViewBag.RoleList = PopulateSelectList();
-
             return View(registrationRequest);
         }
+
         [HttpGet]
         public IActionResult Logout()
         {
-
             return View();
         }
     }

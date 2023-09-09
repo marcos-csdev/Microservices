@@ -19,7 +19,7 @@ namespace Microservices.Web.Client.Services
             ResponseDto = new ResponseDto();
         }
 
-        public async Task<T?> SendAsync<T>(RequestDto apiRequest)
+        public async Task<ResponseDto?> SendAsync(RequestDto apiRequest)
         {
             string apiContent= "";
             try
@@ -32,23 +32,18 @@ namespace Microservices.Web.Client.Services
 
                 var apiResponse = await client.SendAsync(message);
                 apiContent = await apiResponse.Content.ReadAsStringAsync();
-                var deserializedResponse = JsonConvert.DeserializeObject<T>(apiContent);
 
-                return deserializedResponse;
+                if(!string.IsNullOrWhiteSpace(apiContent))
+                {
+                    return new ResponseDto(false, null!, apiContent);
+                }
+
+                return new ResponseDto(true, null!, "Success");
             }
-            catch(JsonSerializationException ex)
-            {
-                var message = !string.IsNullOrWhiteSpace(apiContent) ? apiContent : ex.Message;
-
-                var apiResponseDto = CreateResponseDto<T>(new string[] { message });
-
-                return apiResponseDto;
-            }
+            
             catch (Exception ex)
             {
-                var apiResponseDto = CreateResponseDto<T>(new string[] { ex.Message });
-
-                return apiResponseDto;
+                return new ResponseDto(false, null!, ex.Message);
             }
         }
 
@@ -64,7 +59,7 @@ namespace Microservices.Web.Client.Services
 
             var response = JsonConvert.SerializeObject(responseDto);
 
-            if(response is null) return default(T);
+            if(response is null) return default;
 
             var apiResponseDto = JsonConvert.DeserializeObject<T>(response);
 

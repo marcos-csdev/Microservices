@@ -43,7 +43,8 @@ namespace Microservices.AuthAPI
 
             //=================Adding Identity========================
             //EntityFrameworkStores connects the identity framework with the db context
-            builder.Services.AddIdentity<MSUser, IdentityRole>()
+            builder.Services.AddIdentity<MSUser, IdentityRole>(
+                auth => auth.Password.RequireNonAlphanumeric = false)
                 .AddEntityFrameworkStores<MsDbContext>()
                 .AddDefaultTokenProviders();
             //=================Adding Identity========================

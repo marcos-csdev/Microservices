@@ -22,7 +22,7 @@ namespace Microservices.Web.Client.Controllers
             try
             {
                 var response = await _couponService
-                .GetAllEntitiesAsync<ResponseDto>();
+                .GetAllEntitiesAsync();
 
                 if (response is not null && response.IsSuccess)
                 {
@@ -54,7 +54,7 @@ namespace Microservices.Web.Client.Controllers
                 if (ModelState.IsValid)
                 {
                     
-                    var response = await _couponService.AddEntityAsync<ResponseDto, CouponDto>(couponDto);
+                    var response = await _couponService.AddEntityAsync(couponDto);
                     if(response is not null && response.IsSuccess)
                     {
                         TempData["success"] = "Coupon created";
@@ -80,7 +80,7 @@ namespace Microservices.Web.Client.Controllers
         {
             try
             {
-                var response = await _couponService.RemoveEntityAsync<ResponseDto>(couponId);
+                var response = await _couponService.RemoveEntityAsync(couponId);
 
                 if (response == null || response?.IsSuccess == false)
                 {

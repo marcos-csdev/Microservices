@@ -6,6 +6,6 @@ namespace Microservices.Web.Client.Services.Abstractions
     {
         ResponseDto ResponseDto { get; set; }
 
-        Task<T?> SendAsync<T>(RequestDto apiRequest);
+        Task<ResponseDto?> SendAsync(RequestDto apiRequest);
     }
 }
