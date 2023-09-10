@@ -3,7 +3,9 @@ using Microservices.Web.Client.Models.Factories;
 using Microservices.Web.Client.Services.Abstractions;
 using Microservices.Web.Client.Utility;
 using Newtonsoft.Json;
+using NuGet.Protocol;
 using System.Data.SqlTypes;
+using System.Net;
 using System.Text;
 
 namespace Microservices.Web.Client.Services
@@ -21,7 +23,7 @@ namespace Microservices.Web.Client.Services
 
         public async Task<ResponseDto?> SendAsync(RequestDto apiRequest)
         {
-            string apiContent= "";
+            string apiContent;
             try
             {
                 var client = HttpClientFactory.CreateClient("MSCouponAPI");
@@ -33,12 +35,12 @@ namespace Microservices.Web.Client.Services
                 var apiResponse = await client.SendAsync(message);
                 apiContent = await apiResponse.Content.ReadAsStringAsync();
 
-                if(!string.IsNullOrWhiteSpace(apiContent))
+                if(apiResponse.StatusCode != HttpStatusCode.OK)
                 {
                     return new ResponseDto(false, null!, apiContent);
                 }
 
-                return new ResponseDto(true, null!, "Success");
+                return new ResponseDto(true, apiContent, "Success");
             }
             
             catch (Exception ex)
@@ -47,24 +49,7 @@ namespace Microservices.Web.Client.Services
             }
         }
 
-        private static T? CreateResponseDto<T>(string[] messages) 
-        {
-            var messageList = new List<string>();
-            messageList.AddRange(messages);
-
-            var responseDto = ResponseDtoFactory.CreateResponseDto(
-                    "Error",
-                    messageList,
-                    false);
-
-            var response = JsonConvert.SerializeObject(responseDto);
-
-            if(response is null) return default;
-
-            var apiResponseDto = JsonConvert.DeserializeObject<T>(response);
-
-            return apiResponseDto!;
-        }
+        
 
         private static HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType)
         {

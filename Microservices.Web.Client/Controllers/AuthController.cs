@@ -5,6 +5,7 @@ using Microservices.Web.Client.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 
 namespace Microservices.Web.Client.Controllers
 {
@@ -18,18 +19,42 @@ namespace Microservices.Web.Client.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string userName, string password)
+        public IActionResult Login()
         {
-            LoginRequestDto loginRequest;
+            
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginRequestDto loginRequest)
+        {
             try
             {
-                loginRequest = LoginRequestDtoFactory.Create(userName, password);
+                var response = await _authService.LoginAsync(loginRequest);
+
+                if (response is not null && response.IsSuccess)
+                {
+                    var content = response.Result?.ToString();
+                    if (!string.IsNullOrWhiteSpace(content))
+                    {
+                        var loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(content);
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                else
+                {
+                    var message = response is not null ? response.DisplayMessage : "An unexpected error happened";
+
+                    ModelState.AddModelError("CustomError", message);
+
+                }
             }
             catch (Exception ex)
             {
                 LogError(ex);
-                return View(ControllerResponse);
             }
+
 
             return View(loginRequest);
         }
@@ -61,12 +86,13 @@ namespace Microservices.Web.Client.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegistrationRequestDto registrationRequest)
         {
+            ResponseDto? responseDto = null!;
 
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var responseDto = await _authService.RegisterAsync(registrationRequest);
+                    responseDto = await _authService.RegisterAsync(registrationRequest);
                     //if role has not been defined, assume its a customer
                     if (responseDto is not null && responseDto.IsSuccess)
                     {
@@ -96,6 +122,8 @@ namespace Microservices.Web.Client.Controllers
                 LogError(ex);
                 return View(ControllerResponse);
             }
+
+            TempData["error"] = responseDto is not null && !string.IsNullOrWhiteSpace(responseDto.DisplayMessage) ? responseDto.DisplayMessage : "An unexpected error happened";
 
             ViewBag.RoleList = PopulateSelectList();
             return View(registrationRequest);
