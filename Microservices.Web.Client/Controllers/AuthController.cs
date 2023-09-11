@@ -2,20 +2,28 @@
 using Microservices.Web.Client.Models.Factories;
 using Microservices.Web.Client.Services.Abstractions;
 using Microservices.Web.Client.Utility;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
+using NuGet.Common;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Microservices.Web.Client.Controllers
 {
     public class AuthController : BaseController
     {
         private readonly IAuthService _authService;
+        private readonly ITokenProvider _tokenProvider;
 
-        public AuthController(IAuthService authService, Serilog.ILogger logger) : base(logger)
+        public AuthController(IAuthService authService, Serilog.ILogger logger, ITokenProvider tokenProvider) : base(logger)
         {
             _authService = authService;
+            _tokenProvider = tokenProvider;
         }
 
         [HttpGet]
@@ -37,7 +45,12 @@ namespace Microservices.Web.Client.Controllers
                     var content = response.Result?.ToString();
                     if (!string.IsNullOrWhiteSpace(content))
                     {
-                        var loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(content);
+                        var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(content);
+
+                        if (loginResponse is null)
+                            throw new Exception("There was a problem with the user token");
+
+                        _tokenProvider.SetToken(loginResponse.Token);
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -133,6 +146,73 @@ namespace Microservices.Web.Client.Controllers
         public IActionResult Logout()
         {
             return View();
+        }
+
+        private void AddToClaimsIdentity(string claimProperty, JwtSecurityToken token, ClaimsIdentity identity)
+        {
+            var claimName = token.Claims.FirstOrDefault(t => t.Type == claimProperty);
+
+            if (claimName is not null)
+            {
+                identity.AddClaim(
+                    new Claim(claimProperty, claimName.Value));
+            }
+        }
+
+        private async Task SignInUser(LoginResponseDto loginRequest)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(loginRequest.Token);
+            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            //var claimName = JwtRegisteredClaimNames.Name is not null ? JwtRegisteredClaimNames.Name :
+
+            if(token is not null && token.Claims is not null)
+            {
+                var claimName = token.Claims.FirstOrDefault(t => t.Type == JwtRegisteredClaimNames.Name);
+
+                if (claimName is not null)
+                {
+                    identity.AddClaim(
+                        new Claim(JwtRegisteredClaimNames.Name, claimName.Value));
+                }
+
+                var claimSub = token.Claims.FirstOrDefault(t => t.Type == JwtRegisteredClaimNames.Sub);
+                if (claimSub is not null)
+                {
+                    identity.AddClaim(
+                        new Claim(JwtRegisteredClaimNames.Sub, 
+                        claimSub.Value));
+                }
+
+                var claimEmail = token.Claims.FirstOrDefault(t => t.Type != JwtRegisteredClaimNames.Email);
+                if (claimEmail is not null)
+                {
+                    identity.AddClaim(
+                        new Claim(JwtRegisteredClaimNames.Email, claimEmail.Value));
+                }
+
+                var registeredNames = token.Claims.FirstOrDefault(t => t.Type == JwtRegisteredClaimNames.Name);
+                if (registeredNames is not null)
+                {
+                    identity.AddClaim(
+                        new Claim(ClaimTypes.Name, registeredNames.Value));
+                }
+
+                var registeredEmails = token.Claims.FirstOrDefault(t => t.Value == JwtRegisteredClaimNames.Email);
+                if (registeredEmails is not null)
+                {
+                    identity.AddClaim(
+                        new Claim(ClaimTypes.Email, registeredEmails.Value));
+                }
+
+
+            }
+
+
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
         }
     }
 }

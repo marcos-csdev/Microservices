@@ -24,14 +24,16 @@ namespace Microservices.Web.Client
             StaticDetails.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"]!;
             StaticDetails.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"]!;
 
+            builder.Services.AddScoped<ITokenProvider, TokenProvider>();
             builder.Services.AddScoped<IBaseService, BaseService>();
             builder.Services.AddScoped<ICouponService, CouponService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+
             //=================Adding Serilog========================
             builder.Host.UseSerilog((fileContext, loggingConfig) =>
             {
                 loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
-                loggingConfig.MinimumLevel.Debug();
+                loggingConfig.MinimumLevel.Error();
             });
             //=================Adding Serilog========================
 
