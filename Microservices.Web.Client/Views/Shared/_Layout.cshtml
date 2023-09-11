@@ -54,9 +54,12 @@
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link " href="#">Hello @User.Identity.Name</a>
-                            </li>
+                            if(@User.Claims is not null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link " href="#">Hello </a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <a class="nav-link " asp-controller="Auth" asp-action="Logout">Logout</a>
                             </li>

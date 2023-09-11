@@ -1,6 +1,7 @@
 using Microservices.Web.Client.Services;
 using Microservices.Web.Client.Services.Abstractions;
 using Microservices.Web.Client.Utility;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using System.Text;
 namespace Microservices.Web.Client
@@ -29,6 +30,14 @@ namespace Microservices.Web.Client
             builder.Services.AddScoped<ICouponService, CouponService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromHours(10);
+                    options.LoginPath = "/Auth/Login";
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                });
+
             //=================Adding Serilog========================
             builder.Host.UseSerilog((fileContext, loggingConfig) =>
             {
@@ -53,6 +62,7 @@ namespace Microservices.Web.Client
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

@@ -29,8 +29,7 @@ namespace Microservices.Web.Client.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            
-            return View();
+            return View(new LoginRequestDto());
         }
 
         [HttpPost]
@@ -45,10 +44,9 @@ namespace Microservices.Web.Client.Controllers
                     var content = response.Result?.ToString();
                     if (!string.IsNullOrWhiteSpace(content))
                     {
-                        var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(content);
+                        var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(content) ?? throw new Exception("There was a problem with the user token");
 
-                        if (loginResponse is null)
-                            throw new Exception("There was a problem with the user token");
+                        await SignInUser(loginResponse);
 
                         _tokenProvider.SetToken(loginResponse.Token);
 
@@ -143,12 +141,14 @@ namespace Microservices.Web.Client.Controllers
         }
 
         [HttpGet]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            return View();
+            await HttpContext.SignOutAsync();
+            _tokenProvider.ClearToken();
+            return RedirectToAction("Index", "Home");
         }
 
-        private void AddToClaimsIdentity(string claimProperty, JwtSecurityToken token, ClaimsIdentity identity)
+        private static void AddToClaimsIdentity(string claimProperty, JwtSecurityToken token, ClaimsIdentity identity)
         {
             var claimName = token.Claims.FirstOrDefault(t => t.Type == claimProperty);
 
@@ -169,43 +169,16 @@ namespace Microservices.Web.Client.Controllers
 
             if(token is not null && token.Claims is not null)
             {
-                var claimName = token.Claims.FirstOrDefault(t => t.Type == JwtRegisteredClaimNames.Name);
+                
+                AddToClaimsIdentity(JwtRegisteredClaimNames.Name, token, identity);
 
-                if (claimName is not null)
-                {
-                    identity.AddClaim(
-                        new Claim(JwtRegisteredClaimNames.Name, claimName.Value));
-                }
+                AddToClaimsIdentity(JwtRegisteredClaimNames.Sub, token, identity);
 
-                var claimSub = token.Claims.FirstOrDefault(t => t.Type == JwtRegisteredClaimNames.Sub);
-                if (claimSub is not null)
-                {
-                    identity.AddClaim(
-                        new Claim(JwtRegisteredClaimNames.Sub, 
-                        claimSub.Value));
-                }
+                AddToClaimsIdentity(JwtRegisteredClaimNames.Email, token, identity);
 
-                var claimEmail = token.Claims.FirstOrDefault(t => t.Type != JwtRegisteredClaimNames.Email);
-                if (claimEmail is not null)
-                {
-                    identity.AddClaim(
-                        new Claim(JwtRegisteredClaimNames.Email, claimEmail.Value));
-                }
+                AddToClaimsIdentity(ClaimTypes.Name, token, identity);
 
-                var registeredNames = token.Claims.FirstOrDefault(t => t.Type == JwtRegisteredClaimNames.Name);
-                if (registeredNames is not null)
-                {
-                    identity.AddClaim(
-                        new Claim(ClaimTypes.Name, registeredNames.Value));
-                }
-
-                var registeredEmails = token.Claims.FirstOrDefault(t => t.Value == JwtRegisteredClaimNames.Email);
-                if (registeredEmails is not null)
-                {
-                    identity.AddClaim(
-                        new Claim(ClaimTypes.Email, registeredEmails.Value));
-                }
-
+                AddToClaimsIdentity(ClaimTypes.Email, token, identity);
 
             }
 
