@@ -107,9 +107,9 @@ namespace Microservices.Web.Client.Controllers
                     //if role has not been defined, assume its a customer
                     if (responseDto is not null && responseDto.IsSuccess)
                     {
-                        if (string.IsNullOrWhiteSpace(responseDto.Role))
+                        if (string.IsNullOrWhiteSpace(registrationRequest.Role))
                         {
-                            responseDto.Role = StaticDetails.RoleCustomer;
+                            registrationRequest.Role = StaticDetails.RoleCustomer;
                         }
                         else
                         {
@@ -117,6 +117,7 @@ namespace Microservices.Web.Client.Controllers
 
                             if (assignRole is null || assignRole.IsSuccess == false)
                             {
+                                TempData["error"] = "Could not assign a role to the user";
                                 ViewBag.RoleList = PopulateSelectList();
                                 return View(registrationRequest);
                             }
@@ -131,7 +132,6 @@ namespace Microservices.Web.Client.Controllers
             catch (Exception ex)
             {
                 LogError(ex);
-                return View(ControllerResponse);
             }
 
             TempData["error"] = responseDto is not null && !string.IsNullOrWhiteSpace(responseDto.DisplayMessage) ? responseDto.DisplayMessage : "An unexpected error happened";

@@ -26,7 +26,7 @@ namespace Microservices.Web.Client.Services
             string apiContent;
             try
             {
-                var client = HttpClientFactory.CreateClient("MSCouponAPI");
+                var client = HttpClientFactory.CreateClient("MicroServicesAPI");
 
                 var appType = "application/json";
 
@@ -49,8 +49,6 @@ namespace Microservices.Web.Client.Services
             }
         }
 
-        
-
         private static HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType)
         {
             var message = new HttpRequestMessage();
@@ -59,7 +57,7 @@ namespace Microservices.Web.Client.Services
 
             SetRequestHttpVerb(apiRequest, message);
 
-            //request will have a body on create/update
+            //request will have a body on create/update operations
             if (apiRequest.Body is not null)
             {
                 var serializedJson = JsonConvert.SerializeObject(apiRequest.Body);

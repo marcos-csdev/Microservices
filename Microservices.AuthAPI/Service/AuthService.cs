@@ -37,9 +37,11 @@ namespace Microservices.AuthAPI.Service
 
             var isValid = await _userManagerService.CheckPasswordAsync(userRetrieved, loginRequestDto.Password);
 
-            if (isValid == false) return null;
+            if (isValid == false) 
+                return null;
 
-            var jwtToken = _jwtTokenGenerator.GenerateToken(userRetrieved);
+            var roles = await _userManagerService.GetRolesAsync(userRetrieved);
+            var jwtToken = _jwtTokenGenerator.GenerateToken(userRetrieved, roles);
 
             var userDto = _mapper.Map<MSUserDto>(userRetrieved);
 

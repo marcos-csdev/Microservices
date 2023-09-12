@@ -16,7 +16,7 @@ namespace Microservices.AuthAPI.Service
         {
             _jwtOptions = jwtOptions.Value;
         }
-        public string GenerateToken(MSUser user)
+        public string GenerateToken(MSUser user, IEnumerable<string> roles)
         {
             if (user is null) return "";
 
@@ -39,6 +39,12 @@ namespace Microservices.AuthAPI.Service
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKey), SecurityAlgorithms.HmacSha256Signature)
             };
+
+            //adds a freshly instantiated Claim object to the list with the role from the parameter passed in 
+            claims.AddRange(
+                roles.Select(role => 
+                    new Claim(ClaimTypes.Role, role)
+            ));
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);

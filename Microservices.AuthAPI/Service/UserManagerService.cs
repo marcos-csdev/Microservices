@@ -29,5 +29,10 @@ namespace Microservices.AuthAPI.Service
         {
             return await _userManager.AddToRoleAsync(user, roleName);
         }
+
+        public async Task<IList<string>> GetRolesAsync(MSUser user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
     }
 }

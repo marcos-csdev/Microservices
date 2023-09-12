@@ -59,11 +59,11 @@ namespace Microservices.AuthAPI.Controllers
         }
 
         [HttpPost("assignRole")]
-        public async Task<IActionResult> AssignRole(string email, string roleName)
+        public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto request) 
         {
             try
             {
-                var isRoleAssigned = await _authService.AssignRole(email, roleName);
+                var isRoleAssigned = await _authService.AssignRole(request.Email, request.Role);
 
                 if(isRoleAssigned == false) return BadRequest(isRoleAssigned);
 
