@@ -5,7 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 namespace Microservices.CouponAPI
 {
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.IdentityModel.Tokens;
     using System;
+    using System.Text;
+
     // define a generics class named Student
     public class Student<T>
     {
@@ -49,6 +53,34 @@ namespace Microservices.CouponAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //=================JWT Config========================
+            var secret = builder.Configuration.GetValue<string>("ApiSettings:JwtOptions:Secret");
+            var issuer = builder.Configuration.GetValue<string>("ApiSettings:JwtOptions:Issuer");
+            var audience = builder.Configuration.GetValue<string>("ApiSettings:JwtOptions:Audience");
+
+            var securityKey = Encoding.UTF8.GetBytes(secret!);
+
+            builder.Services.AddAuthentication(auth =>
+            {
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(token =>
+            {
+                token.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(securityKey),
+                    ValidateIssuer = true,
+                    ValidIssuer = issuer,
+                    ValidateAudience = true,
+                    ValidAudience = audience
+                };
+            });
+
+            builder.Services.AddAuthorization();
+
+            //=================JWT Config========================
+
             //=================Adding Serilog========================
             builder.Host.UseSerilog((fileContext, loggingConfig) =>
             {
@@ -68,6 +100,7 @@ namespace Microservices.CouponAPI
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();

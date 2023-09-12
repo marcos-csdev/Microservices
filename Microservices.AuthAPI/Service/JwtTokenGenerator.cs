@@ -30,6 +30,12 @@ namespace Microservices.AuthAPI.Service
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!)
             };
 
+            //adds a freshly instantiated Claim object to the list with the role from the parameter passed in 
+            claims.AddRange(
+                roles.Select(role =>
+                    new Claim(ClaimTypes.Role, role)
+            ));
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Audience = _jwtOptions.Audience,
@@ -40,11 +46,7 @@ namespace Microservices.AuthAPI.Service
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKey), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            //adds a freshly instantiated Claim object to the list with the role from the parameter passed in 
-            claims.AddRange(
-                roles.Select(role => 
-                    new Claim(ClaimTypes.Role, role)
-            ));
+            
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);

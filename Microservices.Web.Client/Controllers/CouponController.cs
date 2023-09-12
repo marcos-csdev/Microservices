@@ -1,11 +1,13 @@
 ﻿using Microservices.Web.Client.Models;
 using Microservices.Web.Client.Models.Factories;
 using Microservices.Web.Client.Services.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Microservices.Web.Client.Controllers
 {
+    [Authorize]
     public class CouponController : BaseController
     {
         private readonly ICouponService _couponService;
@@ -30,6 +32,7 @@ namespace Microservices.Web.Client.Controllers
                 }
                 else
                 {
+                    list ??= new List<CouponDto>();
                     TempData["error"] = response?.DisplayMessage;
                 }
             }

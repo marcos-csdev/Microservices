@@ -49,6 +49,9 @@ namespace Microservices.Web.Client.Services
             }
         }
 
+        /// <summary>
+        /// Creates an HTTP message with header, URI, HTTP Verb and Body
+        /// </summary>
         private static HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType)
         {
             var message = new HttpRequestMessage();

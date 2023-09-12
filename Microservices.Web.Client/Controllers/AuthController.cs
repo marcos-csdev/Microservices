@@ -57,8 +57,9 @@ namespace Microservices.Web.Client.Controllers
                 {
                     var message = response is not null ? response.DisplayMessage : "An unexpected error happened";
 
-                    ModelState.AddModelError("CustomError", message);
+                    //ModelState.AddModelError("CustomError", message);
 
+                    TempData["error"] = message;
                 }
             }
             catch (Exception ex)
@@ -158,6 +159,35 @@ namespace Microservices.Web.Client.Controllers
                     new Claim(claimProperty, claimName.Value));
             }
         }
+        private static void AddToClaimsIdentity(string claimType, string claimProperty, JwtSecurityToken token, ClaimsIdentity identity)
+        {
+            var claimName = token.Claims.FirstOrDefault(t => t.Type == claimProperty);
+
+            if (claimName is not null)
+            {
+                identity.AddClaim(
+                    new Claim(claimType, claimName.Value));
+            }
+        }
+
+        private void AddClaimsToIdentity(ClaimsIdentity identity, JwtSecurityToken? token)
+        {
+            if (token is not null && token.Claims is not null)
+            {
+
+                AddToClaimsIdentity(JwtRegisteredClaimNames.Name, token, identity);
+
+                AddToClaimsIdentity(JwtRegisteredClaimNames.Sub, token, identity);
+
+                AddToClaimsIdentity(JwtRegisteredClaimNames.Email, token, identity);
+
+                AddToClaimsIdentity(ClaimTypes.Name, JwtRegisteredClaimNames.Email, token, identity);
+
+                //considers the .NET role authentication 
+                AddToClaimsIdentity(ClaimTypes.Role, "role", token, identity);
+
+            }
+        }
 
         private async Task SignInUser(LoginResponseDto loginRequest)
         {
@@ -165,23 +195,7 @@ namespace Microservices.Web.Client.Controllers
             var token = handler.ReadJwtToken(loginRequest.Token);
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            //var claimName = JwtRegisteredClaimNames.Name is not null ? JwtRegisteredClaimNames.Name :
-
-            if(token is not null && token.Claims is not null)
-            {
-                
-                AddToClaimsIdentity(JwtRegisteredClaimNames.Name, token, identity);
-
-                AddToClaimsIdentity(JwtRegisteredClaimNames.Sub, token, identity);
-
-                AddToClaimsIdentity(JwtRegisteredClaimNames.Email, token, identity);
-
-                AddToClaimsIdentity(ClaimTypes.Name, token, identity);
-
-                AddToClaimsIdentity(ClaimTypes.Email, token, identity);
-
-            }
-
+            AddClaimsToIdentity(identity, token);
 
             var claimsPrincipal = new ClaimsPrincipal(identity);
 
