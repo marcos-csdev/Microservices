@@ -8,7 +8,7 @@ namespace Microservices.Web.Client.Services
     public class CouponService : BaseService, ICouponService
     {
 
-        public CouponService(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
+        public CouponService(IHttpClientFactory httpClientFactory, ITokenProvider tokenProvider) : base(httpClientFactory, tokenProvider)
         {
         }
 
@@ -17,7 +17,7 @@ namespace Microservices.Web.Client.Services
             if (entityDto is null) return null;
 
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST, 
-                $"{StaticDetails.CouponAPIBase}api/coupons/create", 
+                $"{StaticDetails.CouponAPIBase}/api/coupons/create", 
                 entityDto);
 
             //SendAsync may return null
@@ -30,7 +30,7 @@ namespace Microservices.Web.Client.Services
         public async Task<ResponseDto?> GetAllEntitiesAsync() 
         {
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.GET, 
-                $"{StaticDetails.CouponAPIBase}api/coupons");
+                $"{StaticDetails.CouponAPIBase}/api/coupons");
            
             var response = await SendAsync(request);
 
@@ -42,7 +42,7 @@ namespace Microservices.Web.Client.Services
             if (id < 1) return null;
 
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.GET, 
-                $"{StaticDetails.CouponAPIBase}api/coupons/GetById/{id}");
+                $"{StaticDetails.CouponAPIBase}/api/coupons/GetById/{id}");
 
             var response = await SendAsync(request);
 
@@ -55,7 +55,7 @@ namespace Microservices.Web.Client.Services
             if (id < 1) return null;
 
             var request = RequestDtoFactory.CreateRequestDto         (StaticDetails.ApiType.DELETE, 
-                $"{StaticDetails.CouponAPIBase}api/coupons/remove/{id}");
+                $"{StaticDetails.CouponAPIBase}/api/coupons/remove/{id}");
                 
 
             var response = await SendAsync(request);
@@ -69,7 +69,7 @@ namespace Microservices.Web.Client.Services
             if (string.IsNullOrWhiteSpace(id) || entityDto is null) return null;
 
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.PUT, 
-                $"{StaticDetails.CouponAPIBase}api/coupons/update", 
+                $"{StaticDetails.CouponAPIBase}/api/coupons/update", 
                 entityDto);
             
             var response = await SendAsync(request);

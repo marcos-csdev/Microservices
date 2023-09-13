@@ -170,7 +170,7 @@ namespace Microservices.Web.Client.Controllers
             }
         }
 
-        private void AddClaimsToIdentity(ClaimsIdentity identity, JwtSecurityToken? token)
+        private static void AddClaimsToIdentity(ClaimsIdentity identity, JwtSecurityToken? token)
         {
             if (token is not null && token.Claims is not null)
             {

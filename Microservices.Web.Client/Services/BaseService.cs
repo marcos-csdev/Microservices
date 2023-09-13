@@ -13,24 +13,27 @@ namespace Microservices.Web.Client.Services
     public class BaseService : IBaseService
     {
         public ResponseDto ResponseDto { get; set; } = null!;
-        public IHttpClientFactory HttpClientFactory { get; set; } = null!;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ITokenProvider _tokenProvider;
 
-        public BaseService(IHttpClientFactory httpClientFactory)
+        public BaseService(IHttpClientFactory httpClientFactory, ITokenProvider tokenProvider)
         {
-            HttpClientFactory = httpClientFactory;
             ResponseDto = new ResponseDto();
+            _httpClientFactory = httpClientFactory;
+            _tokenProvider = tokenProvider;
         }
 
-        public async Task<ResponseDto?> SendAsync(RequestDto apiRequest)
+
+        public async Task<ResponseDto?> SendAsync(RequestDto apiRequest, bool withBearer = true)
         {
             string apiContent;
             try
             {
-                var client = HttpClientFactory.CreateClient("MicroServicesAPI");
+                var client = _httpClientFactory.CreateClient("MicroServicesAPI");
 
                 var appType = "application/json";
 
-                var message = SetRequestMessage(apiRequest, appType);
+                var message = SetRequestMessage(apiRequest, appType, withBearer);
 
                 var apiResponse = await client.SendAsync(message);
                 apiContent = await apiResponse.Content.ReadAsStringAsync();
@@ -49,13 +52,27 @@ namespace Microservices.Web.Client.Services
             }
         }
 
+
+        private void SetToken(bool withBearer, HttpRequestMessage message)
+        {
+            if (withBearer)
+            {
+                var token = _tokenProvider.GetToken();
+
+                message.Headers.Add("Authorization", $"Bearer {token}");
+            }
+        }
+
         /// <summary>
         /// Creates an HTTP message with header, URI, HTTP Verb and Body
         /// </summary>
-        private static HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType)
+        private HttpRequestMessage SetRequestMessage(RequestDto apiRequest, string appType, bool withBearer)
         {
             var message = new HttpRequestMessage();
             message.Headers.Add("Accept", appType);
+
+            SetToken(withBearer, message);
+
             message.RequestUri = new Uri(apiRequest.Url);
 
             SetRequestHttpVerb(apiRequest, message);
@@ -69,6 +86,7 @@ namespace Microservices.Web.Client.Services
 
             return message;
         }
+
 
         private static void SetRequestHttpVerb(RequestDto apiRequest, HttpRequestMessage message)
         {

@@ -6,6 +6,6 @@ namespace Microservices.Web.Client.Services.Abstractions
     {
         ResponseDto ResponseDto { get; set; }
 
-        Task<ResponseDto?> SendAsync(RequestDto apiRequest);
+        Task<ResponseDto?> SendAsync(RequestDto apiRequest, bool withBearer = true);
     }
 }

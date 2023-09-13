@@ -2,12 +2,14 @@
 using AutoMapper;
 using Microservices.CouponAPI.Models.Dto;
 using Microservices.CouponAPI.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservices.CouponAPI.Controllers
 {
     [Route("api/coupons")]
     [ApiController]
+    [Authorize]
     public class CouponAPIController : APIBaseController
     {
         private readonly ICouponRepository _couponRepository;

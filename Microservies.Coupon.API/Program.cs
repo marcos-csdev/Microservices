@@ -3,6 +3,7 @@ using Microservices.CouponAPI.Data;
 using Microservices.CouponAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Microsoft.OpenApi.Models;
 namespace Microservices.CouponAPI
 {
     using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,43 +52,12 @@ namespace Microservices.CouponAPI
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
-            //=================JWT Config========================
-            var secret = builder.Configuration.GetValue<string>("ApiSettings:JwtOptions:Secret");
-            var issuer = builder.Configuration.GetValue<string>("ApiSettings:JwtOptions:Issuer");
-            var audience = builder.Configuration.GetValue<string>("ApiSettings:JwtOptions:Audience");
+            AddSwaggerGenConfig(builder);
 
-            var securityKey = Encoding.UTF8.GetBytes(secret!);
+            AutenticateJwtToken(builder);
 
-            builder.Services.AddAuthentication(auth =>
-            {
-                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(token =>
-            {
-                token.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(securityKey),
-                    ValidateIssuer = true,
-                    ValidIssuer = issuer,
-                    ValidateAudience = true,
-                    ValidAudience = audience
-                };
-            });
-
-            builder.Services.AddAuthorization();
-
-            //=================JWT Config========================
-
-            //=================Adding Serilog========================
-            builder.Host.UseSerilog((fileContext, loggingConfig) =>
-            {
-                loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
-                loggingConfig.MinimumLevel.Debug();
-            });
-            //=================Adding Serilog========================
+            AddSeriLog(builder);
 
             var app = builder.Build();
 
@@ -122,6 +92,78 @@ namespace Microservices.CouponAPI
 
                 }
             }
+
+            void AddSeriLog(WebApplicationBuilder builder)
+            {
+                builder.Host.UseSerilog((fileContext, loggingConfig) =>
+                {
+                    loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+                    loggingConfig.MinimumLevel.Debug();
+                });
+            }
+
+            //Adding authentication to swagger doc
+            void AddSwaggerGenConfig(WebApplicationBuilder builder)
+            {
+                builder.Services.AddSwaggerGen(option =>
+                {
+                    option.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Description = "Enter the bearer token as: `Bearer Generated-JWT-Token-at-login-from-AuthAPI`",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer"
+                    });
+                    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                                new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = JwtBearerDefaults.AuthenticationScheme
+                                }
+                            },
+                        Array.Empty<string>()
+                        }
+                    });
+                });
+            }
+
+            void AutenticateJwtToken(WebApplicationBuilder builder)
+            {
+                var configSection = builder.Configuration.GetSection("ApiSettings:JwtOptions");
+
+                var secret = configSection.GetValue<string>("Secret");
+                var issuer = configSection.GetValue<string>("Issuer");
+                var audience = configSection.GetValue<string>("Audience");
+
+                var securityKey = Encoding.UTF8.GetBytes(secret!);
+
+                builder.Services.AddAuthentication(auth =>
+                {
+                    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(token =>
+                {
+                    token.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(securityKey),
+                        ValidateIssuer = true,
+                        ValidIssuer = issuer,
+                        ValidateAudience = true,
+                        ValidAudience = audience
+                    };
+                });
+
+                builder.Services.AddAuthorization();
+            }
+
+
         }
+
     }
 }
