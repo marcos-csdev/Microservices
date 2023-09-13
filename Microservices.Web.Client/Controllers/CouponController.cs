@@ -4,6 +4,7 @@ using Microservices.Web.Client.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microservices.Web.Client.Controllers
 {
@@ -28,7 +29,9 @@ namespace Microservices.Web.Client.Controllers
 
                 if (response is not null && response.IsSuccess)
                 {
-                    list = JsonConvert.DeserializeObject<List<CouponDto>>(response.Result?.ToString()!)!;
+                    var json = JObject.Parse(response.Result?.ToString()!);
+
+                    list = JsonConvert.DeserializeObject<List<CouponDto>>(json["result"]!.ToString());
                 }
                 else
                 {
@@ -56,9 +59,9 @@ namespace Microservices.Web.Client.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    
+
                     var response = await _couponService.AddEntityAsync(couponDto);
-                    if(response is not null && response.IsSuccess)
+                    if (response is not null && response.IsSuccess)
                     {
                         TempData["success"] = "Coupon created";
                         return RedirectToAction(nameof(CouponIndex));
@@ -77,9 +80,9 @@ namespace Microservices.Web.Client.Controllers
             return View(couponDto);
         }
 
-        
 
-        public async Task<IActionResult> CouponRemove(int couponId) 
+
+        public async Task<IActionResult> CouponRemove(int couponId)
         {
             try
             {
