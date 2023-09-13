@@ -38,28 +38,42 @@ namespace Microservices.Web.Client.Services
                 var apiResponse = await client.SendAsync(message);
                 apiContent = await apiResponse.Content.ReadAsStringAsync();
 
-                if(apiResponse.StatusCode != HttpStatusCode.OK)
+                var acceptableResults = new HttpStatusCode[] { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted};
+
+                //if response is not "OK", "Accepted" or "Created"
+                if(!acceptableResults.Contains(apiResponse.StatusCode))
                 {
-                    return new ResponseDto(false, null!, apiContent);
+                    var errorMessage = !string.IsNullOrWhiteSpace(apiContent)? apiContent : apiResponse.ReasonPhrase;
+
+                    return ResponseDtoFactory.CreateResponseDto(false, null!, errorMessage!);
                 }
 
-                return new ResponseDto(true, apiContent, "Success");
+                return ResponseDtoFactory.CreateResponseDto(true, apiContent, "Success");
             }
             
             catch (Exception ex)
             {
-                return new ResponseDto(false, null!, ex.Message);
+                return ResponseDtoFactory.CreateResponseDto(false, null!, ex.Message);
             }
         }
 
 
-        private void SetToken(bool withBearer, HttpRequestMessage message)
+        private void SetMessageToken(bool withBearer, HttpRequestMessage message)
         {
             if (withBearer)
             {
                 var token = _tokenProvider.GetToken();
 
                 message.Headers.Add("Authorization", $"Bearer {token}");
+            }
+        }
+
+        private static void SetMessageBody(RequestDto apiRequest, string appType, HttpRequestMessage message)
+        {
+            if (apiRequest.Body is not null)
+            {
+                var serializedJson = JsonConvert.SerializeObject(apiRequest.Body);
+                message.Content = new StringContent(serializedJson, Encoding.UTF8, appType);
             }
         }
 
@@ -70,25 +84,20 @@ namespace Microservices.Web.Client.Services
         {
             var message = new HttpRequestMessage();
             message.Headers.Add("Accept", appType);
-
-            SetToken(withBearer, message);
-
             message.RequestUri = new Uri(apiRequest.Url);
 
-            SetRequestHttpVerb(apiRequest, message);
+            SetMessageToken(withBearer, message);
+
+            SetMessageHttpVerb(apiRequest, message);
 
             //request will have a body on create/update operations
-            if (apiRequest.Body is not null)
-            {
-                var serializedJson = JsonConvert.SerializeObject(apiRequest.Body);
-                message.Content = new StringContent(serializedJson, Encoding.UTF8, appType);
-            }
+            SetMessageBody(apiRequest, appType, message);
 
             return message;
         }
 
 
-        private static void SetRequestHttpVerb(RequestDto apiRequest, HttpRequestMessage message)
+        private static void SetMessageHttpVerb(RequestDto apiRequest, HttpRequestMessage message)
         {
             _ = apiRequest.ApiType switch
             {

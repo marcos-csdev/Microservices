@@ -25,17 +25,17 @@ namespace Microservices.Web.Client.Services
 
         public async Task<ResponseDto?> AssignRoleAsync(RegistrationRequestDto registrationRequestDto)
         {
-            return await SendRequest(registrationRequestDto, "assignRole");
+            return await SendRequest(registrationRequestDto, "assignRole", false);
         }
 
-        private async Task<ResponseDto?> SendRequest(RegistrationRequestDto registrationRequestDto, string operation)
+        private async Task<ResponseDto?> SendRequest(RegistrationRequestDto registrationRequestDto, string operation, bool withBearer = true)
         {
             var apiRequest = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
                 $"{StaticDetails.AuthAPIBase}/api/auth/{operation}", registrationRequestDto);
 
             if (apiRequest is null) return null;
 
-            var request = await _baseService.SendAsync(apiRequest);
+            var request = await _baseService.SendAsync(apiRequest, withBearer);
 
             return request;
         }

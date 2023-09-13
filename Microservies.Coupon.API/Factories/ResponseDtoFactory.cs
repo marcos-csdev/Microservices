@@ -1,7 +1,8 @@
-﻿using Microservices.Web.Client.Utility;
-using static Microservices.Web.Client.Utility.StaticDetails;
+﻿
 
-namespace Microservices.Web.Client.Models.Factories
+using Microservices.CouponAPI.Models.Dto;
+
+namespace Microservices.CouponAPI.Models.Factories
 {
     public static class ResponseDtoFactory
     {
@@ -12,7 +13,7 @@ namespace Microservices.Web.Client.Models.Factories
                 DisplayMessage = message,
                 ErrorMessages = errorMessages,
                 IsSuccess = isSuccess,
-                Result = result
+                Result = result!
             };
         }
         public static ResponseDto CreateResponseDto(bool isSuccess, object? result, string message)
@@ -21,7 +22,7 @@ namespace Microservices.Web.Client.Models.Factories
             {
                 DisplayMessage = message,
                 IsSuccess = isSuccess,
-                Result = result
+                Result = result!
             };
         }
     }

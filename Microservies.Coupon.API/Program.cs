@@ -3,27 +3,10 @@ using Microservices.CouponAPI.Data;
 using Microservices.CouponAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Microsoft.OpenApi.Models;
+using Microservices.CouponAPI.Extensions;
 namespace Microservices.CouponAPI
 {
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.IdentityModel.Tokens;
-    using System;
-    using System.Text;
-
-    // define a generics class named Student
-    public class Student<T>
-    {
-        // define a variable of type T 
-        public T data;
-
-        // define a constructor of the Student class 
-        public Student(T data)
-        {
-            this.data = data;
-            Console.WriteLine("Data passed: " + this.data);
-        }
-    }
+    
 
     public class Program
     {
@@ -34,18 +17,9 @@ namespace Microservices.CouponAPI
 
             // Add services to the container.
 
-            //=================Adding DbContext========================
-            builder.Services.AddDbContext<MsDbContext>(option =>
-            {
-                option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-            //=================Adding DbContext========================
+            AddDbContext(builder);
 
-            //=================Adding AutoMapper========================
-            var mapper = MappingConfig.RegisterMaps().CreateMapper();
-            builder.Services.AddSingleton(mapper);
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            //=================Adding AutoMapper========================
+            AddAutoMapper(builder);
 
             builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
@@ -53,9 +27,9 @@ namespace Microservices.CouponAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
 
-            AddSwaggerGenConfig(builder);
+            builder.AddSwaggerGenConfigExtension();
 
-            AutenticateJwtToken(builder);
+            builder.AutenticateJwtTokenExtension();
 
             AddSeriLog(builder);
 
@@ -102,66 +76,20 @@ namespace Microservices.CouponAPI
                 });
             }
 
-            //Adding authentication to swagger doc
-            void AddSwaggerGenConfig(WebApplicationBuilder builder)
+            void AddAutoMapper(WebApplicationBuilder builder)
             {
-                builder.Services.AddSwaggerGen(option =>
-                {
-                    option.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-                    {
-                        Name = "Authorization",
-                        Description = "Enter the bearer token as: `Bearer Generated-JWT-Token-at-login-from-AuthAPI`",
-                        In = ParameterLocation.Header,
-                        Type = SecuritySchemeType.ApiKey,
-                        Scheme = "Bearer"
-                    });
-                    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-                    {
-                        {
-                                new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = JwtBearerDefaults.AuthenticationScheme
-                                }
-                            },
-                        Array.Empty<string>()
-                        }
-                    });
-                });
+                var mapper = MappingConfig.RegisterMaps().CreateMapper();
+                builder.Services.AddSingleton(mapper);
+                builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             }
 
-            void AutenticateJwtToken(WebApplicationBuilder builder)
+            void AddDbContext(WebApplicationBuilder builder)
             {
-                var configSection = builder.Configuration.GetSection("ApiSettings:JwtOptions");
-
-                var secret = configSection.GetValue<string>("Secret");
-                var issuer = configSection.GetValue<string>("Issuer");
-                var audience = configSection.GetValue<string>("Audience");
-
-                var securityKey = Encoding.UTF8.GetBytes(secret!);
-
-                builder.Services.AddAuthentication(auth =>
+                builder.Services.AddDbContext<MsDbContext>(option =>
                 {
-                    auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(token =>
-                {
-                    token.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(securityKey),
-                        ValidateIssuer = true,
-                        ValidIssuer = issuer,
-                        ValidateAudience = true,
-                        ValidAudience = audience
-                    };
+                    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 });
-
-                builder.Services.AddAuthorization();
             }
-
 
         }
 

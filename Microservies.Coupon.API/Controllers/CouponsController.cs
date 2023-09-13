@@ -1,7 +1,10 @@
 ﻿
 using AutoMapper;
+using Microservices.CouponAPI;
 using Microservices.CouponAPI.Models.Dto;
+using Microservices.CouponAPI.Models.Factories;
 using Microservices.CouponAPI.Repositories;
+using Microservices.CouponAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +20,7 @@ namespace Microservices.CouponAPI.Controllers
         public CouponAPIController(Serilog.ILogger logger, ICouponRepository couponRepository) : base(logger)
         {
             _couponRepository = couponRepository;
+            ControllerResponse = new ResponseDto();
         }
 
         [HttpGet]
@@ -24,10 +28,9 @@ namespace Microservices.CouponAPI.Controllers
         {
             try
             {
-                ControllerResponse = new ResponseDto();
 
                 var couponDtos = await _couponRepository.GetCouponsAsync();
-                ControllerResponse = new ResponseDto(true, couponDtos, "Success");
+                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDtos, "Success");
 
             }
             catch (Exception ex)
@@ -44,14 +47,13 @@ namespace Microservices.CouponAPI.Controllers
         {
             if (couponId == 0) return BadRequest();
 
-            ControllerResponse = new ResponseDto();
             try
             {
                 var couponDto = await _couponRepository.GetCouponByIdAsync(couponId);
 
                 if (couponDto is null) return NotFound("The provided coupon was not found");
 
-                ControllerResponse = new ResponseDto(true, couponDto, "Success");
+                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDto, "Success");
             }
             catch (Exception ex)
             {
@@ -63,6 +65,7 @@ namespace Microservices.CouponAPI.Controllers
 
         [HttpPost]
         [Route("Create")]
+        [Authorize(Roles = StaticDetails.RoleAdmin)]
         public async Task<IActionResult> Create([FromBody] CouponDto couponDto)
         {
             if (couponDto == null) return BadRequest();
@@ -71,7 +74,7 @@ namespace Microservices.CouponAPI.Controllers
             {
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
 
-                ControllerResponse = new ResponseDto(true, newCoupon.ToString(), "Success");
+                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, newCoupon.ToString(), "Success");
 
                 return Created(nameof(Create), ControllerResponse);
 
@@ -81,20 +84,20 @@ namespace Microservices.CouponAPI.Controllers
                 LogError(ex);
             }
 
-            return Problem(ControllerResponse.DisplayMessage, nameof(Create));
+            return Problem("An error happened during the coupon creation", nameof(Create));
         }
 
         [HttpPut]
         [Route("Update")]
+        [Authorize(Roles = StaticDetails.RoleAdmin)]
         public async Task<IActionResult> Update([FromBody] CouponDto couponDto)
         {
             if (couponDto == null) return BadRequest();
 
-            ControllerResponse = new ResponseDto();
             try
             {
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
-                ControllerResponse = new ResponseDto(true, couponDto, "Success");
+                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDto, "Success");
             }
             catch (Exception ex)
             {
@@ -106,15 +109,15 @@ namespace Microservices.CouponAPI.Controllers
 
         [HttpDelete]
         [Route("Remove/{couponId}")]
+        [Authorize(Roles = StaticDetails.RoleAdmin)]
         public async Task<IActionResult> Remove(int couponId)
         {
             if (couponId == 0) return BadRequest();
 
-            ControllerResponse = new ResponseDto();
             try
             {
                 var hasBeenDeleted = await _couponRepository.DeleteCouponAsync(couponId);
-                ControllerResponse = new ResponseDto(true, hasBeenDeleted, "Success");
+                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, hasBeenDeleted, "Success");
 
             }
             catch (Exception ex)

@@ -42,6 +42,7 @@ namespace Microservices.Web.Client.Controllers
             catch (Exception ex)
             {
                 LogError(ex);
+                TempData["error"] = ControllerResponse.ErrorMessages[0];
             }
 
             return View(list);

@@ -20,8 +20,21 @@ namespace Microservices.AuthAPI.Service
         {
             if (user is null) return "";
 
-            var secretKey = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
+            var claims = CreateClaims(user, roles);
 
+            var tokenDescriptor = GenerateTokenDescriptor(claims);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            //the token can be decoded back into an object at https://jwt.io/
+            var stringToken = tokenHandler.WriteToken(token);
+
+            return stringToken;
+        }
+
+        private List<Claim> CreateClaims(MSUser user, IEnumerable<string> roles)
+        {
             //in the following case, the user "claims" that those are its name, id and email
             var claims = new List<Claim>
             {
@@ -36,7 +49,15 @@ namespace Microservices.AuthAPI.Service
                     new Claim(ClaimTypes.Role, role)
             ));
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            return claims;
+        }
+
+        private SecurityTokenDescriptor GenerateTokenDescriptor(List<Claim> claims)
+        {
+
+            var secretKey = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
+
+            return new SecurityTokenDescriptor
             {
                 Audience = _jwtOptions.Audience,
                 Issuer = _jwtOptions.Issuer,
@@ -45,16 +66,6 @@ namespace Microservices.AuthAPI.Service
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKey), SecurityAlgorithms.HmacSha256Signature)
             };
-
-            
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            //the token can be decoded back into an object at https://jwt.io/
-            var stringToken = tokenHandler.WriteToken(token);
-
-            return stringToken;
         }
     }
 }

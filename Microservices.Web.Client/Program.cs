@@ -30,22 +30,9 @@ namespace Microservices.Web.Client
             builder.Services.AddScoped<ICouponService, CouponService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.ExpireTimeSpan = TimeSpan.FromHours(10);
-                    options.LoginPath = "/Auth/Login";
-                    options.AccessDeniedPath = "/Auth/AccessDenied";
-                });
+            AddAuthentication(builder);
 
-            //=================Adding Serilog========================
-            builder.Host.UseSerilog((fileContext, loggingConfig) =>
-            {
-                loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
-                loggingConfig.MinimumLevel.Error();
-            });
-            //=================Adding Serilog========================
-
+            AddSeriLog(builder);
 
             var app = builder.Build();
 
@@ -70,6 +57,26 @@ namespace Microservices.Web.Client
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        static void AddSeriLog(WebApplicationBuilder builder)
+        {
+            builder.Host.UseSerilog((fileContext, loggingConfig) =>
+            {
+                loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+                loggingConfig.MinimumLevel.Debug();
+            });
+        }
+
+        static void AddAuthentication(WebApplicationBuilder builder)
+        {
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromHours(10);
+                    options.LoginPath = "/Auth/Login";
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                });
         }
     }
 }
