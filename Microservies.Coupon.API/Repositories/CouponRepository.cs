@@ -75,12 +75,12 @@ namespace Microservices.CouponAPI.Repositories
             var dbCoupon = await GetDbCouponByIdAsync(mappedCoupon.Id);
 
             EntityEntry entityEntry;
-            //Create
+            //If product was not found, Create it
             if(dbCoupon is null)
             {
                 entityEntry = await _dbContext.Coupons.AddAsync(mappedCoupon);
             }
-            else//Update
+            else
             {
                 entityEntry = _dbContext.Coupons.Update(mappedCoupon);
             }
@@ -88,6 +88,7 @@ namespace Microservices.CouponAPI.Repositories
 
             await _dbContext.SaveChangesAsync();
 
+            //if product was created or updated, return true
             return entityEntry.State != EntityState.Unchanged;
         }
     }

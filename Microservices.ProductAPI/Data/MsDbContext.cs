@@ -9,14 +9,14 @@ namespace Microservices.ProductAPI.Data
         {
         }
 
-        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductModel> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //without this command migrations will throw a primary key error 
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Product>().HasData(new Product
+            modelBuilder.Entity<ProductModel>().HasData(new ProductModel
             {
                 Id = 1,
                 Name = "Samosa",
@@ -25,7 +25,7 @@ namespace Microservices.ProductAPI.Data
                 ImageUrl = "https://placehold.co/603x403",
                 Category = "Appetizer"
             });
-            modelBuilder.Entity<Product>().HasData(new Product
+            modelBuilder.Entity<ProductModel>().HasData(new ProductModel
             {
                 Id = 2,
                 Name = "Paneer Tikka",
@@ -34,7 +34,7 @@ namespace Microservices.ProductAPI.Data
                 ImageUrl = "https://placehold.co/602x402",
                 Category = "Appetizer"
             });
-            modelBuilder.Entity<Product>().HasData(new Product
+            modelBuilder.Entity<ProductModel>().HasData(new ProductModel
             {
                 Id = 3,
                 Name = "Sweet Pie",
@@ -43,7 +43,7 @@ namespace Microservices.ProductAPI.Data
                 ImageUrl = "https://placehold.co/601x401",
                 Category = "Dessert"
             });
-            modelBuilder.Entity<Product>().HasData(new Product
+            modelBuilder.Entity<ProductModel>().HasData(new ProductModel
             {
                 Id = 4,
                 Name = "Pav Bhaji",

@@ -2,7 +2,7 @@
 
 namespace Microservices.ProductAPI.Models
 {
-    public class Product
+    public class ProductModel
     {
 
         [Key]

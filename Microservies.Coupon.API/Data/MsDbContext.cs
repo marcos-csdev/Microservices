@@ -13,6 +13,7 @@ namespace Microservices.CouponAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //without this command migrations will throw a primary key error 
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<CouponModel>().HasData(
