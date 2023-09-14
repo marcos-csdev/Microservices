@@ -1,4 +1,4 @@
-﻿using Microservices.ProductAPI.Models.Dtos;
+﻿using Microservices.ProductAPI.Models.Dto;
 
 namespace Microservices.ProductAPI.Repositories
 {

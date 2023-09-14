@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microservices.ProductAPI.Data;
 using Microservices.ProductAPI.Models;
-using Microservices.ProductAPI.Models.Dtos;
+using Microservices.ProductAPI.Models.Dto;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.ComponentModel;
@@ -34,7 +34,7 @@ namespace Microservices.ProductAPI.Repositories
         {
             if (productId < 1) return null!;
 
-            var dbProduct = await _dbContext.Products.FirstOrDefaultAsync();
+            var dbProduct = await _dbContext.Products.FirstOrDefaultAsync(prod => prod.Id == productId);
 
             if (dbProduct is null) return null!;
 

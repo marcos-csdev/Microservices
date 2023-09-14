@@ -1,18 +1,16 @@
-using Microservices.CouponAPI;
 using Microservices.CouponAPI.Data;
 using Microservices.CouponAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microservices.CouponAPI.Extensions;
+
 namespace Microservices.CouponAPI
 {
     
-
     public class Program
     {
         public static void Main(string[] args)
         {
-
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.

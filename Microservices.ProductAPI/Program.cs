@@ -1,7 +1,9 @@
 using Microservices.ProductAPI.Data;
+using Microservices.ProductAPI.Extensions;
 using Microservices.ProductAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+
 namespace Microservices.ProductAPI
 {
     public class Program
@@ -15,10 +17,15 @@ namespace Microservices.ProductAPI
 
             AddAutoMapper(builder);
 
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.AddSwaggerGenConfigExtension();
+
+            builder.AutenticateJwtTokenExtension();
 
             AddSeriLog(builder);
 

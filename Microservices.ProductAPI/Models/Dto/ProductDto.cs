@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Microservices.ProductAPI.Models.Dtos
+namespace Microservices.ProductAPI.Models.Dto
 {
     public class ProductDto
     {

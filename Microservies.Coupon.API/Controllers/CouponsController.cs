@@ -32,6 +32,8 @@ namespace Microservices.CouponAPI.Controllers
                 var couponDtos = await _couponRepository.GetCouponsAsync();
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDtos, "Success");
 
+                return Ok(ControllerResponse);
+
             }
             catch (Exception ex)
 
@@ -39,7 +41,7 @@ namespace Microservices.CouponAPI.Controllers
                 LogError(ex);
             }
 
-            return Ok(ControllerResponse);
+            return Problem("An error happened retrieving the coupons");
         }
 
         [HttpGet("GetById/{couponId}")]
@@ -54,13 +56,15 @@ namespace Microservices.CouponAPI.Controllers
                 if (couponDto is null) return NotFound("The provided coupon was not found");
 
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDto, "Success");
+
+                return Ok(ControllerResponse);
             }
             catch (Exception ex)
             {
                 LogError(ex);
             }
 
-            return Ok(ControllerResponse);
+            return Problem();
         }
 
         [HttpPost]
@@ -98,13 +102,15 @@ namespace Microservices.CouponAPI.Controllers
             {
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDto, "Success");
+
+                return Accepted(ControllerResponse);
             }
             catch (Exception ex)
             {
                 LogError(ex);
             }
 
-            return Accepted(ControllerResponse);
+            return Problem("An error happened during the coupon update", nameof(Update));
         }
 
         [HttpDelete]
@@ -119,13 +125,13 @@ namespace Microservices.CouponAPI.Controllers
                 var hasBeenDeleted = await _couponRepository.DeleteCouponAsync(couponId);
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, hasBeenDeleted, "Success");
 
+                return Accepted(ControllerResponse);
             }
             catch (Exception ex)
             {
                 LogError(ex);
             }
-
-            return Accepted(ControllerResponse);
+            return Problem("An error happened during the coupon deletion", nameof(Remove));
         }
     }
 
