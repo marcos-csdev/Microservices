@@ -7,8 +7,8 @@ namespace Microservices.Web.Client.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IBaseService _baseService;
-        public AuthService(IBaseService baseService)
+        private readonly IMessageService _baseService;
+        public AuthService(IMessageService baseService)
         {
             _baseService = baseService;
         }
@@ -31,7 +31,7 @@ namespace Microservices.Web.Client.Services
         private async Task<ResponseDto?> SendRequest(RegistrationRequestDto registrationRequestDto, string operation, bool withBearer = true)
         {
             var apiRequest = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
-                $"{StaticDetails.AuthAPIBase}/api/auth/{operation}", registrationRequestDto);
+                $"{StaticDetails.AuthAPIUrl}/api/auth/{operation}", registrationRequestDto);
 
             if (apiRequest is null) return null;
 
@@ -43,7 +43,7 @@ namespace Microservices.Web.Client.Services
         private async Task<ResponseDto?> SendRequest(LoginRequestDto loginRequestDto, string operation)
         {
             var apiRequest = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
-                $"{StaticDetails.AuthAPIBase}/api/auth/{operation}", loginRequestDto);
+                $"{StaticDetails.AuthAPIUrl}/api/auth/{operation}", loginRequestDto);
 
             if (apiRequest is null) return null;
 

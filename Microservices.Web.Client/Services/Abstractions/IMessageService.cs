@@ -2,7 +2,7 @@
 
 namespace Microservices.Web.Client.Services.Abstractions
 {
-    public interface IBaseService : IDisposable
+    public interface IMessageService : IDisposable
     {
         ResponseDto ResponseDto { get; set; }
 

@@ -29,7 +29,7 @@ namespace Microservices.Coupon.Web.Tests.Services
             }
 
             //Act
-            var coupons = await Service.GetAllEntitiesAsync();
+            var coupons = await Service.GetAllCouponsAsync();
 
             //Assert
             coupons?.IsSuccess.Should().BeTrue();
@@ -52,7 +52,7 @@ namespace Microservices.Coupon.Web.Tests.Services
             }
 
             //Act
-            var coupon = await Service.GetEntityByIdAsync(id);
+            var coupon = await Service.GetCouponByIdAsync(id);
 
             //Assert
             coupon?.IsSuccess.Should().BeTrue();

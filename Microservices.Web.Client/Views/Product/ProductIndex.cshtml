@@ -1,0 +1,75 @@
+﻿@model IList<ProductDto>
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="text-white">Products List</h1>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
+
+            <div class="col-6 text-end">
+                <a class="btn btn-outline-primary" asp-area="" asp-controller="Product" asp-action="ProductCreate"><i class="bi bi-plus-square"></i> Create New Product</a>
+
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Product Code
+                    </th>
+                    <th>
+                        Product Name
+                    </th>
+                    <th>
+                        Product Price
+                    </th>
+                    <th>
+                        Category
+                    </th>
+                    <th>
+                        Image
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>
+                            @item.Id
+                        </td>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.Price
+                        </td>
+                        <td>
+                            @item.Category
+                        </td>
+                        <td>
+                            @item.ImageUrl
+                        </td>
+                        <td>
+                            <a class="btn btn-danger" asp-action="ProductRemove" asp-route-productId="@item.Id">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

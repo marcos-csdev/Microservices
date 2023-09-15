@@ -83,7 +83,7 @@ namespace Microservices.ProductAPI.Controllers
         [HttpPut]
         [Route("Update")]
         [Authorize(Roles = StaticDetails.RoleAdmin)]
-        public async Task<IActionResult> Update(ProductDto product)
+        public async Task<IActionResult> Update([FromBody]ProductDto product)
         {
             if (product == null) return BadRequest();
 
@@ -103,9 +103,9 @@ namespace Microservices.ProductAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("Delete")]
+        [Route("Remove/{productId}")]
         [Authorize(Roles = StaticDetails.RoleAdmin)]
-        public async Task<IActionResult> Delete(int productId)
+        public async Task<IActionResult> Remove(int productId)
         {
             if(productId <= 0) return BadRequest();
 

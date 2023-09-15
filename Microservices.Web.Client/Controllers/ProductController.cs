@@ -1,39 +1,37 @@
 ﻿using Microservices.Web.Client.Models;
-using Microservices.Web.Client.Models.Factories;
+using Microservices.Web.Client.Services;
 using Microservices.Web.Client.Services.Abstractions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microservices.Web.Client.Controllers
 {
-    [Authorize]
-    public class CouponController : BaseController
+    public class ProductController : BaseController
     {
-        private readonly ICouponService _couponService;
+        private readonly IProductService _productService;
 
-        public CouponController(Serilog.ILogger logger, ICouponService couponService) : base(logger)
+        public ProductController(Serilog.ILogger logger, IProductService productService) : base(logger)
         {
-            _couponService = couponService;
+            _productService = productService;
         }
 
-        public async Task<IActionResult> CouponIndex()
+        [HttpGet]
+        public async Task<IActionResult> ProductIndex()
         {
-            List<CouponDto>? coupons = null;
 
+            List<ProductDto> products = null!;
             try
             {
-                var response = await _couponService
-                .GetAllCouponsAsync();
+                var response = await _productService.GetAllProductsAsync();
 
-                if (response is null)
+                if (response is null) 
                     throw new Exception("Could not retrieve products from the server");
 
-                coupons = EntityIndex<CouponDto>(response);
+                products = EntityIndex<ProductDto>(response);
 
-                if (coupons is null)
+                if (products is null)
                     throw new Exception("Problem converting list to JSON");
+
             }
             catch (Exception ex)
             {
@@ -41,27 +39,25 @@ namespace Microservices.Web.Client.Controllers
                 TempData["error"] = ControllerResponse.ErrorMessages[0];
             }
 
-            return View(coupons);
+            return View(products);
         }
 
-        public IActionResult CouponCreate()
-        {
-            return View();
-        }
+        [HttpGet]
+        public ActionResult ProductCreate() { return View(); }
 
         [HttpPost]
-        public async Task<IActionResult> CouponCreate(CouponDto couponDto)
+        public async Task<IActionResult> ProductCreate(ProductDto productDto)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
 
-                    var response = await _couponService.AddCouponAsync(couponDto);
+                    var response = await _productService.AddProductAsync(productDto);
                     if (response is not null && response.IsSuccess)
                     {
-                        TempData["success"] = "Coupon created";
-                        return RedirectToAction(nameof(CouponIndex));
+                        TempData["success"] = "Product created";
+                        return RedirectToAction(nameof(ProductIndex));
                     }
                     else
                     {
@@ -74,16 +70,14 @@ namespace Microservices.Web.Client.Controllers
                 LogError(ex);
             }
 
-            return View(couponDto);
+            return View(productDto);
         }
 
-
-
-        public async Task<IActionResult> CouponRemove(int couponId)
+        public async Task<IActionResult> ProductRemove(int productId)
         {
             try
             {
-                var response = await _couponService.RemoveCouponAsync(couponId);
+                var response = await _productService.RemoveProductAsync(productId);
 
                 if (response == null || response?.IsSuccess == false)
                 {
@@ -98,7 +92,7 @@ namespace Microservices.Web.Client.Controllers
                 }
                 else
                 {
-                    TempData["success"] = "Coupon removed";
+                    TempData["success"] = "Product removed";
                 }
             }
             catch (Exception ex)
@@ -106,9 +100,8 @@ namespace Microservices.Web.Client.Controllers
                 LogError(ex);
             }
 
-            return RedirectToAction(nameof(CouponIndex));
+            return RedirectToAction(nameof(ProductIndex));
         }
-
 
 
     }

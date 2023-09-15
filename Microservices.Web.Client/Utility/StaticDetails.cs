@@ -2,8 +2,9 @@
 {
     public static class StaticDetails
     {
-        public static string CouponAPIBase { get; set; } = string.Empty;
-        public static string AuthAPIBase { get; set; } = string.Empty;
+        public static string CouponAPIUrl { get; set; } = string.Empty;
+        public static string ProductAPIUrl { get; set; } = string.Empty;
+        public static string AuthAPIUrl { get; set; } = string.Empty;
 
         public const string RoleAdmin = "ADMIN";
         public const string RoleCustomer = "CUSTOMER";

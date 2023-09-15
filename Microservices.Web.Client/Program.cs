@@ -18,15 +18,17 @@ namespace Microservices.Web.Client
 
             // Add HttpClient, set API Base URLs and add corresponding service wrappers
             builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient<IProductService, ProductService>();
             builder.Services.AddHttpClient<ICouponService, CouponService>();
             builder.Services.AddHttpClient<IAuthService, AuthService>();
 
-
-            StaticDetails.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"]!;
-            StaticDetails.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"]!;
+            StaticDetails.CouponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
+            StaticDetails.ProductAPIUrl = builder.Configuration["ServiceUrls:ProductAPI"]!;
+            StaticDetails.AuthAPIUrl = builder.Configuration["ServiceUrls:AuthAPI"]!;
 
             builder.Services.AddScoped<ITokenProvider, TokenProvider>();
-            builder.Services.AddScoped<IBaseService, BaseService>();
+            builder.Services.AddScoped<IMessageService, MessageService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICouponService, CouponService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
