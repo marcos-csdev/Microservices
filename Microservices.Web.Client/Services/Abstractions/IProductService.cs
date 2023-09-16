@@ -8,6 +8,6 @@ namespace Microservices.Web.Client.Services.Abstractions
         Task<ResponseDto?> GetAllProductsAsync();
         Task<ResponseDto?> GetProductByIdAsync(int id);
         Task<ResponseDto?> RemoveProductAsync(int id);
-        Task<ResponseDto?> UpdateProductAsync(string id, ProductDto productDto);
+        Task<ResponseDto?> UpdateProductAsync(ProductDto productDto);
     }
 }

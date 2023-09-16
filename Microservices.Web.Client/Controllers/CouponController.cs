@@ -27,13 +27,9 @@ namespace Microservices.Web.Client.Controllers
                 var response = await _couponService
                 .GetAllCouponsAsync();
 
-                if (response is null)
-                    throw new Exception("Could not retrieve products from the server");
 
-                coupons = EntityIndex<CouponDto>(response);
+                coupons = DeserializeResponseToList<CouponDto>(response!);
 
-                if (coupons is null)
-                    throw new Exception("Problem converting list to JSON");
             }
             catch (Exception ex)
             {
@@ -84,22 +80,8 @@ namespace Microservices.Web.Client.Controllers
             try
             {
                 var response = await _couponService.RemoveCouponAsync(couponId);
-
-                if (response == null || response?.IsSuccess == false)
-                {
-                    if (string.IsNullOrWhiteSpace(response?.DisplayMessage))
-                    {
-                        TempData["error"] = "Could not retrieve response from API";
-                    }
-                    else
-                    {
-                        TempData["error"] = response?.DisplayMessage;
-                    }
-                }
-                else
-                {
-                    TempData["success"] = "Coupon removed";
-                }
+               
+                SetReturnMessage(response!, "Coupon removed", "Index", "Coupon");
             }
             catch (Exception ex)
             {

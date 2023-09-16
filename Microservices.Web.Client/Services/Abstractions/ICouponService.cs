@@ -9,6 +9,6 @@ namespace Microservices.Web.Client.Services.Abstractions
         Task<ResponseDto?> GetAllCouponsAsync();
         Task<ResponseDto?> GetCouponByIdAsync(int id);
         Task<ResponseDto?> RemoveCouponAsync(int id);
-        Task<ResponseDto?> UpdateCouponAsync(string id, CouponDto couponDto);
+        Task<ResponseDto?> UpdateCouponAsync(int id, CouponDto couponDto);
     }
 }

@@ -5,6 +5,9 @@ using Microservices.Web.Client.Utility;
 
 namespace Microservices.Web.Client.Services
 {
+    /// <summary>
+    /// Does the entity CRUD operations by sending the message to the respective API
+    /// </summary>
     public class BaseService
     {
         private readonly IMessageService _messageService;
@@ -62,10 +65,10 @@ namespace Microservices.Web.Client.Services
             return response;
         }
 
-        public async Task<ResponseDto?> UpdateEntityAsync<TEntity>(string id, TEntity? entityDto, string url)
+        public async Task<ResponseDto?> UpdateEntityAsync<TEntity>( TEntity? entityDto, string url)
             where TEntity : class
         {
-            if (string.IsNullOrWhiteSpace(id) || entityDto is null) return null;
+            if (entityDto is null) return null;
 
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.PUT,
                 url,

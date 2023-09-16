@@ -50,13 +50,18 @@
                             @item.Name
                         </td>
                         <td>
-                            @item.Price
+                            @((item.Price).ToString("c"))
                         </td>
                         <td>
                             @item.Category
                         </td>
                         <td>
                             @item.ImageUrl
+                        </td>
+                        <td>
+                            <a class="btn btn-success" asp-action="ProductEdit" asp-route-productId="@item.Id">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
                         </td>
                         <td>
                             <a class="btn btn-danger" asp-action="ProductRemove" asp-route-productId="@item.Id">

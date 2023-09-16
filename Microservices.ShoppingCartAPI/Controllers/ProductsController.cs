@@ -1,20 +1,20 @@
-﻿using Microservices.ProductAPI.Models.Dto;
-using Microservices.ProductAPI.Models.Factories;
-using Microservices.ProductAPI.Repositories;
-using Microservices.ProductAPI.Utility;
+﻿using Microservices.ShoppingCartAPI.Models.Dto;
+using Microservices.ShoppingCartAPI.Models.Factories;
+using Microservices.ShoppingCartAPI.Repositories;
+using Microservices.ShoppingCartAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Microservices.ProductAPI.Controllers
+namespace Microservices.ShoppingCartAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
     [Authorize]
     public class ProductsController : APIBaseController
     {
-        private readonly IProductRepository _productsRepository;
+        private readonly IShoppingCartRepository _productsRepository;
 
-        public ProductsController(Serilog.ILogger logger, IProductRepository productsRepository):base(logger)
+        public ProductsController(Serilog.ILogger logger, IShoppingCartRepository productsRepository):base(logger)
         {
             _productsRepository = productsRepository;
         }

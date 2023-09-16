@@ -36,9 +36,9 @@ namespace Microservices.Web.Client.Services
                 $"{StaticDetails.ProductAPIUrl}/api/products/remove/{id}");
         }
 
-        public async Task<ResponseDto?> UpdateProductAsync(string id, ProductDto productDto)
+        public async Task<ResponseDto?> UpdateProductAsync(ProductDto productDto)
         {
-            return await UpdateEntityAsync(id, productDto,
+            return await UpdateEntityAsync(productDto,
                 $"{StaticDetails.ProductAPIUrl}/api/products/update");
 
         }

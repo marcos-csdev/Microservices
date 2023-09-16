@@ -36,9 +36,9 @@ namespace Microservices.Web.Client.Services
                 $"{StaticDetails.CouponAPIUrl}/api/coupons/remove/{id}");
         }
 
-        public async Task<ResponseDto?> UpdateCouponAsync(string id, CouponDto couponDto)
+        public async Task<ResponseDto?> UpdateCouponAsync(int id, CouponDto couponDto)
         {
-            return await UpdateEntityAsync(id, couponDto,
+            return await UpdateEntityAsync(couponDto,
                 $"{StaticDetails.CouponAPIUrl}/api/coupons/update");
 
         }

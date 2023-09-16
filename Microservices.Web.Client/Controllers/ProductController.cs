@@ -2,6 +2,7 @@
 using Microservices.Web.Client.Services;
 using Microservices.Web.Client.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Microservices.Web.Client.Controllers
@@ -24,13 +25,7 @@ namespace Microservices.Web.Client.Controllers
             {
                 var response = await _productService.GetAllProductsAsync();
 
-                if (response is null) 
-                    throw new Exception("Could not retrieve products from the server");
-
-                products = EntityIndex<ProductDto>(response);
-
-                if (products is null)
-                    throw new Exception("Problem converting list to JSON");
+                products = DeserializeResponseToList<ProductDto>(response!);
 
             }
             catch (Exception ex)
@@ -79,21 +74,7 @@ namespace Microservices.Web.Client.Controllers
             {
                 var response = await _productService.RemoveProductAsync(productId);
 
-                if (response == null || response?.IsSuccess == false)
-                {
-                    if (string.IsNullOrWhiteSpace(response?.DisplayMessage))
-                    {
-                        TempData["error"] = "Could not retrieve response from API";
-                    }
-                    else
-                    {
-                        TempData["error"] = response?.DisplayMessage;
-                    }
-                }
-                else
-                {
-                    TempData["success"] = "Product removed";
-                }
+                return SetReturnMessage(response!, "Product removed", "Index", "Product");
             }
             catch (Exception ex)
             {
@@ -101,6 +82,51 @@ namespace Microservices.Web.Client.Controllers
             }
 
             return RedirectToAction(nameof(ProductIndex));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProductEdit(int productId)
+        {
+            var response = await _productService.GetProductByIdAsync(productId);
+
+            if (response != null && response.IsSuccess)
+            {
+                var productJson = DeserializeResponseToEntity<ProductDto>(response!);
+
+                return View(productJson);
+            }
+            else
+            {
+                TempData["error"] = response?.DisplayMessage;
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProductEdit([FromBody] ProductDto product)
+        {
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    if (product is null) return BadRequest(ModelState);
+
+                    var response = await _productService.UpdateProductAsync(product);
+
+                    var deserializedProduct = DeserializeResponseToEntity<ProductDto>(response!);
+
+                    if(deserializedProduct is not null && deserializedProduct.Id > 0)
+                        return RedirectToAction(nameof(ProductIndex));
+
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+
+            return NotFound();
         }
 
 

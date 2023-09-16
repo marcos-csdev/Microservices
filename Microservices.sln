@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.AuthAPI.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.Web.Client", "Microservices.Web.Client\Microservices.Web.Client.csproj", "{E24EB385-B9C7-48BE-A76A-C062D9CDC05A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.ProductAPI", "Microservices.ProductAPI\Microservices.ProductAPI.csproj", "{B8CAB9BF-7114-488A-84DF-CF8403E1FD93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.ProductAPI", "Microservices.ProductAPI\Microservices.ProductAPI.csproj", "{B8CAB9BF-7114-488A-84DF-CF8403E1FD93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.ShoppingCartAPI", "Microservices.ShoppingCartAPI\Microservices.ShoppingCartAPI.csproj", "{8F253E24-C529-480D-AF41-3C8B3A501AD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{B8CAB9BF-7114-488A-84DF-CF8403E1FD93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8CAB9BF-7114-488A-84DF-CF8403E1FD93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8CAB9BF-7114-488A-84DF-CF8403E1FD93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F253E24-C529-480D-AF41-3C8B3A501AD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F253E24-C529-480D-AF41-3C8B3A501AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F253E24-C529-480D-AF41-3C8B3A501AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F253E24-C529-480D-AF41-3C8B3A501AD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
