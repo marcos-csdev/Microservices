@@ -1,12 +1,14 @@
-﻿using Microservices.ShoppingCartAPI.Models.Dto;
+﻿using Microservices.ShoppingCartAPI.Models;
+using Microservices.ShoppingCartAPI.Models.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microservices.ShoppingCartAPI.Repositories
 {
     public interface IShoppingCartRepository
     {
-        Task<bool> DelectProductAsync(int productId);
-        Task<List<ProductDto>?> GetAllProductsAsync();
-        Task<ProductDto?> GetProductByIdAsync(int productId);
-        Task<bool> UpsertProductAsync(ProductDto productDto);
+        Task<bool> DelectProductAsync([FromBody] int cartDetailsId);
+        Task<List<ProductDto>?> GetCartAsync();
+        Task<CartHeaderModel?> GetCartHeadersAsync(string userId);
+        Task UpsertCartAsync(CartDto cartDto);
     }
 }

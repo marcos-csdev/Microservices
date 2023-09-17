@@ -10,9 +10,9 @@ namespace Microservices.Coupon.Web.Tests.Services
 {
     public class CouponServiceTests : CustomWebApplicationFactory<ICouponService>
     {
-        protected override ICouponService SetServiceProvider(IServiceScope scope)
+        protected override ICouponService SetServiceProvider(IServiceCollection services, IServiceScope scope)
         {
-            return ServiceProviderFactory.SetCouponServiceProvider(Scope!);
+            return ServiceProviderFactory.SetCouponServiceProvider(services, scope);
         }
 
         public CouponServiceTests() : base()
@@ -61,5 +61,7 @@ namespace Microservices.Coupon.Web.Tests.Services
             var content = (JObject) coupon?.Result!;
             content.Root.Children().Count().Should().BeGreaterThan(0);
         }
+
+        
     }
 }

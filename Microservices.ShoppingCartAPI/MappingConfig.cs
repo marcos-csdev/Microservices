@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Microservices.ProductAPI.Models;
-using Microservices.ProductAPI.Models.Dto;
 using Microservices.ShoppingCartAPI.Models;
 using Microservices.ShoppingCartAPI.Models.Dto;
 
@@ -14,6 +12,7 @@ namespace Microservices.ShoppingCartAPI
             {
                 config.CreateMap<CartDetailsDto, CartDetailsModel>().ReverseMap();
                 config.CreateMap<CartHeaderDto, CartHeaderModel>().ReverseMap();
+                //config.CreateMap<CartDto, >().ReverseMap();
             }
                 
             );

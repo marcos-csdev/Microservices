@@ -26,11 +26,7 @@ namespace Microservices.AuthAPI.Tests
                 whb.ConfigureServices((context, services) =>
                 {
                     ConfigureServices(context, services);
-                });
-
-                whb.ConfigureTestServices(services =>
-                {
-
+                
                     Scope = services.BuildServiceProvider().CreateScope();
                     Service = SetServiceProvider(services, Scope);
                 });

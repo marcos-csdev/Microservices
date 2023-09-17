@@ -24,18 +24,32 @@ namespace Microservices.Coupon.Web.Tests
 
             HttpClient = WithWebHostBuilder(whb =>
             {
-
-                whb.ConfigureTestServices(services =>
+                whb.ConfigureServices((context, services) =>
                 {
+                    ConfigureServices(context, services);
+
                     Scope = services.BuildServiceProvider().CreateScope();
-                    Service = SetServiceProvider(Scope);
+                    Service = SetServiceProvider(services, Scope);
                 });
             }).CreateClient();
 
         }
 
+        private static void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
+        {
+            services.RemoveAll(typeof(MsDbContext));
 
-        protected abstract TServiceInterface SetServiceProvider(IServiceScope scope);
+            var connectionString = context.Configuration.GetConnectionString("DefaultConnection");
+
+            services.AddDbContext<MsDbContext>(option =>
+                option.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+
+            services.AddLogging(configure =>
+                configure.AddSerilog());
+
+        }
+
+        protected abstract TServiceInterface SetServiceProvider(IServiceCollection services, IServiceScope scope);
 
 
         protected new void Dispose()

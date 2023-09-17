@@ -14,18 +14,25 @@ namespace Microservices.Coupon.Web.Tests
 {
     public class ServiceProviderFactory
     {
-        public static ICouponService SetCouponServiceProvider(IServiceScope scope)
+        public static ICouponService SetCouponServiceProvider(IServiceCollection serviceCollection, IServiceScope scope)
         {
-            var serviceCollection = new ServiceCollection();
 
-            serviceCollection.AddHttpClient<ICouponService, CouponService>();
+
+            //public ResponseDto ResponseDto { get; set; } = null!;
+            //private readonly IHttpClientFactory _httpClientFactory;
+            //private readonly ITokenProvider _tokenProvider;
+
+            serviceCollection.AddHttpClient();//IHttpClientFactory dependency
+            serviceCollection.AddAuthorization(); 
+
+            serviceCollection.AddTransient<IMessageService, MessageService>();
             serviceCollection.AddTransient<ICouponService, CouponService>();
 
             var service = scope.ServiceProvider.GetService<ICouponService>();
 
             return service!;
         }
-        
+
 
 
     }
