@@ -1,5 +1,6 @@
 ﻿using Microservices.CouponAPI;
 using Microservices.CouponAPI.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,7 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Security.Claims;
 
 namespace Microservices.Coupon.Web.Tests
 {
@@ -19,6 +22,7 @@ namespace Microservices.Coupon.Web.Tests
         protected IServiceScope? Scope = null!;
         protected TServiceInterface? Service;
 
+
         public CustomWebApplicationFactory()
         {
 
@@ -26,6 +30,7 @@ namespace Microservices.Coupon.Web.Tests
             {
                 whb.ConfigureServices((context, services) =>
                 {
+                    AddTestAuthentication(services);
                     ConfigureServices(context, services);
 
                     Scope = services.BuildServiceProvider().CreateScope();
@@ -33,6 +38,15 @@ namespace Microservices.Coupon.Web.Tests
                 });
             }).CreateClient();
 
+        }
+
+        private static void AddTestAuthentication(IServiceCollection services)
+        {
+            services.AddAuthentication(auth =>
+            {
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            });
         }
 
         private static void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)

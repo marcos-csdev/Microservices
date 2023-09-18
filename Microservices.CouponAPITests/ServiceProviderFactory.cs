@@ -1,19 +1,19 @@
-﻿using AutoMapper;
-using FluentAssertions.Common;
-using Microservices.CouponAPI.Repositories;
-using Microservices.Web.Client.Services;
+﻿using Microservices.Web.Client.Services;
 using Microservices.Web.Client.Services.Abstractions;
+using Microservices.Coupon.Web.Tests.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
+using FluentAssertions.Common;
 
 namespace Microservices.Coupon.Web.Tests
 {
     public class ServiceProviderFactory
     {
+
+        private static readonly MockAuthUser _user = new MockAuthUser(
+            new Claim("sub", Guid.NewGuid().ToString()),
+            new Claim("email", "default-user@xyz.com"));
+
         public static ICouponService SetCouponServiceProvider(IServiceCollection serviceCollection, IServiceScope scope)
         {
 
@@ -21,9 +21,9 @@ namespace Microservices.Coupon.Web.Tests
             //public ResponseDto ResponseDto { get; set; } = null!;
             //private readonly IHttpClientFactory _httpClientFactory;
             //private readonly ITokenProvider _tokenProvider;
+            serviceCollection.AddScoped(_ => _user);
 
             serviceCollection.AddHttpClient();//IHttpClientFactory dependency
-            serviceCollection.AddAuthorization(); 
 
             serviceCollection.AddTransient<IMessageService, MessageService>();
             serviceCollection.AddTransient<ICouponService, CouponService>();
