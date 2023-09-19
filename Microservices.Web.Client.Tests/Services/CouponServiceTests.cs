@@ -6,7 +6,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 
-namespace Microservices.Coupon.Web.Tests.Services
+namespace Microservices.Web.Client.Tests.Services
 {
     public class CouponServiceTests : CustomWebApplicationFactory<ICouponService>
     {
@@ -23,7 +23,7 @@ namespace Microservices.Coupon.Web.Tests.Services
         public async Task GetAllEntitiesAsync_Coupons_Found()
         {
             // Arrange
-            if (Service is null)
+            if (Service == null)
             {
                 Assert.Fail("There was a problem setting up the CouponService provider");
             }
@@ -46,7 +46,7 @@ namespace Microservices.Coupon.Web.Tests.Services
         public async Task GetEntityByIdAsyncTest(int id)
         {
             // Arrange
-            if (Service is null)
+            if (Service == null)
             {
                 Assert.Fail("There was a problem setting up the CouponService provider");
             }

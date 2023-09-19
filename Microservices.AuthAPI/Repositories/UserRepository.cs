@@ -23,7 +23,7 @@ namespace Microservices.AuthAPI.Repositories
         {
             var user = await GetDbUserByEmailAsync(email);
 
-            if (user is null) return false;
+            if (user == null) return false;
 
             var deletedUser = _dbContext.Users.Remove(user);
 
@@ -59,7 +59,7 @@ namespace Microservices.AuthAPI.Repositories
             var user = await _dbContext.Users
                 .FirstOrDefaultAsync(c => c.Id == userId);
 
-            if (user is null) return null!;
+            if (user == null) return null!;
 
             var userDto = _mapper.Map<MSUserDto>(user);
 

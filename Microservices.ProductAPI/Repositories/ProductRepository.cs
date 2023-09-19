@@ -23,7 +23,7 @@ namespace Microservices.ProductAPI.Repositories
         {
             var dbProducts = await _dbContext.Products.ToListAsync();
 
-            if (dbProducts is null) return new List<ProductDto>();
+            if (dbProducts == null) return new List<ProductDto>();
 
             var productsDto = _mapper.Map<List<ProductDto>>(dbProducts);
 
@@ -36,7 +36,7 @@ namespace Microservices.ProductAPI.Repositories
 
             var dbProduct = await _dbContext.Products.FirstOrDefaultAsync(prod => prod.Id == productId);
 
-            if (dbProduct is null) return null!;
+            if (dbProduct == null) return null!;
 
             var productDto = _mapper.Map<ProductDto>(dbProduct);
 
@@ -45,14 +45,14 @@ namespace Microservices.ProductAPI.Repositories
 
         public async Task<bool> UpsertProductAsync(ProductDto productDto)
         {
-            if (productDto is null) return false;
+            if (productDto == null) return false;
 
             var mappedProduct = _mapper.Map<ProductModel>(productDto);
 
             var dbProduct = await _dbContext.Products.FirstOrDefaultAsync(prod => prod.Id == mappedProduct.Id);
 
             EntityEntry entityEntry;
-            if (dbProduct is null)
+            if (dbProduct == null)
             {
                 entityEntry = await _dbContext.Products.AddAsync(mappedProduct);
             }
@@ -73,7 +73,7 @@ namespace Microservices.ProductAPI.Repositories
 
             var dbProduct = await _dbContext.Products.FirstOrDefaultAsync(prod => prod.Id == productId);
 
-            if (dbProduct is null) return false;
+            if (dbProduct == null) return false;
 
             var deletedProduct = _dbContext.Products.Remove(dbProduct);
 

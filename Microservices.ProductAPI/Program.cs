@@ -67,7 +67,6 @@ namespace Microservices.ProductAPI
                 builder.Host.UseSerilog((fileContext, loggingConfig) =>
                 {
                     loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
-                    loggingConfig.MinimumLevel.Debug();
                 });
             }
 

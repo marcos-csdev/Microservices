@@ -33,7 +33,7 @@ namespace Microservices.AuthAPI.Service
         {
             var userRetrieved = await _userRepository.GetDbUserByUserNameAsync(loginRequestDto.UserName);
 
-            if (userRetrieved is null) return null;
+            if (userRetrieved == null) return null;
 
             var isValid = await _userManagerService.CheckPasswordAsync(userRetrieved, loginRequestDto.Password);
 
@@ -45,7 +45,7 @@ namespace Microservices.AuthAPI.Service
 
             var userDto = _mapper.Map<MSUserDto>(userRetrieved);
 
-            if(userDto is null) return null;
+            if(userDto == null) return null;
 
             var response = LoginResponseDtoFactory.Create(userDto, jwtToken);
 
@@ -74,7 +74,7 @@ namespace Microservices.AuthAPI.Service
         {
             var user = await _userRepository.GetDbUserByEmailAsync(email);
 
-            if (user is null) return false;
+            if (user == null) return false;
 
             //if role doesnt exist, create it
             if (!await _roleManagerService.RoleExistsAsync(roleName))
@@ -92,7 +92,7 @@ namespace Microservices.AuthAPI.Service
         {
             var userFound = await _userRepository.GetDbUserByEmailAsync(email);
 
-            if (userFound is null) return false;
+            if (userFound == null) return false;
 
             var isUserDeleted = await _userRepository.DeleteUserAsync(email);
 

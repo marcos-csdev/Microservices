@@ -22,17 +22,34 @@ namespace Microservices.ShoppingCartAPI.Repositories
             _mapper = mapper;
         }
 
-        public async Task<List<ProductDto>?> GetCartAsync()
+        public async Task<CartDto> GetCartAsync(string userId)
         {
-            //var dbProducts = await _dbContext.CartHeaders.ToListAsync();
+            if (string.IsNullOrWhiteSpace(userId)) return null!;
 
-            //if (dbProducts is null) return new List<ProductDto>();
+            var dbCartHeader = await _dbContext.CartHeaders.FirstOrDefaultAsync(u => u.UserId == userId);
 
-            //var productsDto = _mapper.Map<List<ProductDto>>(dbProducts);
+            if (dbCartHeader == null) return null!;
 
-            //return productsDto;
+            var mappedCartHeader = _mapper.Map<CartHeaderDto>(dbCartHeader);
 
-            throw new NotImplementedException();
+            if(mappedCartHeader == null) return null!;
+
+            var dbCartDetails = _dbContext.CartDetails.Where(u => u.CartHeaderId == dbCartHeader.CartHeaderId);
+
+            if (dbCartDetails.Count() == 0) return null!;
+
+            var mappedCartDetails = _mapper.Map<IEnumerable<CartDetailsDto>>(dbCartDetails);
+
+            if (mappedCartDetails.Count() == 0) return null!;
+
+            var cartDto = new CartDto
+            {
+                CartHeader = mappedCartHeader,
+                CartDetails = mappedCartDetails
+            };
+
+            return cartDto;
+
         }
 
         public async Task<CartHeaderModel?> GetCartHeadersAsync(string userId)
@@ -46,16 +63,16 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
         public async Task UpsertCartAsync(CartDto cartDto)
         {
-            if (cartDto is null ||
-                cartDto.CartHeader is null ||
-                cartDto.CartDetails is null)
+            if (cartDto == null ||
+                cartDto.CartHeader == null ||
+                cartDto.CartDetails == null)
                 return;
 
             var cartHeaderFromDb = await _dbContext.CartHeaders.AsNoTracking()
                     .FirstOrDefaultAsync(u => u.UserId == cartDto.CartHeader.UserId);
 
 
-            if (cartHeaderFromDb is null)
+            if (cartHeaderFromDb == null)
             {
                 //create header and details
                 var mappedCartHeader = _mapper.Map<CartHeaderModel>(cartDto.CartHeader);
@@ -69,7 +86,7 @@ namespace Microservices.ShoppingCartAPI.Repositories
             }
             else
             {
-                //if header is not null
+                //if header != null
                 //check if details has same product
                 var cartDetailsFromDb = await _dbContext.CartDetails.AsNoTracking().FirstOrDefaultAsync(
                     u => u.ProductId == cartDto.CartDetails.First().ProductId &&
@@ -104,7 +121,7 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
             var dbCartDetails = await _dbContext.CartDetails.FirstOrDefaultAsync(cart => cart.CartDetailsId == cartDetailsId);
 
-            if (dbCartDetails is null) return false;
+            if (dbCartDetails == null) return false;
 
             var deletedProduct = _dbContext.CartDetails.Remove(dbCartDetails);
 

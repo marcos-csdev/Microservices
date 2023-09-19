@@ -12,19 +12,19 @@ namespace Microservices.ShoppingCartAPI.Controllers
     [Authorize]
     public class ShoppingCartController : APIBaseController
     {
-        private readonly IShoppingCartRepository _productsRepository;
+        private readonly IShoppingCartRepository _cartRepository;
 
-        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository productsRepository):base(logger)
+        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository):base(logger)
         {
-            _productsRepository = productsRepository;
+            _cartRepository = cartsRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("GetCart/{userId}")]
+        public async Task<IActionResult> GetCart(string userId)
         {
             try
             {
-                var cart = await _productsRepository.GetCartAsync();
+                var cart = await _cartRepository.GetCartAsync(userId);
 
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, cart, "Success");
 

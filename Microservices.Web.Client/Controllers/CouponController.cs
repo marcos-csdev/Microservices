@@ -54,7 +54,7 @@ namespace Microservices.Web.Client.Controllers
                 {
 
                     var response = await _couponService.AddCouponAsync(couponDto);
-                    if (response is not null && response.IsSuccess)
+                    if (response != null && response.IsSuccess)
                     {
                         TempData["success"] = "Coupon created";
                         return RedirectToAction(nameof(CouponIndex));

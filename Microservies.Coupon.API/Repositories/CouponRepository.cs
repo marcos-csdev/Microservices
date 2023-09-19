@@ -48,7 +48,7 @@ namespace Microservices.CouponAPI.Repositories
             var coupon = await _dbContext.Coupons
                 .FirstOrDefaultAsync(c => c.Id == couponId);
 
-            if(coupon is null) return null!;
+            if(coupon == null) return null!;
 
             var couponDto = _mapper.Map<CouponDto>(coupon);
 
@@ -68,7 +68,7 @@ namespace Microservices.CouponAPI.Repositories
 
         public async Task<bool> UpsertCouponAsync(CouponDto couponDto)
         {
-            if(couponDto is null) return false;
+            if(couponDto == null) return false;
 
             var mappedCoupon = _mapper.Map<CouponModel>(couponDto);
 
@@ -76,7 +76,7 @@ namespace Microservices.CouponAPI.Repositories
 
             EntityEntry entityEntry;
             //If product was not found, Create it
-            if(dbCoupon is null)
+            if(dbCoupon == null)
             {
                 entityEntry = await _dbContext.Coupons.AddAsync(mappedCoupon);
             }

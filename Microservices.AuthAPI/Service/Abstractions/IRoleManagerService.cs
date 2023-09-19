@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Microservices.AuthAPI.Service
+namespace Microservices.AuthAPI.Service.Abstractions
 {
     public interface IRoleManagerService
     {

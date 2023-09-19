@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microservices.AuthAPI.Service.Abstractions;
+using Microsoft.AspNetCore.Identity;
 
 namespace Microservices.AuthAPI.Service
 {

@@ -24,14 +24,14 @@ namespace Microservices.Web.Client.Services
         }
 
 
-        public async Task<ResponseDto?> SendAsync(RequestDto apiRequest, bool withBearer = true)
+        public async Task<ResponseDto?> SendAsync(RequestDto apiRequest, bool withBearer = true, string clientName = "MicroServicesClient")
         {
             string apiContent;
             try
             {
-                var client = _httpClientFactory.CreateClient("MicroServicesAPI");
+                var client = _httpClientFactory.CreateClient(clientName);
 
-                var appType = "application/json";
+                var appType = StaticDetails.AppType;
 
                 var message = SetRequestMessage(apiRequest, appType, withBearer);
 
@@ -70,7 +70,7 @@ namespace Microservices.Web.Client.Services
 
         private static void SetMessageBody(RequestDto apiRequest, string appType, HttpRequestMessage message)
         {
-            if (apiRequest.Body is not null)
+            if (apiRequest.Body != null)
             {
                 var serializedJson = JsonConvert.SerializeObject(apiRequest.Body);
                 message.Content = new StringContent(serializedJson, Encoding.UTF8, appType);

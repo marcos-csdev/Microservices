@@ -1,20 +1,12 @@
-﻿using Microservices.CouponAPI;
-using Microservices.CouponAPI.Data;
+﻿
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System.Security.Claims;
 
-namespace Microservices.Coupon.Web.Tests
+namespace Microservices.Web.Client.Tests
 {
     public abstract class CustomWebApplicationFactory<TServiceInterface> : WebApplicationFactory<Program> where TServiceInterface : class
     {
@@ -51,12 +43,12 @@ namespace Microservices.Coupon.Web.Tests
 
         private static void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
         {
-            services.RemoveAll(typeof(MsDbContext));
+            //services.RemoveAll(typeof(MsDbContext));
 
             var connectionString = context.Configuration.GetConnectionString("DefaultConnection");
 
-            services.AddDbContext<MsDbContext>(option =>
-                option.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+            //services.AddDbContext<MsDbContext>(option =>
+            //    option.UseSqlServer(connectionString), ServiceLifetime.Scoped);
 
             services.AddLogging(configure =>
                 configure.AddSerilog());

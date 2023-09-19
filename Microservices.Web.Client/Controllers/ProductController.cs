@@ -49,7 +49,7 @@ namespace Microservices.Web.Client.Controllers
                 {
 
                     var response = await _productService.AddProductAsync(productDto);
-                    if (response is not null && response.IsSuccess)
+                    if (response != null && response.IsSuccess)
                     {
                         TempData["success"] = "Product created";
                         return RedirectToAction(nameof(ProductIndex));
@@ -109,13 +109,13 @@ namespace Microservices.Web.Client.Controllers
             {
                 if(ModelState.IsValid)
                 {
-                    if (product is null) return BadRequest(ModelState);
+                    if (product == null) return BadRequest(ModelState);
 
                     var response = await _productService.UpdateProductAsync(product);
 
                     var deserializedProduct = DeserializeResponseToEntity<ProductDto>(response!);
 
-                    if(deserializedProduct is not null && deserializedProduct.Id > 0)
+                    if(deserializedProduct != null && deserializedProduct.Id > 0)
                         return RedirectToAction(nameof(ProductIndex));
 
                 }

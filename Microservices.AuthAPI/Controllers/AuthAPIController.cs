@@ -46,7 +46,7 @@ namespace Microservices.AuthAPI.Controllers
             {
                 var loginResponse = await _authService.Login(model);
 
-                if(loginResponse is null) return NotFound("user not found");
+                if(loginResponse == null) return NotFound("user not found");
 
                 return Ok(loginResponse);
             }

@@ -33,21 +33,21 @@ namespace Microservices.Web.Client.Controllers
             try
             {
 
-                if (response is null)
+                if (response == null)
                     throw new Exception("Could not retrieve products from the server");
 
-                if (response is not null && response.IsSuccess)
+                if (response != null && response.IsSuccess)
                 {
                     var jsonResponse = JObject.Parse(response.Result?.ToString()!);
 
                     list = JsonConvert.DeserializeObject<List<TEntity>>(jsonResponse["result"]!.ToString());
 
-                    if (list is null)
+                    if (list == null)
                         throw new Exception("Problem converting list to JSON");
                 }
                 else
                 {
-                    if (response is null)
+                    if (response == null)
                     {
                         throw new Exception("Could not retrieve a response from the server");
                     }
@@ -72,21 +72,21 @@ namespace Microservices.Web.Client.Controllers
             TEntity? entity = null;
 
 
-            if (response is null)
+            if (response == null)
                 throw new Exception("Could not retrieve products from the server");
 
-            if (response is not null && response.IsSuccess)
+            if (response != null && response.IsSuccess)
             {
                 var jsonResponse = JObject.Parse(response.Result?.ToString()!);
 
                 entity = JsonConvert.DeserializeObject<TEntity>(jsonResponse["result"]!.ToString());
 
-                if (entity is null)
+                if (entity == null)
                     TempData["error"] = "Problem converting list to JSON";
             }
             else
             {
-                if (response is null)
+                if (response == null)
                 {
                     TempData["error"] = "Could not retrieve a response from the server";
                 }
@@ -103,9 +103,9 @@ namespace Microservices.Web.Client.Controllers
 
         protected IActionResult SetReturnMessage(ResponseDto response, string message, string actionName, string controllerName)
         {
-            if (response is null || response?.IsSuccess == false)
+            if (response == null || response?.IsSuccess == false)
             {
-                if (response is null || string.IsNullOrWhiteSpace(response?.DisplayMessage))
+                if (response == null || string.IsNullOrWhiteSpace(response?.DisplayMessage))
                 {
                     return NotFound();
                 }

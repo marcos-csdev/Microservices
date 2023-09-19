@@ -39,7 +39,7 @@ namespace Microservices.Web.Client.Controllers
             {
                 var response = await _authService.LoginAsync(loginRequest);
 
-                if (response is not null && response.IsSuccess)
+                if (response != null && response.IsSuccess)
                 {
                     var content = response.Result?.ToString();
                     if (!string.IsNullOrWhiteSpace(content))
@@ -55,7 +55,7 @@ namespace Microservices.Web.Client.Controllers
                 }
                 else
                 {
-                    var message = response is not null ? response.DisplayMessage : "An unexpected error happened";
+                    var message = response != null ? response.DisplayMessage : "An unexpected error happened";
 
                     //ModelState.AddModelError("CustomError", message);
 
@@ -106,7 +106,7 @@ namespace Microservices.Web.Client.Controllers
                 {
                     responseDto = await _authService.RegisterAsync(registrationRequest);
                     //if role has not been defined, assume its a customer
-                    if (responseDto is not null && responseDto.IsSuccess)
+                    if (responseDto != null && responseDto.IsSuccess)
                     {
                         if (string.IsNullOrWhiteSpace(registrationRequest.Role))
                         {
@@ -116,7 +116,7 @@ namespace Microservices.Web.Client.Controllers
                         {
                             var assignRole = await _authService.AssignRoleAsync(registrationRequest);
 
-                            if (assignRole is null || assignRole.IsSuccess == false)
+                            if (assignRole == null || assignRole.IsSuccess == false)
                             {
                                 TempData["error"] = "Could not assign a role to the user";
                                 ViewBag.RoleList = PopulateSelectList();
@@ -135,7 +135,7 @@ namespace Microservices.Web.Client.Controllers
                 LogError(ex);
             }
 
-            TempData["error"] = responseDto is not null && !string.IsNullOrWhiteSpace(responseDto.DisplayMessage) ? responseDto.DisplayMessage : "An unexpected error happened";
+            TempData["error"] = responseDto != null && !string.IsNullOrWhiteSpace(responseDto.DisplayMessage) ? responseDto.DisplayMessage : "An unexpected error happened";
 
             ViewBag.RoleList = PopulateSelectList();
             return View(registrationRequest);
@@ -153,7 +153,7 @@ namespace Microservices.Web.Client.Controllers
         {
             var claimName = token.Claims.FirstOrDefault(t => t.Type == claimProperty);
 
-            if (claimName is not null)
+            if (claimName != null)
             {
                 identity.AddClaim(
                     new Claim(claimProperty, claimName.Value));
@@ -163,7 +163,7 @@ namespace Microservices.Web.Client.Controllers
         {
             var claimName = token.Claims.FirstOrDefault(t => t.Type == claimProperty);
 
-            if (claimName is not null)
+            if (claimName != null)
             {
                 identity.AddClaim(
                     new Claim(claimType, claimName.Value));
@@ -172,7 +172,7 @@ namespace Microservices.Web.Client.Controllers
 
         private static void AddClaimsToIdentity(ClaimsIdentity identity, JwtSecurityToken? token)
         {
-            if (token is not null && token.Claims is not null)
+            if (token != null && token.Claims != null)
             {
 
                 AddToClaimsIdentity(JwtRegisteredClaimNames.Name, token, identity);

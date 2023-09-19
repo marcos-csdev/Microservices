@@ -42,7 +42,7 @@ namespace Microservices.AuthAPI.Service.Tests
         [Fact]
         public async Task Registration_Successful()
         {
-            if (Service is null) Assert.Fail("There was a problem setting up the Auth Service");
+            if (Service == null) Assert.Fail("There was a problem setting up the Auth Service");
 
             var createdUser = await Service.Register(_registrationUser);
 
@@ -54,7 +54,7 @@ namespace Microservices.AuthAPI.Service.Tests
         [Fact]
         public async Task RemoveUser_Removal_Successful()
         {
-            if (Service is null) Assert.Fail("There was a problem setting up the Auth Service");
+            if (Service == null) Assert.Fail("There was a problem setting up the Auth Service");
 
             var isSuccessful = await Service.RemoveUser(_registrationUser.Email);
             isSuccessful.Should().BeTrue();

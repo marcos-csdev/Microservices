@@ -18,7 +18,7 @@ namespace Microservices.AuthAPI.Service
         }
         public string GenerateToken(MSUser user, IEnumerable<string> roles)
         {
-            if (user is null) return "";
+            if (user == null) return "";
 
             var claims = CreateClaims(user, roles);
 
@@ -43,7 +43,8 @@ namespace Microservices.AuthAPI.Service
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!)
             };
 
-            //adds a freshly instantiated Claim object to the list with the role from the parameter passed in 
+            //adds a freshly instantiated Claim object to the list with the role from the parameter passed in (not recommended for security reasons)
+            //DECIDING WHICH APPROACH TO FOLLOW HERE
             claims.AddRange(
                 roles.Select(role =>
                     new Claim(ClaimTypes.Role, role)

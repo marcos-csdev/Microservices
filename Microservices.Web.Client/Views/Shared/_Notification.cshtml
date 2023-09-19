@@ -1,4 +1,4 @@
-﻿@if(TempData["error"] is not null){
+﻿@if(TempData["error"] != null){
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
@@ -7,7 +7,7 @@
     </script>
 }
 
-@if (TempData["success"] is not null)
+@if (TempData["success"] != null)
 {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>

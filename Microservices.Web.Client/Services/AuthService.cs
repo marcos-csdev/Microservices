@@ -33,7 +33,7 @@ namespace Microservices.Web.Client.Services
             var apiRequest = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
                 $"{StaticDetails.AuthAPIUrl}/api/auth/{operation}", registrationRequestDto);
 
-            if (apiRequest is null) return null;
+            if (apiRequest == null) return null;
 
             var request = await _baseService.SendAsync(apiRequest, withBearer);
 
@@ -45,7 +45,7 @@ namespace Microservices.Web.Client.Services
             var apiRequest = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
                 $"{StaticDetails.AuthAPIUrl}/api/auth/{operation}", loginRequestDto);
 
-            if (apiRequest is null) return null;
+            if (apiRequest == null) return null;
 
             var request = await _baseService.SendAsync(apiRequest);
 

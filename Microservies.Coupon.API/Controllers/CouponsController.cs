@@ -53,7 +53,7 @@ namespace Microservices.CouponAPI.Controllers
             {
                 var couponDto = await _couponRepository.GetCouponByIdAsync(couponId);
 
-                if (couponDto is null) return NotFound("The provided coupon was not found");
+                if (couponDto == null) return NotFound("The provided coupon was not found");
 
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDto, "Success");
 

@@ -41,7 +41,7 @@ namespace Microservices.Web.Client.Services
 
         public async Task<ResponseDto?> AddEntityAsync<TEntity>(TEntity? entityDto, string url) where TEntity : class
         {
-            if (entityDto is null) return null;
+            if (entityDto == null) return null;
 
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
                 url,
@@ -68,7 +68,7 @@ namespace Microservices.Web.Client.Services
         public async Task<ResponseDto?> UpdateEntityAsync<TEntity>( TEntity? entityDto, string url)
             where TEntity : class
         {
-            if (entityDto is null) return null;
+            if (entityDto == null) return null;
 
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.PUT,
                 url,

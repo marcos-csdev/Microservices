@@ -1,16 +1,16 @@
 ﻿using Microservices.Web.Client.Services;
 using Microservices.Web.Client.Services.Abstractions;
-using Microservices.Coupon.Web.Tests.Extensions;
+using Microservices.Web.Client.Tests.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using FluentAssertions.Common;
 
-namespace Microservices.Coupon.Web.Tests
+namespace Microservices.Web.Client.Tests
 {
     public class ServiceProviderFactory
     {
 
-        private static readonly MockAuthUser _user = new MockAuthUser(
+        private static readonly MockAuthUser _user = new(
             new Claim("sub", Guid.NewGuid().ToString()),
             new Claim("email", "default-user@xyz.com"));
 

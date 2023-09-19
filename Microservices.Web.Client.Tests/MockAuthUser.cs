@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microservices.Coupon.Web.Tests
+namespace Microservices.Web.Client.Tests
 {
     public class MockAuthUser
     {
