@@ -32,15 +32,15 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
             var mappedCartHeader = _mapper.Map<CartHeaderDto>(dbCartHeader);
 
-            if(mappedCartHeader == null) return null!;
+            if (mappedCartHeader == null) return null!;
 
             var dbCartDetails = _dbContext.CartDetails.Where(u => u.CartHeaderId == dbCartHeader.CartHeaderId);
 
-            if (dbCartDetails.Count() == 0) return null!;
+            if (!dbCartDetails.Any()) return null!;
 
             var mappedCartDetails = _mapper.Map<IEnumerable<CartDetailsDto>>(dbCartDetails);
 
-            if (mappedCartDetails.Count() == 0) return null!;
+            if (!mappedCartDetails.Any()) return null!;
 
             var cartDto = new CartDto
             {
@@ -52,84 +52,135 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
         }
 
+        private async Task<CartHeaderModel> CreateCartHeadersAsync(CartDto cartDto)
+        {
+            var mappedCartHeader = _mapper.Map<CartHeaderModel>(cartDto.CartHeader);
+            if (mappedCartHeader == null) return null!;
+
+            await _dbContext.CartHeaders.AddAsync(mappedCartHeader);
+
+            await _dbContext.SaveChangesAsync();
+
+            return mappedCartHeader;
+        }
+        public async Task<int> CreateCartDetailsAsync(CartDto cartDto)
+        {
+            var mappedCartHeader = await CreateCartHeadersAsync(cartDto);
+            
+            if(mappedCartHeader == null) return 0;
+
+            var firstCartDetails = cartDto.CartDetails!.First();
+            firstCartDetails.CartHeaderId = mappedCartHeader.CartHeaderId;
+
+            var mappedCartDetails = _mapper.Map<CartDetailsModel>(firstCartDetails);
+
+            if (mappedCartDetails == null) return 0;
+            mappedCartDetails.CartHeader = mappedCartHeader;
+
+            _dbContext.CartDetails.Add(mappedCartDetails);
+
+            var changes = await _dbContext.SaveChangesAsync();
+
+            return changes;
+        }
+
+        private async Task<int> CreateFullCartAsync(CartDto cartDto)
+        {
+
+            var mappedCartHeader = _mapper.Map<CartHeaderModel>(cartDto.CartHeader);
+            if (mappedCartHeader == null) return 0;
+
+            await _dbContext.CartHeaders.AddAsync(mappedCartHeader);
+
+            _dbContext.SaveChanges();
+
+            //cart header id will be populated suring the SaveChanges()
+            var firstCartDetails = cartDto.CartDetails!.First();
+            firstCartDetails.CartHeaderId = mappedCartHeader.CartHeaderId;
+
+            var mappedCartDetails = _mapper.Map<CartDetailsModel>(firstCartDetails);
+
+            firstCartDetails.CartHeaderId = mappedCartHeader.CartHeaderId;
+            _dbContext.CartDetails.Add(mappedCartDetails);
+
+            return await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<CartHeaderModel?> GetCartHeadersAsync(string userId)
         {
             if (string.IsNullOrWhiteSpace(userId)) return null!;
 
-            var dbCartHeader = await _dbContext.CartHeaders.FirstOrDefaultAsync(u => u.UserId == userId);
+            var dbCartHeader = await _dbContext.CartHeaders.FirstOrDefaultAsync(ch => ch.UserId == userId);
 
             return dbCartHeader;
         }
 
-        public async Task UpsertCartAsync(CartDto cartDto)
+        public async Task<CartDetailsModel?> GetCartDetailsAsync(int productId, int cartHeaderId)
         {
-            if (cartDto == null ||
-                cartDto.CartHeader == null ||
-                cartDto.CartDetails == null)
-                return;
+            if (productId < 1) return null!;
 
-            var cartHeaderFromDb = await _dbContext.CartHeaders.AsNoTracking()
-                    .FirstOrDefaultAsync(u => u.UserId == cartDto.CartHeader.UserId);
+            //without the AsNoTracking function, it returns a tracking multiple requests error
+            var dbCartDetails = await _dbContext.CartDetails.AsNoTracking().FirstOrDefaultAsync(cd => cd.ProductId == productId && cd.CartHeaderId == cartHeaderId);
 
-
-            if (cartHeaderFromDb == null)
-            {
-                //create header and details
-                var mappedCartHeader = _mapper.Map<CartHeaderModel>(cartDto.CartHeader);
-                _dbContext.CartHeaders.Add(mappedCartHeader);
-                //await _dbContext.SaveChangesAsync();
-
-                cartDto.CartDetails.First().CartHeaderId = mappedCartHeader.CartHeaderId;
-                _dbContext.CartDetails.Add(_mapper.Map<CartDetailsModel>(cartDto.CartDetails.First()));
-
-                await _dbContext.SaveChangesAsync();
-            }
-            else
-            {
-                //if header != null
-                //check if details has same product
-                var cartDetailsFromDb = await _dbContext.CartDetails.AsNoTracking().FirstOrDefaultAsync(
-                    u => u.ProductId == cartDto.CartDetails.First().ProductId &&
-                    u.CartHeaderId == cartHeaderFromDb.CartHeaderId);
-
-                if (cartDetailsFromDb == null)
-                {
-                    //create cartdetails
-                    cartDto.CartDetails.First().CartHeaderId = cartHeaderFromDb.CartHeaderId;
-                    _dbContext.CartDetails.Add(_mapper.Map<CartDetailsModel>(cartDto.CartDetails.First()));
-                }
-                else
-                {
-                    //update count in cart details
-                    cartDto.CartDetails.First().Count += cartDetailsFromDb.Count;
-
-                    cartDto.CartDetails.First().CartHeaderId = cartDetailsFromDb.CartHeaderId;
-
-                    cartDto.CartDetails.First().CartDetailsId = cartDetailsFromDb.CartDetailsId;
-
-                    _dbContext.CartDetails.Update(_mapper.Map<CartDetailsModel>(cartDto.CartDetails.First()));
-                }
-
-                await _dbContext.SaveChangesAsync();
-            }
-
+            return dbCartDetails;
         }
 
-        public async Task<bool> DelectProductAsync([FromBody] int cartDetailsId)
+        public async Task<int> UpsertCartCountAsync(CartDto cartDto, CartDetailsModel dbCartDetails)
         {
-            if (cartDetailsId < 1) return false;
+
+            //update count in cart details
+            var firstCartDetails = cartDto.CartDetails!.First();
+
+            firstCartDetails.Count += dbCartDetails.Count;
+            firstCartDetails.CartHeaderId = dbCartDetails.CartHeaderId;
+            firstCartDetails.CartDetailsId = dbCartDetails.CartDetailsId;
+
+            _dbContext.CartDetails.Update(_mapper.Map<CartDetailsModel>(firstCartDetails));
+
+            var changes = await _dbContext.SaveChangesAsync();
+
+            return changes;
+        }
+
+        public async Task<int> UpsertCartAsync(CartDto cartDto)
+        {
+            var dbCartHeader = await GetCartHeadersAsync(cartDto.CartHeader!.UserId!);
+
+            //Create cart header and details
+            if (dbCartHeader == null)
+            {
+                return await CreateCartDetailsAsync(cartDto);
+            }
+            else//check if details has same product
+            {
+                //cartDetails will only have one entry here since the only way to add an item is through the product details page
+                var firstCartDetails = cartDto.CartDetails!.First();
+
+                var dbCartDetails = await GetCartDetailsAsync(firstCartDetails.ProductId, dbCartHeader.CartHeaderId);
+
+                if (dbCartDetails == null)
+                {
+                    //create cart details
+                    return await CreateCartDetailsAsync(cartDto);
+                }
+                else//update cart details from DB
+                {
+                    return await UpsertCartCountAsync(cartDto, dbCartDetails);
+                }
+            }
+        }
+
+        public async Task<int> DelectProductAsync([FromBody] int cartDetailsId)
+        {
+            if (cartDetailsId < 1) return 0;
 
             var dbCartDetails = await _dbContext.CartDetails.FirstOrDefaultAsync(cart => cart.CartDetailsId == cartDetailsId);
 
-            if (dbCartDetails == null) return false;
+            if (dbCartDetails == null) return 0;
 
             var deletedProduct = _dbContext.CartDetails.Remove(dbCartDetails);
 
-            await _dbContext.SaveChangesAsync();
-
-            //if product was deleted, return true
-            return deletedProduct.State != EntityState.Unchanged;
+            return await _dbContext.SaveChangesAsync();
         }
-
     }
 }

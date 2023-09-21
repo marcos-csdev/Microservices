@@ -103,7 +103,7 @@ namespace Microservices.CouponAPI.Controllers
                 var newCoupon = await _couponRepository.UpsertCouponAsync(couponDto);
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDto, "Success");
 
-                return Accepted(ControllerResponse);
+                return Ok(ControllerResponse);
             }
             catch (Exception ex)
             {
@@ -125,7 +125,7 @@ namespace Microservices.CouponAPI.Controllers
                 var hasBeenDeleted = await _couponRepository.DeleteCouponAsync(couponId);
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, hasBeenDeleted, "Success");
 
-                return Accepted(ControllerResponse);
+                return Ok(ControllerResponse);
             }
             catch (Exception ex)
             {

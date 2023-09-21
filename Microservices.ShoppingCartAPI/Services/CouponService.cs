@@ -11,7 +11,8 @@ namespace Microservices.ShoppingCartAPI.Services
 
         public async Task<CouponDto> GetCoupon(string couponCode)
         {
-            var response = await SendMessageAsync("ShoppingCartAPIClient", $"{StaticDetails.CouponAPIURL}/{couponCode}");
+            var url = $"{StaticDetails.CouponAPIURL}/{couponCode}";
+            var response = await SendMessageAsync("ShoppingCartAPIClient", url);
 
             var coupon = DeserializeResponseToEntity<CouponDto>(response!);
 

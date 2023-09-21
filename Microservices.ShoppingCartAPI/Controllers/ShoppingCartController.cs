@@ -4,17 +4,17 @@ using Microservices.ShoppingCartAPI.Repositories;
 using Microservices.ShoppingCartAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Microservices.ShoppingCartAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    [Authorize]
     public class ShoppingCartController : APIBaseController
     {
         private readonly IShoppingCartRepository _cartRepository;
 
-        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository):base(logger)
+        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository) : base(logger)
         {
             _cartRepository = cartsRepository;
         }
@@ -24,7 +24,11 @@ namespace Microservices.ShoppingCartAPI.Controllers
         {
             try
             {
+                if (string.IsNullOrEmpty(userId)) return BadRequest(string.Empty);
+
                 var cart = await _cartRepository.GetCartAsync(userId);
+
+                var products =
 
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, cart, "Success");
 
@@ -37,7 +41,35 @@ namespace Microservices.ShoppingCartAPI.Controllers
 
             return Problem("An error happened retrieving the products");
         }
+
         
+
+        [HttpPost("Upsert")]
+        public async Task<IActionResult> Upsert(CartDto cartDto)
+        {
+            try
+            {
+                if (cartDto == null || cartDto.CartHeader == null || cartDto.CartDetails == null)
+                {
+                    ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No cart has been acquired");
+
+                    return BadRequest(ControllerResponse);
+                }
+
+                await _cartRepository.UpsertCartAsync(cartDto);
+                ControllerResponse.Result = cartDto;
+
+                return Ok(ControllerResponse);
+
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+            return Problem("An error happened updating the products");
+        }
+
         //[HttpGet("GetById/{productId}")]
         //public async Task<IActionResult> GetProductByIDAsync(int productId)
         //{

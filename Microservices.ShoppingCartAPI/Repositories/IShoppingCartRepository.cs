@@ -6,9 +6,12 @@ namespace Microservices.ShoppingCartAPI.Repositories
 {
     public interface IShoppingCartRepository
     {
-        Task<bool> DelectProductAsync([FromBody] int cartDetailsId);
+        Task<int> CreateCartDetailsAsync(CartDto cartDto);
+        Task<int> DelectProductAsync([FromBody] int cartDetailsId);
         Task<CartDto> GetCartAsync(string userId);
+        Task<CartDetailsModel?> GetCartDetailsAsync(int productId, int cartHeaderId);
         Task<CartHeaderModel?> GetCartHeadersAsync(string userId);
-        Task UpsertCartAsync(CartDto cartDto);
+        Task<int> UpsertCartAsync(CartDto cartDto);
+        Task<int> UpsertCartCountAsync(CartDto cartDto, CartDetailsModel dbCartDetails);
     }
 }
