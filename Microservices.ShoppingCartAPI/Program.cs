@@ -67,7 +67,9 @@ namespace Microservices.ShoppingCartAPI
                 builder.Host.UseSerilog((fileContext, loggingConfig) =>
                 {
                     loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+
                 });
+                
             }
 
             void AddAutoMapper(WebApplicationBuilder builder)

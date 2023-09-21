@@ -18,7 +18,8 @@ namespace Microservices.ShoppingCartAPI.Controllers
         protected void LogError(Exception ex)
         {
             ControllerResponse.IsSuccess = false;
-            ControllerResponse.ErrorMessages = new List<string> { ex.Message };
+            var message = ex.InnerException == null ? ex.Message : ex.InnerException.Message;
+            ControllerResponse.ErrorMessages = new List<string> { message };
             Logger.Error(ex.Message, ex);
         }
     }
