@@ -5,9 +5,6 @@ using Microservices.ShoppingCartAPI.Models;
 using Microservices.ShoppingCartAPI.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.ComponentModel;
-using System.Reflection.PortableExecutable;
 
 namespace Microservices.ShoppingCartAPI.Repositories
 {
@@ -59,25 +56,18 @@ namespace Microservices.ShoppingCartAPI.Repositories
             if (mappedCartHeader == null) return null!;
 
             //headers may exist while details may not and vice-versa
-            if(mappedCartHeader.CartHeaderId == 0)
-            {
-                await _dbContext.CartHeaders.AddAsync(mappedCartHeader);
-            }
-            else
-            {
-                _dbContext.CartHeaders.Update(mappedCartHeader);
-            }
-
+            await _dbContext.CartHeaders.AddAsync(mappedCartHeader);
 
             await _dbContext.SaveChangesAsync();
 
             return mappedCartHeader;
         }
-        public async Task<int> UpsertCartDetailsAsync(CartDto cartDto)
+
+        public async Task<int> CreateCartDetailsAsync(CartDto cartDto)
         {
             var mappedCartHeader = await CreateCartHeadersAsync(cartDto);
-            
-            if(mappedCartHeader == null) return 0;
+
+            if (mappedCartHeader == null) return 0;
 
             var firstCartDetails = cartDto.CartDetails!.First();
             firstCartDetails.CartHeaderId = mappedCartHeader.CartHeaderId;
@@ -88,14 +78,7 @@ namespace Microservices.ShoppingCartAPI.Repositories
             mappedCartDetails.CartHeader = mappedCartHeader;
 
             //headers may exist while details may not and vice-versa
-            if (mappedCartDetails.CartDetailsId == 0)
-            {
-                await _dbContext.CartDetails.AddAsync(mappedCartDetails);
-            }
-            else
-            {
-                _dbContext.CartDetails.Update(mappedCartDetails);
-            }
+            await _dbContext.CartDetails.AddAsync(mappedCartDetails);
 
             var changes = await _dbContext.SaveChangesAsync();
 
@@ -112,6 +95,15 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
             return dbCartHeader;
         }
+        public async Task<CartDetailsModel?> GetCartDetailsAsync(int cartDetailsId)
+        {
+            if (cartDetailsId < 1) return null!;
+
+            //without the AsNoTracking function, EF returns a tracking multiple requests error as this would be a second transaction being tracked
+            var dbCartDetails = await _dbContext.CartDetails.AsNoTracking().FirstOrDefaultAsync(cd => cd.CartDetailsId == cartDetailsId);
+
+            return dbCartDetails;
+        }
 
         public async Task<CartDetailsModel?> GetCartDetailsAsync(int productId, int cartHeaderId)
         {
@@ -125,8 +117,7 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
         public async Task<int> UpdateCartCountAsync(CartDto cartDto, CartDetailsModel dbCartDetails)
         {
-
-            //update count in cart details
+            //this allows to relate the user to the correct cart even when the ids are invalid 
             var firstCartDetails = cartDto.CartDetails!.First();
 
             firstCartDetails.Count += dbCartDetails.Count;
@@ -148,19 +139,19 @@ namespace Microservices.ShoppingCartAPI.Repositories
             //Create cart header and details
             if (dbCartHeader == null)
             {
-                return await UpsertCartDetailsAsync(cartDto);
+                return await CreateCartDetailsAsync(cartDto);
             }
             else//check if details has same product
             {
-                //cartDetails will only have one entry here since the only way to add an item is through the product details page
+                //this allows to relate the user to the correct cart even when the ids are invalid 
                 var firstCartDetails = cartDto.CartDetails!.First();
 
-                var dbCartDetails = await GetCartDetailsAsync(firstCartDetails.ProductId, dbCartHeader.CartHeaderId);
+                var dbCartDetails = await GetCartDetailsAsync(firstCartDetails.ProductId, cartDto.CartHeader.CartHeaderId);
 
                 if (dbCartDetails == null)
                 {
                     //create cart details
-                    return await UpsertCartDetailsAsync(cartDto);
+                    return await CreateCartDetailsAsync(cartDto);
                 }
                 else//update cart details from DB
                 {
@@ -169,7 +160,39 @@ namespace Microservices.ShoppingCartAPI.Repositories
             }
         }
 
-        public async Task<int> DelectProductAsync([FromBody] int cartDetailsId)
+        private async Task RemoveCartHeader(int cartHeaderId, int cartTotalItems)
+        {
+            if (cartTotalItems == 1)
+            {
+                var cartHeader = await _dbContext.CartHeaders.FirstOrDefaultAsync(user => user.CartHeaderId == cartHeaderId);
+
+                if (cartHeader == null)
+                    return;
+
+                _dbContext.CartHeaders.Remove(cartHeader);
+            }
+        }
+
+        public async Task<int> RemoveCartAsync(int cartDetailsId)
+        {
+            var dbCartDetails = await GetCartDetailsAsync(cartDetailsId);
+
+            var cartTotalItems = _dbContext.CartDetails.
+                Where(user => user.CartHeaderId == cartDetailsId)
+                .Count();
+
+            if (dbCartDetails == null || dbCartDetails.CartHeader == null) return 0;
+
+            _dbContext.CartDetails.Remove(dbCartDetails);
+
+            //if there's only one item for the user, remove the cart header along (last item being removed from the cart)
+            await RemoveCartHeader(dbCartDetails.CartHeader.CartHeaderId, cartTotalItems);
+
+            return await _dbContext.SaveChangesAsync();
+
+        }
+
+        public async Task<int> RemoveProductAsync(int cartDetailsId)
         {
             if (cartDetailsId < 1) return 0;
 

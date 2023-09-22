@@ -70,5 +70,28 @@ namespace Microservices.ShoppingCartAPI.Controllers
             return Problem("An error happened updating the products");
         }
 
+        [HttpDelete("RemoveCart")]
+        public async Task<IActionResult> RemoveCart([FromBody] int cartDetailsId)
+        {
+            try
+            {
+                if(cartDetailsId < 1)
+                {
+                    ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No cart has been acquired");
+
+                    return BadRequest(ControllerResponse);
+                }
+
+                await _cartRepository.RemoveCartAsync(cartDetailsId);
+                ControllerResponse.Result = cartDetailsId;
+                return Ok(ControllerResponse);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+            return Problem("An error happened removing the cart");
+        }
+
     }
 }
