@@ -178,15 +178,15 @@ namespace Microservices.ShoppingCartAPI.Repositories
             var dbCartDetails = await GetCartDetailsAsync(cartDetailsId);
 
             var cartTotalItems = _dbContext.CartDetails.
-                Where(user => user.CartHeaderId == cartDetailsId)
+                Where(user => user.CartDetailsId == cartDetailsId)
                 .Count();
 
-            if (dbCartDetails == null || dbCartDetails.CartHeader == null) return 0;
+            if (dbCartDetails == null) return 0;
 
             _dbContext.CartDetails.Remove(dbCartDetails);
 
             //if there's only one item for the user, remove the cart header along (last item being removed from the cart)
-            await RemoveCartHeader(dbCartDetails.CartHeader.CartHeaderId, cartTotalItems);
+            await RemoveCartHeader(dbCartDetails.CartHeaderId, cartTotalItems);
 
             return await _dbContext.SaveChangesAsync();
 

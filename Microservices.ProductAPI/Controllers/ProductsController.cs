@@ -9,7 +9,6 @@ namespace Microservices.ProductAPI.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    [Authorize]
     public class ProductsController : APIBaseController
     {
         private readonly IProductRepository _productsRepository;

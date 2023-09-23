@@ -1,6 +1,7 @@
 ﻿using Microservices.ShoppingCartAPI.Models.Dto;
 using Microservices.ShoppingCartAPI.Models.Factories;
 using Microservices.ShoppingCartAPI.Repositories;
+using Microservices.ShoppingCartAPI.Services;
 using Microservices.ShoppingCartAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,26 @@ namespace Microservices.ShoppingCartAPI.Controllers
     public class ShoppingCartController : APIBaseController
     {
         private readonly IShoppingCartRepository _cartRepository;
+        private readonly IProductService _productService;
 
-        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository) : base(logger)
+        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService) : base(logger)
         {
             _cartRepository = cartsRepository;
+            _productService = productService;
+        }
+
+        private async Task CalculateTotal(CartDto cartDto)
+        {
+            var productsDto = await _productService.GetProducts();
+
+            foreach (var item in cartDto.CartDetails!)
+            {
+                item.productDto = productsDto
+                .FirstOrDefault(prod => prod.Id == item.ProductId);
+
+                cartDto.CartHeader!.CartTotal += item.Count * item.productDto!.Price;
+            }
+
         }
 
         [HttpGet("GetCart/{userId}")]
@@ -26,11 +43,16 @@ namespace Microservices.ShoppingCartAPI.Controllers
             {
                 if (string.IsNullOrEmpty(userId)) return BadRequest(string.Empty);
 
-                var cart = await _cartRepository.GetCartAsync(userId);
+                var cartDto = await _cartRepository.GetCartAsync(userId);
 
-                var products =
+                if (cartDto == null || 
+                    cartDto.CartDetails == null || 
+                    cartDto.CartDetails.Count() == 0 || 
+                    cartDto.CartHeader == null) return NotFound();
 
-                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, cart, "Success");
+                await CalculateTotal(cartDto);
+
+                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, cartDto, "Success");
 
                 return Ok(ControllerResponse);
             }
@@ -42,7 +64,7 @@ namespace Microservices.ShoppingCartAPI.Controllers
             return Problem("An error happened retrieving the products");
         }
 
-        
+
 
         [HttpPost("Upsert")]
         public async Task<IActionResult> Upsert(CartDto cartDto)
@@ -75,7 +97,7 @@ namespace Microservices.ShoppingCartAPI.Controllers
         {
             try
             {
-                if(cartDetailsId < 1)
+                if (cartDetailsId < 1)
                 {
                     ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No cart has been acquired");
 

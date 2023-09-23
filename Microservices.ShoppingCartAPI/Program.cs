@@ -1,6 +1,8 @@
 using Microservices.ShoppingCartAPI.Data;
 using Microservices.ShoppingCartAPI.Extensions;
 using Microservices.ShoppingCartAPI.Repositories;
+using Microservices.ShoppingCartAPI.Services;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -16,6 +18,13 @@ namespace Microservices.ShoppingCartAPI
             AddDbContext(builder);
 
             AddAutoMapper(builder);
+
+
+            builder.Services.AddScoped<IProductService, ProductService>();
+            var serviceConfig = builder.Configuration["ServiceUrls:ProductAPI"]!;
+
+            builder.Services.AddHttpClient("Product",
+                url => url.BaseAddress = new Uri(serviceConfig!));
 
             builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 

@@ -23,6 +23,7 @@ namespace Microservices.ShoppingCartAPI.Services
 
             return deserializedJson;
         }
+
         protected List<TEntity> DeserializeResponseToList<TEntity>(ResponseDto? response)
         {
             List<TEntity>? list = null;
@@ -31,28 +32,17 @@ namespace Microservices.ShoppingCartAPI.Services
             if (response == null)
                 throw new Exception("Could not retrieve products from the server");
 
-            if (response != null && response.IsSuccess)
+            if (response.IsSuccess)
             {
-                var jsonResponse = JObject.Parse(response.Result?.ToString()!);
 
-                list = JsonConvert.DeserializeObject<List<TEntity>>(jsonResponse["result"]!.ToString());
+                var jsonResponse = JArray.Parse(response.Result?.ToString()!);
+
+                list = JsonConvert.DeserializeObject<List<TEntity>>(jsonResponse.ToString());
 
                 if (list == null)
                     throw new Exception("Problem converting list to JSON");
             }
-            else
-            {
-                if (response == null)
-                {
-                    throw new Exception("Could not retrieve response from the server");
-                }
-                else
-                {
-                    throw new Exception(response?.DisplayMessage);
-                }
-            }
-
-
+            
             list ??= new List<TEntity>();
             return list;
         }
