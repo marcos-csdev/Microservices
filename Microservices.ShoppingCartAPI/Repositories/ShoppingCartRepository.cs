@@ -132,6 +132,32 @@ namespace Microservices.ShoppingCartAPI.Repositories
             return changes;
         }
 
+        public async Task<int> UpdateCouponCodeAsync(CartDto cartDto)
+        {
+            var dbCartHeader = await _dbContext.CartHeaders.FirstAsync(ch => ch.UserId == cartDto.CartHeader!.UserId);
+
+            if (dbCartHeader == null) return 0;
+
+            dbCartHeader.CouponCode = cartDto.CartHeader!.CouponCode;
+
+            _dbContext.CartHeaders.Update(dbCartHeader);
+
+            return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> RemoveCouponCodeAsync(CartDto cartDto)
+        {
+            var dbCartHeader = await _dbContext.CartHeaders.FirstAsync(ch => ch.UserId == cartDto.CartHeader!.UserId);
+
+            if (dbCartHeader == null) return 0;
+
+            dbCartHeader.CouponCode = "";
+
+            _dbContext.CartHeaders.Update(dbCartHeader);
+
+            return await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<int> UpsertCartAsync(CartDto cartDto)
         {
             var dbCartHeader = await GetCartHeadersAsync(cartDto.CartHeader!.UserId!);

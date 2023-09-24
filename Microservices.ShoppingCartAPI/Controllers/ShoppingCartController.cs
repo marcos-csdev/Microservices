@@ -65,7 +65,6 @@ namespace Microservices.ShoppingCartAPI.Controllers
         }
 
 
-
         [HttpPost("Upsert")]
         public async Task<IActionResult> Upsert(CartDto cartDto)
         {
@@ -90,6 +89,52 @@ namespace Microservices.ShoppingCartAPI.Controllers
             }
 
             return Problem("An error happened updating the products");
+        }
+
+        [HttpPut("ApplyCouponCode")]
+        public async Task<IActionResult> ApplyCouponCode([FromBody] CartDto cartDto)
+        {
+            try
+            {
+                if (cartDto == null || cartDto.CartHeader == null || cartDto.CartDetails == null)
+                {
+                    ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No cart has been acquired");
+
+                    return BadRequest(ControllerResponse);
+                }
+
+                await _cartRepository.UpdateCouponCodeAsync(cartDto);
+
+                return Ok(ControllerResponse);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+            return Problem("An error happened applying the coupon");
+        }
+
+        [HttpDelete("RemoveCouponCode")]
+        public async Task<IActionResult> RemoveCouponCode([FromBody] CartDto cartDto)
+        {
+            try
+            {
+                if (cartDto == null || cartDto.CartHeader == null || cartDto.CartDetails == null)
+                {
+                    ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No cart has been acquired");
+
+                    return BadRequest(ControllerResponse);
+                }
+
+                await _cartRepository.RemoveCouponCodeAsync(cartDto);
+
+                return Ok(ControllerResponse);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+            return Problem("An error happened applying the coupon");
         }
 
         [HttpDelete("RemoveCart")]
