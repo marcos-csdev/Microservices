@@ -12,7 +12,6 @@ namespace Microservices.CouponAPI.Controllers
 {
     [Route("api/coupons")]
     [ApiController]
-    [Authorize]
     public class CouponAPIController : APIBaseController
     {
         private readonly ICouponRepository _couponRepository;
@@ -52,6 +51,29 @@ namespace Microservices.CouponAPI.Controllers
             try
             {
                 var couponDto = await _couponRepository.GetCouponByIdAsync(couponId);
+
+                if (couponDto == null) return NotFound("The provided coupon was not found");
+
+                ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, couponDto, "Success");
+
+                return Ok(ControllerResponse);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+            return Problem();
+        }
+        
+        [HttpGet("GetByCode/{couponCode}")]
+        public async Task<IActionResult> GetByCode(string couponCode)
+        {
+            if (string.IsNullOrWhiteSpace(couponCode)) return BadRequest();
+
+            try
+            {
+                var couponDto = await _couponRepository.GetCouponByCodeAsync(couponCode);
 
                 if (couponDto == null) return NotFound("The provided coupon was not found");
 

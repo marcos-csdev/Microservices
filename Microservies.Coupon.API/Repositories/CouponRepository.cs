@@ -54,6 +54,20 @@ namespace Microservices.CouponAPI.Repositories
 
             return couponDto;
         }
+        
+        public async Task<CouponDto?> GetCouponByCodeAsync(string couponCode)
+        {
+            if (string.IsNullOrWhiteSpace(couponCode)) return null!;
+
+            var coupon = await _dbContext.Coupons
+                .FirstOrDefaultAsync(c => c.CouponCode == couponCode);
+
+            if(coupon == null) return null!;
+
+            var couponDto = _mapper.Map<CouponDto>(coupon);
+
+            return couponDto;
+        }
 
         public async Task<List<CouponDto>> GetCouponsAsync()
         {

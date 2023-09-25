@@ -35,9 +35,9 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
             if (!dbCartDetails.Any()) return null!;
 
-            var mappedCartDetails = _mapper.Map<IEnumerable<CartDetailsDto>>(dbCartDetails);
+            var mappedCartDetails = _mapper.Map<List<CartDetailsDto>>(dbCartDetails);
 
-            if (!mappedCartDetails.Any()) return null!;
+            if (mappedCartDetails.Count == 0) return null!;
 
             var cartDto = new CartDto
             {

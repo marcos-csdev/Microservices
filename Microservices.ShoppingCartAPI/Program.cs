@@ -21,6 +21,7 @@ namespace Microservices.ShoppingCartAPI
 
 
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICouponService, CouponService>();
             var serviceConfig = builder.Configuration["ServiceUrls:ProductAPI"]!;
 
             builder.Services.AddHttpClient("Product",

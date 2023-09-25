@@ -7,7 +7,7 @@
         public const string RoleCustomer = "CUSTOMER";
         public const string TokenCookie = "JWTToken";
 
-        public const string CouponAPIURL = "https://localhost:7001/api/coupon/GetByCode";
+        public const string CouponAPIURL = "https://localhost:7001/api/coupons/GetByCode";
 
 
         public const string ProductAPIFullUrl = "https://localhost:7000/api/products";

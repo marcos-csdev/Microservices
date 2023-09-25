@@ -50,17 +50,18 @@ namespace Microservices.ShoppingCartAPI.Services
         protected TEntity DeserializeResponseToEntity<TEntity>(ResponseDto response) where TEntity : class, new()
 
         {
-            TEntity? entity = null;
-
-
             if (response == null)
                 throw new Exception("Could not retrieve products from the server");
 
+            TEntity? entity;
             if (response != null && response.IsSuccess)
             {
                 var jsonResponse = JObject.Parse(response.Result?.ToString()!);
 
-                entity = JsonConvert.DeserializeObject<TEntity>(jsonResponse["result"]!.ToString());
+                if (jsonResponse["result"] != null)
+                    entity = JsonConvert.DeserializeObject<TEntity>(jsonResponse["result"]!.ToString());
+                else
+                    entity = JsonConvert.DeserializeObject<TEntity>(jsonResponse.ToString());
 
                 if (entity == null)
                     throw new Exception("Problem converting list to JSON");

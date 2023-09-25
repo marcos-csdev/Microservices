@@ -15,11 +15,13 @@ namespace Microservices.ShoppingCartAPI.Controllers
     {
         private readonly IShoppingCartRepository _cartRepository;
         private readonly IProductService _productService;
+        private readonly ICouponService _couponService;
 
-        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService) : base(logger)
+        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService, ICouponService couponService) : base(logger)
         {
             _cartRepository = cartsRepository;
             _productService = productService;
+            _couponService = couponService;
         }
 
         private async Task CalculateTotal(CartDto cartDto)
@@ -36,6 +38,23 @@ namespace Microservices.ShoppingCartAPI.Controllers
 
         }
 
+        private async Task ApplyDiscounts(CartDto cartDto)
+        {
+            var cartHeader = cartDto.CartHeader;
+            if (!string.IsNullOrWhiteSpace(cartHeader!.CouponCode))
+            {
+                var coupon = await _couponService.GetCoupon(cartHeader.CouponCode);
+
+                if (coupon != null && 
+                    cartDto.CartHeader != null && 
+                    cartDto.CartHeader.CartTotal > coupon.MinExpense) 
+                {
+                    cartDto.CartHeader.CartTotal -= coupon.MinExpense;
+                    cartDto.CartHeader.Discount = coupon.Discount;
+                }
+            }
+        }
+
         [HttpGet("GetCart/{userId}")]
         public async Task<IActionResult> GetCart(string userId)
         {
@@ -46,11 +65,13 @@ namespace Microservices.ShoppingCartAPI.Controllers
                 var cartDto = await _cartRepository.GetCartAsync(userId);
 
                 if (cartDto == null || 
-                    cartDto.CartDetails == null || 
-                    cartDto.CartDetails.Count() == 0 || 
+                    cartDto.CartDetails == null ||
+                    !cartDto.CartDetails.Any() || 
                     cartDto.CartHeader == null) return NotFound();
 
                 await CalculateTotal(cartDto);
+
+                await ApplyDiscounts(cartDto);
 
                 ControllerResponse = ResponseDtoFactory.CreateResponseDto(true, cartDto, "Success");
 
@@ -64,6 +85,7 @@ namespace Microservices.ShoppingCartAPI.Controllers
             return Problem("An error happened retrieving the products");
         }
 
+        
 
         [HttpPost("Upsert")]
         public async Task<IActionResult> Upsert(CartDto cartDto)

@@ -10,5 +10,6 @@ namespace Microservices.CouponAPI.Repositories
         Task<CouponDto?> GetCouponByIdAsync(int couponId);
         Task<bool> UpsertCouponAsync(CouponDto couponDto);
         Task<bool> DeleteCouponAsync(int couponId);
+        Task<CouponDto?> GetCouponByCodeAsync(string couponCode);
     }
 }
