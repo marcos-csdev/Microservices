@@ -2,6 +2,8 @@ using Microservices.ShoppingCartAPI.Data;
 using Microservices.ShoppingCartAPI.Extensions;
 using Microservices.ShoppingCartAPI.Repositories;
 using Microservices.ShoppingCartAPI.Services;
+using Microservices.ShoppingCartAPI.Services.Abstractions;
+using Microservices.ShoppingCartAPI.Utility;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -22,10 +24,8 @@ namespace Microservices.ShoppingCartAPI
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICouponService, CouponService>();
-            var serviceConfig = builder.Configuration["ServiceUrls:ProductAPI"]!;
 
-            builder.Services.AddHttpClient("Product",
-                url => url.BaseAddress = new Uri(serviceConfig!));
+            SetAPIsUrls(builder);
 
             builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
@@ -95,6 +95,19 @@ namespace Microservices.ShoppingCartAPI
                 {
                     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 });
+            }
+
+            void SetAPIsUrls(WebApplicationBuilder builder)
+            {
+
+                var productAPIUrl = builder.Configuration["ServiceUrls:ProductAPI"]!;
+                StaticDetails.ProductAPIUrl = productAPIUrl;
+
+                builder.Services.AddHttpClient("Product",
+                    url => url.BaseAddress = new Uri(productAPIUrl!));
+
+                var couponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
+                StaticDetails.CouponAPIUrl = couponAPIUrl;
             }
 
         }

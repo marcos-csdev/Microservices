@@ -84,17 +84,7 @@ namespace Microservices.Web.Client.Controllers
                 if (entity == null)
                     TempData["error"] = "Problem converting list to JSON";
             }
-            else
-            {
-                if (response == null)
-                {
-                    TempData["error"] = "Could not retrieve a response from the server";
-                }
-                else
-                {
-                    TempData["error"] = response?.DisplayMessage;
-                }
-            }
+            
 
             entity ??= new TEntity();
             return entity;

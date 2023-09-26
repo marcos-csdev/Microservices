@@ -1,7 +1,7 @@
 ﻿using Microservices.ShoppingCartAPI.Models.Dto;
 using Microservices.ShoppingCartAPI.Models.Factories;
 using Microservices.ShoppingCartAPI.Repositories;
-using Microservices.ShoppingCartAPI.Services;
+using Microservices.ShoppingCartAPI.Services.Abstractions;
 using Microservices.ShoppingCartAPI.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,10 +30,10 @@ namespace Microservices.ShoppingCartAPI.Controllers
 
             foreach (var item in cartDto.CartDetails!)
             {
-                item.productDto = productsDto
+                item.ProductDto = productsDto
                 .FirstOrDefault(prod => prod.Id == item.ProductId);
 
-                cartDto.CartHeader!.CartTotal += item.Count * item.productDto!.Price;
+                cartDto.CartHeader!.CartTotal += item.Count * item.ProductDto!.Price;
             }
 
         }
@@ -43,7 +43,7 @@ namespace Microservices.ShoppingCartAPI.Controllers
             var cartHeader = cartDto.CartHeader;
             if (!string.IsNullOrWhiteSpace(cartHeader!.CouponCode))
             {
-                var coupon = await _couponService.GetCoupon(cartHeader.CouponCode);
+                var coupon = await _couponService.GetCoupon("GetByCode", cartHeader.CouponCode);
 
                 if (coupon != null && 
                     cartDto.CartHeader != null && 
@@ -64,10 +64,14 @@ namespace Microservices.ShoppingCartAPI.Controllers
 
                 var cartDto = await _cartRepository.GetCartAsync(userId);
 
-                if (cartDto == null || 
+                if (cartDto == null ||
                     cartDto.CartDetails == null ||
-                    !cartDto.CartDetails.Any() || 
-                    cartDto.CartHeader == null) return NotFound();
+                    !cartDto.CartDetails.Any() ||
+                    cartDto.CartHeader == null)
+                {
+                    //customer has nothing in the cart, return right away
+                    return NoContent();
+                }
 
                 await CalculateTotal(cartDto);
 

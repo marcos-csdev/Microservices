@@ -51,9 +51,9 @@ namespace Microservices.ShoppingCartAPI.Services
 
         {
             if (response == null)
-                throw new Exception("Could not retrieve products from the server");
+                throw new Exception("Could not retrieve data from the server");
 
-            TEntity? entity;
+            TEntity? entity = null!;
             if (response != null && response.IsSuccess)
             {
                 var jsonResponse = JObject.Parse(response.Result?.ToString()!);
@@ -66,17 +66,7 @@ namespace Microservices.ShoppingCartAPI.Services
                 if (entity == null)
                     throw new Exception("Problem converting list to JSON");
             }
-            else
-            {
-                if (response == null)
-                {
-                    throw new Exception("Could not retrieve a response from the server");
-                }
-                else
-                {
-                    throw new Exception(response?.DisplayMessage);
-                }
-            }
+            
 
             entity ??= new TEntity();
             return entity;

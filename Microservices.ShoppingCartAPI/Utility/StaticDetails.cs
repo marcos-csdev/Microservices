@@ -7,10 +7,8 @@
         public const string RoleCustomer = "CUSTOMER";
         public const string TokenCookie = "JWTToken";
 
-        public const string CouponAPIURL = "https://localhost:7001/api/coupons/GetByCode";
-
-
-        public const string ProductAPIFullUrl = "https://localhost:7000/api/products";
+        public static string CouponAPIUrl { get; set; } = string.Empty;
+        public static string ProductAPIUrl { get; set; } = string.Empty;
 
         public const string AppType = "application/json";
         public const string CartAPIName = "ShoppingCartAPIClient";

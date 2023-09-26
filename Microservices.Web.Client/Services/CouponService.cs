@@ -13,33 +13,33 @@ namespace Microservices.Web.Client.Services
 
         public async Task<ResponseDto?> AddCouponAsync(CouponDto couponDto) 
         {
-            return await AddEntityAsync(couponDto, $"{StaticDetails.CouponAPIUrl}/api/coupons/create");
+            return await AddEntityAsync(couponDto, $"{StaticDetails.CouponAPIUrl}/create");
 
         }
 
         public async Task<ResponseDto?> GetAllCouponsAsync()
         {
-            return await GetAllEntitiesAsync($"{StaticDetails.CouponAPIUrl}/api/coupons");
+            return await GetAllEntitiesAsync(StaticDetails.CouponAPIUrl);
 
         }
 
         public async Task<ResponseDto?> GetCouponByIdAsync(int id)
         {
-            return await GetEntityByIdAsync(id,
-                $"{StaticDetails.CouponAPIUrl}/api/coupons/GetById/{id}");
+            return await GetEntityByIdAsync(
+                $"{StaticDetails.CouponAPIUrl}/GetById/{id}");
         }
 
 
         public async Task<ResponseDto?> RemoveCouponAsync(int id)
         {
-            return await RemoveEntityAsync(id,
-                $"{StaticDetails.CouponAPIUrl}/api/coupons/remove/{id}");
+            return await RemoveEntityAsync(
+                $"{StaticDetails.CouponAPIUrl}/remove/{id}");
         }
 
         public async Task<ResponseDto?> UpdateCouponAsync(int id, CouponDto couponDto)
         {
             return await UpdateEntityAsync(couponDto,
-                $"{StaticDetails.CouponAPIUrl}/api/coupons/update");
+                $"{StaticDetails.CouponAPIUrl}/update");
 
         }
 

@@ -20,15 +20,18 @@ namespace Microservices.Web.Client
             builder.Services.AddHttpClient();
             builder.Services.AddHttpClient<IProductService, ProductService>();
             builder.Services.AddHttpClient<ICouponService, CouponService>();
+            builder.Services.AddHttpClient<ICartService, CartService>();
             builder.Services.AddHttpClient<IAuthService, AuthService>();
 
             StaticDetails.CouponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
             StaticDetails.ProductAPIUrl = builder.Configuration["ServiceUrls:ProductAPI"]!;
             StaticDetails.AuthAPIUrl = builder.Configuration["ServiceUrls:AuthAPI"]!;
+            StaticDetails.CartAPIUrl = builder.Configuration["ServiceUrls:ShoppingCartAPI"]!;
 
             builder.Services.AddScoped<ITokenProvider, TokenProvider>();
             builder.Services.AddScoped<IMessageService, MessageService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<ICouponService, CouponService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 

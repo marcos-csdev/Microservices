@@ -12,34 +12,34 @@ namespace Microservices.Web.Client.Services
 
         public async Task<ResponseDto?> AddProductAsync(ProductDto productDto)
         {
-            return await AddEntityAsync(productDto, $"{StaticDetails.ProductAPIUrl}/api/products/create");
+            return await AddEntityAsync(productDto, $"{StaticDetails.ProductAPIUrl}/create");
 
         }
 
         public async Task<ResponseDto?> GetAllProductsAsync()
         {
             return await GetAllEntitiesAsync(
-                $"{StaticDetails.ProductAPIUrl}/api/products");
+                $"{StaticDetails.ProductAPIUrl}");
 
         }
 
         public async Task<ResponseDto?> GetProductByIdAsync(int id)
         {
-            return await GetEntityByIdAsync(id,
-                $"{StaticDetails.ProductAPIUrl}/api/products/GetById/{id}");
+            return await GetEntityByIdAsync(
+                $"{StaticDetails.ProductAPIUrl}/GetById/{id}");
         }
 
 
         public async Task<ResponseDto?> RemoveProductAsync(int id)
         {
-            return await RemoveEntityAsync(id,
-                $"{StaticDetails.ProductAPIUrl}/api/products/remove/{id}");
+            return await RemoveEntityAsync(
+                $"{StaticDetails.ProductAPIUrl}/remove/{id}");
         }
 
         public async Task<ResponseDto?> UpdateProductAsync(ProductDto productDto)
         {
             return await UpdateEntityAsync(productDto,
-                $"{StaticDetails.ProductAPIUrl}/api/products/update");
+                $"{StaticDetails.ProductAPIUrl}/update");
 
         }
     }

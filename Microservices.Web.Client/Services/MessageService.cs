@@ -38,7 +38,7 @@ namespace Microservices.Web.Client.Services
                 var apiResponse = await client.SendAsync(message);
                 apiContent = await apiResponse.Content.ReadAsStringAsync();
 
-                var acceptableResults = new HttpStatusCode[] { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted};
+                var acceptableResults = new HttpStatusCode[] { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted, HttpStatusCode.NoContent};
 
                 //if response is not "OK", "Accepted" or "Created"
                 if(!acceptableResults.Contains(apiResponse.StatusCode))

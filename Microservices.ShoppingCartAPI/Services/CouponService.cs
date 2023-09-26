@@ -1,4 +1,5 @@
 ﻿using Microservices.ShoppingCartAPI.Models.Dto;
+using Microservices.ShoppingCartAPI.Services.Abstractions;
 using Microservices.ShoppingCartAPI.Utility;
 
 namespace Microservices.ShoppingCartAPI.Services
@@ -9,9 +10,9 @@ namespace Microservices.ShoppingCartAPI.Services
         {
         }
 
-        public async Task<CouponDto?> GetCoupon(string couponCode)
+        public async Task<CouponDto?> GetCoupon(string actionName, string couponCode)
         {
-            var url = $"{StaticDetails.CouponAPIURL}/{couponCode}";
+            var url = $"{StaticDetails.CouponAPIUrl}/{actionName}/{couponCode}";
             var response = await SendMessageAsync("ShoppingCartAPIClient", url);
 
             var coupon = DeserializeResponseToEntity<CouponDto>(response!);

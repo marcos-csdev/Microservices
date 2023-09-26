@@ -27,10 +27,8 @@ namespace Microservices.Web.Client.Services
             return response;
         }
 
-        public async Task<ResponseDto?> GetEntityByIdAsync(int id, string url)
+        public async Task<ResponseDto?> GetEntityByIdAsync(string url)
         {
-            if (id < 1) return null;
-
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.GET,
                 url);
 
@@ -41,8 +39,6 @@ namespace Microservices.Web.Client.Services
 
         public async Task<ResponseDto?> AddEntityAsync<TEntity>(TEntity? entityDto, string url) where TEntity : class
         {
-            if (entityDto == null) return null;
-
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
                 url,
                 entityDto);
@@ -52,13 +48,10 @@ namespace Microservices.Web.Client.Services
 
             return response;
         }
-        public async Task<ResponseDto?> RemoveEntityAsync(int id, string url)
+        public async Task<ResponseDto?> RemoveEntityAsync(string url)
         {
-            if (id < 1) return null;
-
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.DELETE,
                 url);
-
 
             var response = await _messageService.SendAsync(request);
 
@@ -68,8 +61,6 @@ namespace Microservices.Web.Client.Services
         public async Task<ResponseDto?> UpdateEntityAsync<TEntity>( TEntity? entityDto, string url)
             where TEntity : class
         {
-            if (entityDto == null) return null;
-
             var request = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.PUT,
                 url,
                 entityDto);

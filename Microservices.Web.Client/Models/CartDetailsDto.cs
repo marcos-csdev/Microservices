@@ -1,4 +1,4 @@
-﻿namespace Microservices.ShoppingCartAPI.Models.Dto
+﻿namespace Microservices.Web.Client.Models
 {
     public class CartDetailsDto
     {

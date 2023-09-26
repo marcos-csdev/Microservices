@@ -31,7 +31,7 @@ namespace Microservices.Web.Client.Services
         private async Task<ResponseDto?> SendRequest(RegistrationRequestDto registrationRequestDto, string operation, bool withBearer = true)
         {
             var apiRequest = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
-                $"{StaticDetails.AuthAPIUrl}/api/auth/{operation}", registrationRequestDto);
+                $"{StaticDetails.AuthAPIUrl}/{operation}", registrationRequestDto);
 
             if (apiRequest == null) return null;
 
@@ -43,7 +43,7 @@ namespace Microservices.Web.Client.Services
         private async Task<ResponseDto?> SendRequest(LoginRequestDto loginRequestDto, string operation)
         {
             var apiRequest = RequestDtoFactory.CreateRequestDto(StaticDetails.ApiType.POST,
-                $"{StaticDetails.AuthAPIUrl}/api/auth/{operation}", loginRequestDto);
+                $"{StaticDetails.AuthAPIUrl}/{operation}", loginRequestDto);
 
             if (apiRequest == null) return null;
 
