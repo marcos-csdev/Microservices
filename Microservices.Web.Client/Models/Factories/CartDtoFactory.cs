@@ -2,7 +2,7 @@
 {
     public static class CartDtoFactory
     {
-        public static CartDto CreateCartDto(CartHeaderDto cartHeader, List<CartDetailsDto> cartDetails)
+        public static CartDto Create(CartHeaderDto cartHeader, List<CartDetailsDto> cartDetails)
         {
             return new CartDto
             {

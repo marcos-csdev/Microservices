@@ -16,5 +16,12 @@ namespace Microservices.Web.Client.Models.Factories
                 UserId = userId
             };
         }
+        public static CartHeaderDto Create(string userId)
+        {
+            return new CartHeaderDto
+            {
+                UserId = userId
+            };
+        }
     }
 }

@@ -38,17 +38,19 @@ namespace Microservices.Web.Client.Services
                 var apiResponse = await client.SendAsync(message);
                 apiContent = await apiResponse.Content.ReadAsStringAsync();
 
-                var acceptableResults = new HttpStatusCode[] { HttpStatusCode.OK, HttpStatusCode.Created, HttpStatusCode.Accepted, HttpStatusCode.NoContent};
-
-                //if response is not "OK", "Accepted" or "Created"
-                if(!acceptableResults.Contains(apiResponse.StatusCode))
+                var numericStatusCode = (int) apiResponse.StatusCode;
+                
+                // only 2xx status codes are acceptable
+                if(numericStatusCode >= 200 && numericStatusCode < 300)
                 {
-                    var errorMessage = !string.IsNullOrWhiteSpace(apiContent)? apiContent : apiResponse.ReasonPhrase;
-
-                    return ResponseDtoFactory.CreateResponseDto(false, null!, errorMessage!);
+                    return ResponseDtoFactory.CreateResponseDto(true, apiContent, "Success");
                 }
 
-                return ResponseDtoFactory.CreateResponseDto(true, apiContent, "Success");
+                //message not successfully sent
+                var errorMessage = !string.IsNullOrWhiteSpace(apiContent) ? apiContent : apiResponse.ReasonPhrase;
+
+                return ResponseDtoFactory.CreateResponseDto(false, null!, errorMessage!);
+
             }
             
             catch (Exception ex)

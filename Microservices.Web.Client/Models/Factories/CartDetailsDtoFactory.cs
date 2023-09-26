@@ -14,5 +14,13 @@
                 
             };
         }
+        public static CartDetailsDto Create(int productId, int count)
+        {
+            return new CartDetailsDto
+            {
+                ProductId = productId,
+                Count = count
+            };
+        }
     }
 }

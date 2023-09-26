@@ -2,7 +2,6 @@
 using Microservices.Web.Client.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Microservices.Web.Client.Controllers
@@ -41,7 +40,10 @@ namespace Microservices.Web.Client.Controllers
 
             var response = await _cartService.GetCartByIdAsync(userId);
 
-            if(response == null || response.Result == null || response.Result.ToString() == "") return null!;
+            //empty cart
+            if(response == null || 
+                response.Result == null || 
+                response.Result.ToString() == "") return null!;
 
             var cartDto = DeserializeResponseToEntity<CartDto>(response!);
 
