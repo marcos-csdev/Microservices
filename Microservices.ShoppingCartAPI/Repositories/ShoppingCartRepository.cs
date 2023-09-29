@@ -3,6 +3,7 @@ using Azure;
 using Microservices.ShoppingCartAPI.Data;
 using Microservices.ShoppingCartAPI.Models;
 using Microservices.ShoppingCartAPI.Models.Dto;
+using Microservices.ShoppingCartAPI.Models.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,11 +40,7 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
             if (mappedCartDetails.Count == 0) return null!;
 
-            var cartDto = new CartDto
-            {
-                CartHeader = mappedCartHeader,
-                CartDetails = mappedCartDetails
-            };
+            var cartDto = CartDtoFactory.Create(mappedCartHeader, mappedCartDetails);
 
             return cartDto;
 
@@ -63,7 +60,7 @@ namespace Microservices.ShoppingCartAPI.Repositories
             return mappedCartHeader;
         }
 
-        public async Task<int> CreateCartDetailsAsync(CartDto cartDto)
+        public async Task<int> CreateCartAsync(CartDto cartDto)
         {
             var mappedCartHeader = await CreateCartHeadersAsync(cartDto);
 
@@ -165,19 +162,19 @@ namespace Microservices.ShoppingCartAPI.Repositories
             //Create cart header and details
             if (dbCartHeader == null)
             {
-                return await CreateCartDetailsAsync(cartDto);
+                return await CreateCartAsync(cartDto);
             }
             else//check if details has same product
             {
-                //this allows to relate the user to the correct cart even when the ids are invalid 
+                //this allows to relate the user to the correct cart even when the cart ids are invalid 
                 var firstCartDetails = cartDto.CartDetails!.First();
 
-                var dbCartDetails = await GetCartDetailsAsync(firstCartDetails.ProductId, cartDto.CartHeader.CartHeaderId);
+                var dbCartDetails = await GetCartDetailsAsync(firstCartDetails.ProductId, dbCartHeader.CartHeaderId);
 
                 if (dbCartDetails == null)
                 {
                     //create cart details
-                    return await CreateCartDetailsAsync(cartDto);
+                    return await CreateCartAsync(cartDto);
                 }
                 else//update cart details from DB
                 {
