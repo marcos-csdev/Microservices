@@ -11,9 +11,9 @@ namespace Microservices.Web.Client.Services
         {
         }
 
-        public async Task<ResponseDto?> UpsertCartAsync(CartDto couponDto)
+        public async Task<ResponseDto?> UpsertCartAsync(CartDto cartDto)
         {
-            return await AddEntityAsync(couponDto, $"{StaticDetails.CartAPIUrl}/Upsert");
+            return await AddEntityAsync(cartDto, $"{StaticDetails.CartAPIUrl}/Upsert");
 
         }
 

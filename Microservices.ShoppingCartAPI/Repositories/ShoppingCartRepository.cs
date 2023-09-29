@@ -81,6 +81,25 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
             return changes;
         }
+        
+        public async Task<int> CreateCartDetailsAsync(CartHeaderModel dbCartHeader, CartDto cartDto)
+        {
+
+            var cartDetFirst = cartDto.CartDetails!.First();
+
+            cartDetFirst.CartHeaderId = dbCartHeader.CartHeaderId;
+
+            var mappedCartDetails = _mapper.Map<CartDetailsModel>(cartDetFirst);
+
+            if (mappedCartDetails == null) return 0;
+
+            //headers may exist while details may not and vice-versa
+            await _dbContext.CartDetails.AddAsync(mappedCartDetails);
+
+            var changes = await _dbContext.SaveChangesAsync();
+
+            return changes;
+        }
 
 
         public async Task<CartHeaderModel?> GetCartHeadersAsync(string userId)
@@ -159,9 +178,9 @@ namespace Microservices.ShoppingCartAPI.Repositories
         {
             var dbCartHeader = await GetCartHeadersAsync(cartDto.CartHeader!.UserId!);
 
-            //Create cart header and details
             if (dbCartHeader == null)
             {
+                //Create cart header and details
                 return await CreateCartAsync(cartDto);
             }
             else//check if details has same product
@@ -173,8 +192,8 @@ namespace Microservices.ShoppingCartAPI.Repositories
 
                 if (dbCartDetails == null)
                 {
-                    //create cart details
-                    return await CreateCartAsync(cartDto);
+                    //cart header exists, create cart details only
+                    return await CreateCartDetailsAsync(dbCartHeader, cartDto);
                 }
                 else//update cart details from DB
                 {

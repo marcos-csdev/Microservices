@@ -8,6 +8,6 @@
         public string Description { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
-        public int Amount { get; set; }
+        public int Count { get; set; }
     }
 }

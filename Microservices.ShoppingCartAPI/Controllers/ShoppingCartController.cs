@@ -89,8 +89,6 @@ namespace Microservices.ShoppingCartAPI.Controllers
             return Problem("An error happened retrieving the products");
         }
 
-        
-
         [HttpPost("Upsert")]
         public async Task<IActionResult> Upsert(CartDto cartDto)
         {
