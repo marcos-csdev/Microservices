@@ -14,7 +14,6 @@ namespace Microservices.Web.Client.Services
         public async Task<ResponseDto?> UpsertCartAsync(CartDto cartDto)
         {
             return await AddEntityAsync(cartDto, $"{StaticDetails.CartAPIUrl}/Upsert");
-
         }
 
         public async Task<ResponseDto?> GetCartByIdAsync(string userId)
@@ -23,7 +22,7 @@ namespace Microservices.Web.Client.Services
                 $"{StaticDetails.CartAPIUrl}/GetCart/{userId}");
         }
 
-        public async Task<ResponseDto?> RemoveCartAsync(string cartDetailsId)
+        public async Task<ResponseDto?> RemoveCartAsync(int cartDetailsId)
         {
             return await RemoveEntityAsync(
                 $"{StaticDetails.CartAPIUrl}/RemoveCart/{cartDetailsId}");

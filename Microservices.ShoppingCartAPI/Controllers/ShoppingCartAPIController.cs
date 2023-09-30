@@ -2,22 +2,19 @@
 using Microservices.ShoppingCartAPI.Models.Factories;
 using Microservices.ShoppingCartAPI.Repositories;
 using Microservices.ShoppingCartAPI.Services.Abstractions;
-using Microservices.ShoppingCartAPI.Utility;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Microservices.ShoppingCartAPI.Controllers
 {
     [Route("api/shoppingcart")]
     [ApiController]
-    public class ShoppingCartController : APIBaseController
+    public class ShoppingCartAPIController : APIBaseController
     {
         private readonly IShoppingCartRepository _cartRepository;
         private readonly IProductService _productService;
         private readonly ICouponService _couponService;
 
-        public ShoppingCartController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService, ICouponService couponService) : base(logger)
+        public ShoppingCartAPIController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService, ICouponService couponService) : base(logger)
         {
             _cartRepository = cartsRepository;
             _productService = productService;
@@ -120,7 +117,7 @@ namespace Microservices.ShoppingCartAPI.Controllers
         {
             try
             {
-                if (cartDto == null || cartDto.CartHeader == null || cartDto.CartDetails == null)
+                if (cartDto == null || cartDto.CartHeader == null)
                 {
                     ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No cart has been acquired");
 
@@ -161,8 +158,8 @@ namespace Microservices.ShoppingCartAPI.Controllers
             return Problem("An error happened applying the coupon");
         }
 
-        [HttpDelete("RemoveCart")]
-        public async Task<IActionResult> RemoveCart([FromBody] int cartDetailsId)
+        [HttpDelete("RemoveCart/{cartDetailsId}")]
+        public async Task<IActionResult> RemoveCart(int cartDetailsId)
         {
             try
             {

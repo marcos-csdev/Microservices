@@ -16,6 +16,7 @@ namespace Microservices.Web.Client.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -28,8 +29,9 @@ namespace Microservices.Web.Client.Controllers
             {
                 LogError(ex);
             }
+            TempData["error"] = "It was not possible to acquire the cart";
 
-            return Problem("It was not possible to acquire the cart");
+            return View();
         }
 
         private async Task<CartDto> LoadCartDto()
@@ -41,15 +43,59 @@ namespace Microservices.Web.Client.Controllers
             var response = await _cartService.GetCartByIdAsync(userId);
 
             //empty cart
-            if(response == null || 
-                response.Result == null || 
+            if (response == null ||
+                response.Result == null ||
                 response.Result.ToString() == "") return null!;
 
             var cartDto = DeserializeResponseToEntity<CartDto>(response!);
 
-            cartDto ??= new CartDto();  
+            cartDto ??= new CartDto();
 
             return cartDto;
+        }
+
+        public async Task<IActionResult> RemoveCart(int cartDetailsId)
+        {
+            try
+            {
+                var response = await _cartService.RemoveCartAsync(cartDetailsId);
+
+                if(response !=  null && response.IsSuccess)
+                {
+                    TempData["success"] = "Cart updated successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+            TempData["error"] = "There was a problem removing the cart.";
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApplyCouponCode(CartDto cartDto)
+        {
+            try
+            {
+                var response = await _cartService.ApplyCouponCodeAsync(cartDto);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Cart updated successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+            TempData["error"] = "There was a problem applying the coupon.";
+            return View(cartDto);
         }
     }
 }

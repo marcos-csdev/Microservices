@@ -2,6 +2,9 @@
 
 <form method="post">
     <br />
+    <input asp-for="CartHeader!.UserId" hidden />
+    <input asp-for="CartHeader!.CartHeaderId" hidden />
+
     <div class="">
         <div class="card border mt-4 container">
             <div class="card-header bg-dark text-light ml-0 row ">
@@ -50,24 +53,25 @@
                             <span style="font-size:17px;"> @cart.Count</span>
                         </div>
                         <div class="col-2 col-lg-1 p-0 pt-lg-4 text-center">
-                            <a asp-action="Remove" asp-route-cartDetailsId="@cart.CartDetailsId" class="btn btn-sm btn-danger">
+                            <a asp-action="RemoveCart" asp-route-cartDetailsId="@cart.CartDetailsId" class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash-fill"></i>
                             </a>
                         </div>
                     </div>
                     <hr />
-                    <div class="row">
-                        <div class="col-6">
-                            <span>Coupon:</span>
-                            <input />
-                            <button type="submit" class="btn btn-sm btn-success"> Apply </button>
-                        </div>
-                        <div class="col-6 text-end">
-                            <span class="text-danger" style="font-size:21px;">  Order Total : $$ <br /></span>
-                            <span class="text-success"> Order Discount :  $$</span>
-                        </div>
-                    </div>
                 }
+
+                <div class="row">
+                    <div class="col-6">
+                        <span>Coupon:</span>
+                        <input asp-for="CartHeader!.CouponCode"/>
+                        <button type="submit" asp-action="ApplyCouponCode" class="btn btn-sm btn-success"> Apply </button>
+                    </div>
+                    <div class="col-6 text-end">
+                        <span class="text-danger" style="font-size:21px;">  Order Total : $$ <br /></span>
+                        <span class="text-success"> Order Discount :  $$</span>
+                    </div>
+                </div>
             </div>
             <div class="card-footer row">
                 <div class="col-6 col-md-3 ">
