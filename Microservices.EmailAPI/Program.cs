@@ -1,18 +1,15 @@
-using Microservices.ShoppingCartAPI.Data;
-using Microservices.ShoppingCartAPI.Extensions;
-using Microservices.ShoppingCartAPI.Repositories;
-using Microservices.ShoppingCartAPI.Services;
-using Microservices.ShoppingCartAPI.Services.Abstractions;
-using Microservices.ShoppingCartAPI.Utility;
+using Microservices.EmailAPI.Data;
+using Microservices.EmailAPI.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-namespace Microservices.ShoppingCartAPI
+namespace Microservices.EmailAPI
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -20,13 +17,12 @@ namespace Microservices.ShoppingCartAPI
 
             AddAutoMapper(builder);
 
+            /*builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICouponService, CouponService>();*/
 
-            builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddScoped<ICouponService, CouponService>();
+            //SetAPIsUrls(builder);
 
-            SetAPIsUrls(builder);
-
-            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            /*builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();*/
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -78,7 +74,7 @@ namespace Microservices.ShoppingCartAPI
                     loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
 
                 });
-                
+
             }
 
             void AddAutoMapper(WebApplicationBuilder builder)
@@ -90,25 +86,28 @@ namespace Microservices.ShoppingCartAPI
 
             void AddDbContext(WebApplicationBuilder builder)
             {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
                 builder.Services.AddDbContext<MsDbContext>(option =>
                 {
-                    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+                    option.UseSqlServer(connectionString);
                 });
             }
 
             void SetAPIsUrls(WebApplicationBuilder builder)
             {
 
-                var productAPIUrl = builder.Configuration["ServiceUrls:ProductAPI"]!;
+                /*var productAPIUrl = builder.Configuration["ServiceUrls:EmailAPI"]!;
                 StaticDetails.ProductAPIUrl = productAPIUrl;
 
                 builder.Services.AddHttpClient("Product",
                     url => url.BaseAddress = new Uri(productAPIUrl!));
 
                 var couponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
-                StaticDetails.CouponAPIUrl = couponAPIUrl;
+                StaticDetails.CouponAPIUrl = couponAPIUrl;*/
             }
-
         }
     }
+
 }
+

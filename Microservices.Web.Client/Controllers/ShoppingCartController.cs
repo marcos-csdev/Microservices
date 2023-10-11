@@ -75,6 +75,27 @@ namespace Microservices.Web.Client.Controllers
             return View();
         }
 
+        public async Task<IActionResult> RemoveCoupon(string userId)
+        {
+            try
+            {
+                var response = await _cartService.RemoveCouponAsync(userId);
+
+                if (response != null && response.IsSuccess)
+                {
+                    TempData["success"] = "Cart updated successfully";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
+
+            TempData["error"] = "There was a problem removing the coupon.";
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> ApplyCouponCode(CartDto cartDto)
         {

@@ -161,9 +161,9 @@ namespace Microservices.ShoppingCartAPI.Repositories
             return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> RemoveCouponCodeAsync(CartDto cartDto)
+        public async Task<int> RemoveCouponAsync(string userId)
         {
-            var dbCartHeader = await _dbContext.CartHeaders.FirstAsync(ch => ch.UserId == cartDto.CartHeader!.UserId);
+            var dbCartHeader = await _dbContext.CartHeaders.FirstAsync(ch => ch.UserId == userId);
 
             if (dbCartHeader == null) return 0;
 

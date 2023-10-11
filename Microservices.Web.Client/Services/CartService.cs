@@ -33,6 +33,11 @@ namespace Microservices.Web.Client.Services
             return await UpdateEntityAsync(cartDto,
                 $"{StaticDetails.CartAPIUrl}/ApplyCouponCode/");
         }
+        public async Task<ResponseDto?> RemoveCouponAsync(string userId)
+        {
+            return await RemoveEntityAsync(
+                $"{StaticDetails.CartAPIUrl}/RemoveCoupon/{userId}");
+        }
 
     }
 }

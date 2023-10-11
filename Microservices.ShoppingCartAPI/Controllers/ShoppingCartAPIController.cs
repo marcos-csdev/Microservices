@@ -135,19 +135,20 @@ namespace Microservices.ShoppingCartAPI.Controllers
             return Problem("An error happened applying the coupon");
         }
 
-        [HttpDelete("RemoveCouponCode")]
-        public async Task<IActionResult> RemoveCouponCode([FromBody] CartDto cartDto)
+        [HttpDelete("RemoveCoupon/{userId}")]
+        public async Task<IActionResult> RemoveCoupon(string userId)
         {
             try
             {
-                if (cartDto == null || cartDto.CartHeader == null || cartDto.CartDetails == null)
+
+                if (string.IsNullOrEmpty(userId)) 
                 {
-                    ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No cart has been acquired");
+                    ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No coupon has been acquired");
 
                     return BadRequest(ControllerResponse);
                 }
 
-                await _cartRepository.RemoveCouponCodeAsync(cartDto);
+                await _cartRepository.RemoveCouponAsync(userId);
 
                 return Ok(ControllerResponse);
             }

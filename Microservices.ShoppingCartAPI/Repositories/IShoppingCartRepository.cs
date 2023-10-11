@@ -16,6 +16,6 @@ namespace Microservices.ShoppingCartAPI.Repositories
         Task<int> RemoveCartAsync(int cartDetailsId);
         Task<CartDetailsModel?> GetCartDetailsAsync(int cartDetailsId);
         Task<int> UpdateCouponCodeAsync(CartDto cartDto);
-        Task<int> RemoveCouponCodeAsync(CartDto cartDto);
+        Task<int> RemoveCouponAsync(string userId);
     }
 }

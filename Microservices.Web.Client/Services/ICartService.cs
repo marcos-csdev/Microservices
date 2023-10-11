@@ -7,6 +7,7 @@ namespace Microservices.Web.Client.Services
         Task<ResponseDto?> ApplyCouponCodeAsync(CartDto cartDto);
         Task<ResponseDto?> GetCartByIdAsync(string userId);
         Task<ResponseDto?> RemoveCartAsync(int cartDetailsId);
+        Task<ResponseDto?> RemoveCouponAsync(string userId);
         Task<ResponseDto?> UpsertCartAsync(CartDto couponDto);
     }
 }
