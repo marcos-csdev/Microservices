@@ -1,9 +1,9 @@
-﻿@model CartDto
-@{var userId = Model.CartHeader!.UserId;}
+﻿@model CartWrapperDto
+@{var userId = Model.CartDto!.CartHeader!.UserId;}
 <form method="post">
     <br />
-    <input asp-for="CartHeader!.UserId" hidden />
-    <input asp-for="CartHeader!.CartHeaderId" hidden />
+    <input asp-for="CartDto!.CartHeader!.UserId" hidden />
+    <input asp-for="CartDto!.CartHeader!.CartHeaderId" hidden />
     
     <div class="">
         <div class="card border mt-4 container">
@@ -35,7 +35,7 @@
                 </div>
                 <hr />
 
-                @foreach (var cart in Model.CartDetails!)
+                @foreach (var cart in Model.CartDto!.CartDetails!)
                 {
 
                     <div class="row h-100">
@@ -62,12 +62,12 @@
                 }
 
                 <div class="row">
-                    @if (string.IsNullOrWhiteSpace(Model.CartHeader!.CouponCode))
+                    @if (string.IsNullOrWhiteSpace(Model.CartDto!.CartHeader!.CouponCode))
                     {
 
                         <div class="col-6">
                             <span>Coupon:</span>
-                            <input asp-for="CartHeader!.CouponCode" />
+                            <input asp-for="CartDto!.CartHeader!.CouponCode" />
                             <button type="submit" asp-route-userId="@userId" asp-action="ApplyCouponCode" class="btn btn-sm btn-success"> Apply </button>
                         </div>
                     }
@@ -75,15 +75,15 @@
                     {
                         <div class="col-6">
                             <span>Coupon:</span>
-                            <input asp-for="CartHeader!.CouponCode" disabled />
+                            <input asp-for="CartDto!.CartHeader!.CouponCode" disabled />
                             <button type="submit" asp-route-userId="@userId" asp-action="RemoveCoupon" class="btn btn-sm btn-danger"> Remove </button>
                         </div>
                     }
                     <div class="col-6 text-end">
-                        <span class="text-danger" style="font-size:21px;">  Order Total : @string.Format("{0:c}", Model.CartHeader!.CartTotal) <br /></span>
-                        @if (Model.CartHeader.Discount > 0)
+                        <span class="text-danger" style="font-size:21px;">  Order Total : @string.Format("{0:c}", Model.CartDto!.CartHeader!.CartTotal) <br /></span>
+                        @if (Model.CartDto!.CartHeader.Discount > 0)
                         {
-                            <span class="text-success"> Order Discount :  @string.Format("{0:c}", Model.CartHeader!.Discount)</span>
+                            <span class="text-success"> Order Discount :  @string.Format("{0:c}", Model.CartDto!.CartHeader!.Discount)</span>
                         }
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                     <button type="submit" class="btn btn-outline-danger form-control">Email Cart</button>
                 </div>
                 <div class="col-6 col-md-3 offset-md-6">
-                    <button disabled class="btn btn-success form-control " value="Checkout (Comming Soon!)" />
+                    <button disabled class="btn btn-success form-control ">"Checkout (Comming Soon!)" </button>
                 </div>
             </div>
         </div>

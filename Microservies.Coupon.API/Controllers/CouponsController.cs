@@ -12,6 +12,7 @@ namespace Microservices.CouponAPI.Controllers
 {
     [Route("api/coupons")]
     [ApiController]
+    [Authorize]
     public class CouponAPIController : APIBaseController
     {
         private readonly ICouponRepository _couponRepository;

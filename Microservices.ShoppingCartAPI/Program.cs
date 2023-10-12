@@ -22,6 +22,8 @@ namespace Microservices.ShoppingCartAPI
 
 
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
             builder.Services.AddScoped<ICouponService, CouponService>();
 
             SetAPIsUrls(builder);
@@ -78,7 +80,7 @@ namespace Microservices.ShoppingCartAPI
                     loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
 
                 });
-                
+
             }
 
             void AddAutoMapper(WebApplicationBuilder builder)
@@ -103,7 +105,7 @@ namespace Microservices.ShoppingCartAPI
                 StaticDetails.ProductAPIUrl = productAPIUrl;
 
                 builder.Services.AddHttpClient("Product",
-                    url => url.BaseAddress = new Uri(productAPIUrl!));
+                    url => url.BaseAddress = new Uri(productAPIUrl!)).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
                 var couponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
                 StaticDetails.CouponAPIUrl = couponAPIUrl;

@@ -1,5 +1,7 @@
 ﻿using Microservices.Web.Client.Models;
+using Microservices.Web.Client.Models.Factories;
 using Microservices.Web.Client.Services;
+using Microservices.Web.Client.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,10 +11,12 @@ namespace Microservices.Web.Client.Controllers
     public class ShoppingCartController : BaseController
     {
         private readonly ICartService _cartService;
+        private readonly ICouponService _couponService;
 
-        public ShoppingCartController(Serilog.ILogger logger, ICartService cartService) : base(logger)
+        public ShoppingCartController(Serilog.ILogger logger, ICartService cartService, ICouponService couponService) : base(logger)
         {
             _cartService = cartService;
+            _couponService = couponService;
         }
 
         [Authorize]
@@ -21,9 +25,9 @@ namespace Microservices.Web.Client.Controllers
         {
             try
             {
-                var cartDto = await LoadCartDto();
+                var cartWrapper = await LoadCartDto();
 
-                return View(cartDto);
+                return View(cartWrapper);
             }
             catch (Exception ex)
             {
@@ -34,7 +38,8 @@ namespace Microservices.Web.Client.Controllers
             return View();
         }
 
-        private async Task<CartDto> LoadCartDto()
+
+        private async Task<CartWrapperDto> LoadCartDto()
         {
             var userId = User.Claims.FirstOrDefault(usr => usr.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
@@ -51,7 +56,13 @@ namespace Microservices.Web.Client.Controllers
 
             cartDto ??= new CartDto();
 
-            return cartDto;
+            var allCouponsResponse = await _couponService.GetAllCouponsAsync();
+
+            var listCoupons = DeserializeResponseToList<CouponDto>(allCouponsResponse!);
+
+            var cartWrapper = CartWrapperDtoFactory.Create(cartDto, listCoupons);
+
+            return cartWrapper;
         }
 
         public async Task<IActionResult> RemoveCart(int cartDetailsId)
@@ -60,7 +71,7 @@ namespace Microservices.Web.Client.Controllers
             {
                 var response = await _cartService.RemoveCartAsync(cartDetailsId);
 
-                if(response !=  null && response.IsSuccess)
+                if (response != null && response.IsSuccess)
                 {
                     TempData["success"] = "Cart updated successfully";
                     return RedirectToAction(nameof(Index));
