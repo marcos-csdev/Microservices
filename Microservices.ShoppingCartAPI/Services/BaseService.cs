@@ -2,22 +2,23 @@
 using Newtonsoft.Json;
 using Microservices.ShoppingCartAPI.Models.Dto;
 using Microservices.ShoppingCartAPI.Utility;
+using System.Net.Http;
+using Microservices.ShoppingCartAPI.Models.Factories;
 
 namespace Microservices.ShoppingCartAPI.Services
 {
     public class BaseService
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _httpClient;
 
-        public BaseService(IHttpClientFactory httpClientFactory)
+        public BaseService(IHttpContextAccessor contextAccessor)
         {
-            _httpClientFactory = httpClientFactory;
+            _httpClient = HttpClientFactoryFactory.Create(contextAccessor);
         }
 
-        protected async Task<ResponseDto?> SendMessageAsync(string clientName, string url)
+        protected async Task<ResponseDto?> SendMessageAsync(string url)
         {
-            var client = _httpClientFactory.CreateClient(clientName);
-            var response = await client.GetAsync(url);
+            var response = await _httpClient.GetAsync(url);
             var apiContent = await response.Content.ReadAsStringAsync();
             var deserializedJson = JsonConvert.DeserializeObject<ResponseDto>(apiContent);
 

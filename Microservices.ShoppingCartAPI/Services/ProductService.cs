@@ -6,13 +6,13 @@ namespace Microservices.ShoppingCartAPI.Services
 {
     public class ProductService : BaseService, IProductService
     {
-        public ProductService(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
+        public ProductService(IHttpContextAccessor contextAccessor) : base(contextAccessor)
         {
         }
 
         public async Task<List<ProductDto>> GetProducts()
         {
-            var response = await SendMessageAsync(StaticDetails.CartAPIName, $"{StaticDetails.ProductAPIUrl}");
+            var response = await SendMessageAsync($"{StaticDetails.ProductAPIUrl}");
 
             var products = DeserializeResponseToList<ProductDto>(response);
 

@@ -62,8 +62,7 @@ namespace Microservices.ShoppingCartAPI.Extensions
                                     Type = ReferenceType.SecurityScheme,
                                     Id = JwtBearerDefaults.AuthenticationScheme
                                 }
-                            },
-                        Array.Empty<string>()
+                            }, new string[]{}
                         }
                     });
             });

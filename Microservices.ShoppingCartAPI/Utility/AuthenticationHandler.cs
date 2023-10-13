@@ -6,11 +6,11 @@ namespace Microservices.ShoppingCartAPI.Utility
     /// <summary>
     /// DelegatingHandlers are useful to add processing to the regular .NET CORE request
     /// </summary>
-    public class BackendApiAuthenticationHttpClientHandler:DelegatingHandler
+    public class AuthenticationHandler:DelegatingHandler
     {
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public BackendApiAuthenticationHttpClientHandler(IHttpContextAccessor contextAccessor)
+        public AuthenticationHandler(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
         }
@@ -21,7 +21,7 @@ namespace Microservices.ShoppingCartAPI.Utility
             {
                 var token = await _contextAccessor.HttpContext.GetTokenAsync("access_token");
 
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
             return await base.SendAsync(request, cancellationToken);

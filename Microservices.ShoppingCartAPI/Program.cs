@@ -5,6 +5,7 @@ using Microservices.ShoppingCartAPI.Services;
 using Microservices.ShoppingCartAPI.Services.Abstractions;
 using Microservices.ShoppingCartAPI.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Http;
 using Serilog;
 
 namespace Microservices.ShoppingCartAPI
@@ -20,15 +21,25 @@ namespace Microservices.ShoppingCartAPI
 
             AddAutoMapper(builder);
 
-
             builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
             builder.Services.AddScoped<ICouponService, CouponService>();
+            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services
+                .AddScoped<AuthenticationHandler>();
+            //builder.Services.ConfigureAll<HttpClientFactoryOptions>(options =>
+            //{
+            //    options.HttpMessageHandlerBuilderActions.Add(
+            //        builder =>
+            //        {
+            //            builder.AdditionalHandlers.Add(
+            //                builder.Services
+            //                .GetRequiredService<AuthenticationHandler>());
+            //        });
+            //});
 
             SetAPIsUrls(builder);
-
-            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -104,11 +115,18 @@ namespace Microservices.ShoppingCartAPI
                 var productAPIUrl = builder.Configuration["ServiceUrls:ProductAPI"]!;
                 StaticDetails.ProductAPIUrl = productAPIUrl;
 
-                builder.Services.AddHttpClient("Product",
-                    url => url.BaseAddress = new Uri(productAPIUrl!)).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
+
+                //builder.Services.AddHttpClient("Product",
+                //    uri => uri.BaseAddress = new Uri(productAPIUrl))
+                //    .AddHttpMessageHandler<AuthenticationHandler>();
 
                 var couponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
                 StaticDetails.CouponAPIUrl = couponAPIUrl;
+
+                //builder.Services.AddHttpClient("Coupon",
+                //    uri => uri.BaseAddress = new Uri(couponAPIUrl))
+                //    .AddHttpMessageHandler<AuthenticationHandler>();
+
             }
 
         }
