@@ -116,9 +116,8 @@ namespace Microservices.ShoppingCartAPI
                 StaticDetails.ProductAPIUrl = productAPIUrl;
 
 
-                //builder.Services.AddHttpClient("Product",
-                //    uri => uri.BaseAddress = new Uri(productAPIUrl))
-                //    .AddHttpMessageHandler<AuthenticationHandler>();
+                builder.Services.AddHttpClient("Product",
+                    url => url.BaseAddress = new Uri(productAPIUrl!));
 
                 var couponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
                 StaticDetails.CouponAPIUrl = couponAPIUrl;

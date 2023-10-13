@@ -12,6 +12,7 @@
 
         public const string AppType = "application/json";
         public const string CartAPIName = "ShoppingCartAPIClient";
+        public const string ProductAPIName = "ProductAPIClient";
 
         public enum ApiType
         {

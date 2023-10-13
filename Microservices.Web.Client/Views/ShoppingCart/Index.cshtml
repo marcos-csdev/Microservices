@@ -1,5 +1,8 @@
 ﻿@model CartWrapperDto
-@{var userId = Model.CartDto!.CartHeader!.UserId;}
+@{
+    if(Model != null && Model.CartDto != null && Model.CartDto.CartHeader != null)
+    {
+        var userId = Model.CartDto!.CartHeader!.UserId;
 <form method="post">
     <br />
     <input asp-for="CartDto!.CartHeader!.UserId" hidden />
@@ -98,4 +101,14 @@
             </div>
         </div>
     </div>
-</form>
+        </form>
+
+    }
+    else
+    {
+        <div>
+            <p>The cart is empty right now</p>
+        </div>
+    }
+
+}

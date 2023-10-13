@@ -11,6 +11,10 @@ namespace Microservices.ShoppingCartAPI.Services
     {
         private readonly HttpClient _httpClient;
 
+        public BaseService(IHttpClientFactory clientFactory, string name)
+        {
+            _httpClient = clientFactory.CreateClient(name);
+        }
         public BaseService(IHttpContextAccessor contextAccessor)
         {
             _httpClient = HttpClientFactoryFactory.Create(contextAccessor);
