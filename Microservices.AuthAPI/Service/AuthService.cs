@@ -62,9 +62,16 @@ namespace Microservices.AuthAPI.Service
 
             var userCreated = await _userManagerService.CreateAsync(user, registrationRequestDto.Password);
 
-            if (userCreated.Succeeded == false)
+            var roleResult = await _userManagerService.AddToRoleAsync(user, registrationRequestDto.Role);
+
+            if (userCreated.Succeeded == false || roleResult.Succeeded == false)
             {
-                return userCreated.Errors.FirstOrDefault()!.Description;
+                var errors = new List<string>();
+                errors.AddRange(userCreated.Errors.Select(err => err.Description));
+                if(errors.Count == 0) 
+                    errors.AddRange(roleResult.Errors.Select(err => err.Description));
+
+                return string.Join("; ", errors);
             }
 
             return "";

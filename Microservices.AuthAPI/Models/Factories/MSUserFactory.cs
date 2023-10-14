@@ -10,7 +10,7 @@
                 Email = email,
                 NormalizedEmail = normalizedEmail,
                 Name = name,
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
             };
         }
     }

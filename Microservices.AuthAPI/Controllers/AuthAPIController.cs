@@ -1,8 +1,7 @@
 ﻿using Microservices.AuthAPI.Models.Dto;
 using Microservices.AuthAPI.Service.Abstractions;
-using Microsoft.AspNetCore.Http;
+using Microservices.MessageBus;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace Microservices.AuthAPI.Controllers
 {
@@ -10,11 +9,17 @@ namespace Microservices.AuthAPI.Controllers
     [ApiController]
     public class AuthAPIController : APIBaseController
     {
-        private readonly IAuthService _authService;
+        private const string _registerQueue = "TopicAndQueueNames:RegisterUserQueue";
 
-        public AuthAPIController(Serilog.ILogger logger, IAuthService authService) : base(logger)
+        private readonly IAuthService _authService;
+        private readonly IRabbitMQMB _messageBus;
+        private readonly string? _queueName;
+
+        public AuthAPIController(Serilog.ILogger logger, IAuthService authService, IRabbitMQMB messageBus, IConfiguration configuration) : base(logger)
         {
             _authService = authService;
+            _messageBus = messageBus;
+            _queueName = configuration.GetValue<string>(_registerQueue);
         }
 
         [HttpPost("register")]
@@ -25,18 +30,18 @@ namespace Microservices.AuthAPI.Controllers
                 var errorMessage = await _authService.Register(model);
 
                 if (!string.IsNullOrWhiteSpace(errorMessage))
-                {
                     return BadRequest(errorMessage);
-                }
+                
+                _messageBus.SendMessage(model.Email, _queueName!);
 
                 return Ok();
             }
             catch (Exception ex)
             {
                 LogError(ex);
-
-                return BadRequest("An unexpected error happened during the user registration");
             }
+
+            return BadRequest("An unexpected error happened during the user registration");
         }
 
         [HttpPost("login")]

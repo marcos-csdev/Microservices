@@ -1,4 +1,5 @@
 using AutoMapper;
+using MassTransit;
 using Microservices.AuthAPI;
 using Microservices.AuthAPI.Data;
 using Microservices.AuthAPI.Models;
@@ -7,8 +8,9 @@ using Microservices.AuthAPI.Service;
 using Microservices.AuthAPI.Service.Abstractions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microservices.MessageBus;
 using Serilog;
+
 namespace Microservices.AuthAPI
 {
     public class Program
@@ -18,58 +20,34 @@ namespace Microservices.AuthAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            //=================Adding DbContext========================
-            builder.Services.AddDbContext<MsDbContext>(option =>
-            {
-                option.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-            //=================Adding DbContext========================
+            AddDbContext(builder);
 
-            //=================Configuring Token========================
-            builder.Services.Configure<JwtOptions>(
-                builder.Configuration.GetSection("ApiSettings:JwtOptions"));
-            //=================Configuring Token========================
+            ConfigureToken(builder);
 
+            AddAutoMapper(builder);
 
-            //=================Adding AutoMapper========================
-            var mapperConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-            var mapper = mapperConfig.CreateMapper();
-            builder.Services.AddSingleton(mapper);
-            //=================Adding AutoMapper========================
-
-            //=================Adding Identity========================
-            //EntityFrameworkStores connects the identity framework with the db context
-            builder.Services.AddIdentity<MSUser, IdentityRole>(
-                auth => auth.Password.RequireNonAlphanumeric = false)
-                .AddEntityFrameworkStores<MsDbContext>()
-                .AddDefaultTokenProviders();
-            //=================Adding Identity========================
-
+            AddIdentity(builder);
 
             //=================Adding Services========================
             builder.Services.AddScoped<IUserManagerService, UserManagerService>(); 
             builder.Services.AddScoped<IRoleManagerService, RoleManagerService>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+            AddMassTransit(builder);
+
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IRabbitMQMB, RabbitMQMB>();
 
             //=================Adding Services========================
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
 
-            //=================Adding Serilog========================
-            builder.Host.UseSerilog((fileContext, loggingConfig) =>
-            {
-                loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
-            });
-            //=================Adding Serilog========================
+            AddSeriLog(builder);
 
             var app = builder.Build();
 
@@ -106,6 +84,56 @@ namespace Microservices.AuthAPI
 
                 }
             }
+            void AddSeriLog(WebApplicationBuilder builder)
+            {
+                builder.Host.UseSerilog((fileContext, loggingConfig) =>
+                {
+                    loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+                });
+            }
+
+            void AddAutoMapper(WebApplicationBuilder builder)
+            {
+                var mapperConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MappingProfile());
+                });
+                var mapper = mapperConfig.CreateMapper();
+                builder.Services.AddSingleton(mapper);
+            }
+
+            void AddDbContext(WebApplicationBuilder builder)
+            {
+                builder.Services.AddDbContext<MsDbContext>(option =>
+                {
+                    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                });
+            }
+
+            void AddIdentity(WebApplicationBuilder builder)
+            {
+                builder.Services.AddIdentity<MSUser, IdentityRole>(
+                auth => auth.Password.RequireNonAlphanumeric = false)
+                .AddEntityFrameworkStores<MsDbContext>()
+                .AddDefaultTokenProviders();
+            }
+        }
+
+        private static void AddMassTransit(WebApplicationBuilder builder)
+        {
+            builder.Services.AddMassTransit(options =>
+            {
+                options.UsingRabbitMq((context, config) =>
+                {
+                    config.ConfigureEndpoints(context);
+                });
+            });
+        }
+
+        private static void ConfigureToken(WebApplicationBuilder builder)
+        {
+            builder.Services.Configure<JwtOptions>(
+                builder.Configuration.GetSection("ApiSettings:JwtOptions"));
         }
     }
 }
