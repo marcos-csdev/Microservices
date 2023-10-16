@@ -23,13 +23,6 @@ namespace Microservices.EmailAPI
 
             AddAutoMapper(builder);
 
-            /*builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddScoped<ICouponService, CouponService>();*/
-
-            //SetAPIsUrls(builder);
-
-            /*builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();*/
-
             AssignBusValues(builder);
 
             builder.Services.AddScoped<IEmailRepository, EmailRepository>();
@@ -107,19 +100,6 @@ namespace Microservices.EmailAPI
 
                     option.UseSqlServer(connectionString);
                 });
-            }
-
-            void SetAPIsUrls(WebApplicationBuilder builder)
-            {
-
-                /*var productAPIUrl = builder.Configuration["ServiceUrls:EmailAPI"]!;
-                StaticDetails.ProductAPIUrl = productAPIUrl;
-
-                builder.Services.AddHttpClient("Product",
-                    url => url.BaseAddress = new Uri(productAPIUrl!));
-
-                var couponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
-                StaticDetails.CouponAPIUrl = couponAPIUrl;*/
             }
 
             void AssignBusValues(WebApplicationBuilder builder)

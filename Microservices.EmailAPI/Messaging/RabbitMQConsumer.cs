@@ -25,7 +25,13 @@ namespace Microservices.EmailAPI.Messaging
             SetupRabbitMQ();
         }
 
-        void Dispose(bool disposing)
+        public override void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -80,6 +86,7 @@ namespace Microservices.EmailAPI.Messaging
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
+                //here IEmailService is called through service provider because of how it is called on Program.cs (AddHostedService)
                 var emailService = scope.ServiceProvider.GetService<IEmailService>();
 
                 await emailService!.RegisterUserEmail(email);

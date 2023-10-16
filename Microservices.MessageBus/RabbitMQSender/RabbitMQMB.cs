@@ -9,12 +9,20 @@ namespace Microservices.MessageBus
 {
     public class RabbitMQMB : IRabbitMQMB
     {
-        private readonly string _hostName;
-        private readonly string _userName;
-        private readonly string _password;
+        private string _hostName;
+        private string _userName;
+        private string _password;
         private IConnection _connection;
 
         public RabbitMQMB()
+        {
+            if (_connection == null)
+                CreateConnection();
+
+        }
+
+
+        private void CreateConnection()
         {
             //reads from client app appsettings.json
             var config = new ConfigurationBuilder()
@@ -40,8 +48,8 @@ namespace Microservices.MessageBus
             try
             {
 
-                //creates queue and binds it to the channel
-                channel.QueueDeclare(queueName, false, true, true);
+                //creates queue (if it does not exist) and binds it to the channel
+                channel.QueueDeclarePassive(queueName);
 
                 var json = JsonConvert.SerializeObject(message);
                 var body = Encoding.UTF8.GetBytes(json);
@@ -53,10 +61,6 @@ namespace Microservices.MessageBus
             catch (Exception )
             {
                 throw;
-            }
-            finally
-            {
-                channel.Dispose();
             }
 
         }
