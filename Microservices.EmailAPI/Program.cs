@@ -1,7 +1,13 @@
 using Microservices.EmailAPI.Data;
 using Microservices.EmailAPI.Extensions;
+using Microservices.EmailAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microservices.EmailAPI.Messaging;
 using Serilog;
+using Microservices.EmailAPI.Repositories;
+using RabbitMQ.Client;
+using Microservices.EmailAPI.Utility;
+using Microservices.MessageBus;
 
 namespace Microservices.EmailAPI
 {
@@ -23,6 +29,15 @@ namespace Microservices.EmailAPI
             //SetAPIsUrls(builder);
 
             /*builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();*/
+
+            AssignBusValues(builder);
+
+            builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IMessageBusConfig, MessageBusConfig>();
+
+            //automatically starts the consumer
+            builder.Services.AddHostedService<RabbitMQConsumer>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -105,6 +120,15 @@ namespace Microservices.EmailAPI
 
                 var couponAPIUrl = builder.Configuration["ServiceUrls:CouponAPI"]!;
                 StaticDetails.CouponAPIUrl = couponAPIUrl;*/
+            }
+
+            void AssignBusValues(WebApplicationBuilder builder)
+            {
+
+                MessageBusConfig.Host = builder.Configuration["RabbitMQLogin:host"]!;
+                MessageBusConfig.UserName = builder.Configuration["RabbitMQLogin:user"]!;
+                MessageBusConfig.Password = builder.Configuration["RabbitMQLogin:password"]!;
+                MessageBusConfig.QueueName = builder.Configuration.GetValue<string>("TopicAndQueueNames:RegisterUserQueue")!;
             }
         }
     }

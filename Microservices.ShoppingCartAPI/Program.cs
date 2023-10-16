@@ -28,17 +28,7 @@ namespace Microservices.ShoppingCartAPI
             builder.Services.AddHttpContextAccessor();
             builder.Services
                 .AddScoped<AuthenticationHandler>();
-            //builder.Services.ConfigureAll<HttpClientFactoryOptions>(options =>
-            //{
-            //    options.HttpMessageHandlerBuilderActions.Add(
-            //        builder =>
-            //        {
-            //            builder.AdditionalHandlers.Add(
-            //                builder.Services
-            //                .GetRequiredService<AuthenticationHandler>());
-            //        });
-            //});
-
+            
             SetAPIsUrls(builder);
 
             builder.Services.AddControllers();
