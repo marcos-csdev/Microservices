@@ -1,4 +1,5 @@
-﻿using Microservices.ShoppingCartAPI.Models.Dto;
+﻿using Microservices.MessageBus;
+using Microservices.ShoppingCartAPI.Models.Dto;
 using Microservices.ShoppingCartAPI.Models.Factories;
 using Microservices.ShoppingCartAPI.Repositories;
 using Microservices.ShoppingCartAPI.Services.Abstractions;
@@ -14,11 +15,14 @@ namespace Microservices.ShoppingCartAPI.Controllers
         private readonly IProductService _productService;
         private readonly ICouponService _couponService;
 
-        public ShoppingCartAPIController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService, ICouponService couponService) : base(logger)
+        private readonly IRabbitMQMB _rabbitMQMB;
+
+        public ShoppingCartAPIController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService, ICouponService couponService, IRabbitMQMB rabbitMQMB) : base(logger)
         {
             _cartRepository = cartsRepository;
             _productService = productService;
             _couponService = couponService;
+            _rabbitMQMB = rabbitMQMB;
         }
 
         private async Task CalculateTotal(CartDto cartDto)
@@ -42,9 +46,9 @@ namespace Microservices.ShoppingCartAPI.Controllers
             {
                 var coupon = await _couponService.GetCoupon("GetByCode", cartHeader.CouponCode);
 
-                if (coupon != null && 
-                    cartDto.CartHeader != null && 
-                    cartDto.CartHeader.CartTotal > coupon.MinExpense) 
+                if (coupon != null &&
+                    cartDto.CartHeader != null &&
+                    cartDto.CartHeader.CartTotal > coupon.MinExpense)
                 {
                     cartDto.CartHeader.CartTotal -= coupon.MinExpense;
                     cartDto.CartHeader.Discount = coupon.Discount;
@@ -141,7 +145,7 @@ namespace Microservices.ShoppingCartAPI.Controllers
             try
             {
 
-                if (string.IsNullOrEmpty(userId)) 
+                if (string.IsNullOrEmpty(userId))
                 {
                     ControllerResponse = ResponseDtoFactory.CreateResponseDto(false, null, "No coupon has been acquired");
 
@@ -180,6 +184,20 @@ namespace Microservices.ShoppingCartAPI.Controllers
                 LogError(ex);
             }
             return Problem("An error happened removing the cart");
+        }
+
+        [HttpPost("EmailCartRequest")]
+        public async Task<IActionResult> EmailCartRequest([FromBody] CartDto cartDto)
+        {
+            try
+            {
+                await _rabbitMQMB.PublishMessage(cartDto);
+                return Ok(cartDto);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+            }
         }
 
     }

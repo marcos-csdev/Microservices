@@ -31,8 +31,8 @@ namespace Microservices.AuthAPI.Controllers
 
                 if (!string.IsNullOrWhiteSpace(errorMessage))
                     return BadRequest(errorMessage);
-                
-                _messageBus.SendMessage(model.Email, _queueName!);
+
+                _messageBus.PublishMessage(model.Email, _queueName!);
 
                 return Ok();
             }
@@ -51,7 +51,7 @@ namespace Microservices.AuthAPI.Controllers
             {
                 var loginResponse = await _authService.Login(model);
 
-                if(loginResponse == null) return NotFound("user not found");
+                if (loginResponse == null) return NotFound("user not found");
 
                 return Ok(loginResponse);
             }
@@ -64,13 +64,13 @@ namespace Microservices.AuthAPI.Controllers
         }
 
         [HttpPost("assignRole")]
-        public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto request) 
+        public async Task<IActionResult> AssignRole([FromBody] RegistrationRequestDto request)
         {
             try
             {
                 var isRoleAssigned = await _authService.AssignRole(request.Email, request.Role);
 
-                if(isRoleAssigned == false) return BadRequest(isRoleAssigned);
+                if (isRoleAssigned == false) return BadRequest(isRoleAssigned);
 
                 return Ok(isRoleAssigned);
             }

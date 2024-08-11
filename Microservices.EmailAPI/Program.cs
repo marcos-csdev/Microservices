@@ -8,6 +8,7 @@ using Microservices.EmailAPI.Repositories;
 using RabbitMQ.Client;
 using Microservices.EmailAPI.Utility;
 using Microservices.MessageBus;
+using MassTransit;
 
 namespace Microservices.EmailAPI
 {
@@ -22,6 +23,8 @@ namespace Microservices.EmailAPI
             AddDbContext(builder);
 
             AddAutoMapper(builder);
+
+            AddMassTransit(builder);
 
             AssignBusValues(builder);
 
@@ -110,8 +113,20 @@ namespace Microservices.EmailAPI
                 MessageBusConfig.Password = builder.Configuration["RabbitMQLogin:password"]!;
                 MessageBusConfig.QueueName = builder.Configuration.GetValue<string>("TopicAndQueueNames:RegisterUserQueue")!;
             }
+
+        }
+        private static void AddMassTransit(WebApplicationBuilder builder)
+        {
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, config) =>
+                {
+                    config.ConfigureEndpoints(context);
+                });
+            });
         }
     }
+
 
 }
 

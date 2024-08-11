@@ -1,3 +1,5 @@
+using MassTransit;
+using Microservices.MessageBus;
 using Microservices.ShoppingCartAPI.Data;
 using Microservices.ShoppingCartAPI.Extensions;
 using Microservices.ShoppingCartAPI.Repositories;
@@ -20,6 +22,7 @@ namespace Microservices.ShoppingCartAPI
             AddDbContext(builder);
 
             AddAutoMapper(builder);
+            AddMassTransit(builder);
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICouponService, CouponService>();
@@ -28,7 +31,9 @@ namespace Microservices.ShoppingCartAPI
             builder.Services.AddHttpContextAccessor();
             builder.Services
                 .AddScoped<AuthenticationHandler>();
-            
+
+            builder.Services.AddScoped<IMessageBusConsumer, MessageBusConsumer>();
+
             SetAPIsUrls(builder);
 
             builder.Services.AddControllers();
@@ -118,6 +123,18 @@ namespace Microservices.ShoppingCartAPI
 
             }
 
+
+        }
+
+        private static void AddMassTransit(WebApplicationBuilder builder)
+        {
+            builder.Services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, config) =>
+                {
+                    config.ConfigureEndpoints(context);
+                });
+            });
         }
     }
 }

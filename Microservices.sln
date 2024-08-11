@@ -5,8 +5,6 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrontEnd", "FrontEnd", "{E546E7D7-A768-4C24-9FE4-BBCBD1D4F20C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{CDAD1D7D-81AA-471C-8B64-FE46F9389FBB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{547A2259-C019-4A33-A415-01B34AA930C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPI", "Microservies.Coupon.API\Microservices.CouponAPI.csproj", "{B2DFCE2C-21F9-4074-AC31-9D32C25C39FA}"
