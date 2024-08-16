@@ -12,14 +12,16 @@ namespace Microservices.AuthAPI.Controllers
         private const string _registerQueue = "TopicAndQueueNames:RegisterUserQueue";
 
         private readonly IAuthService _authService;
-        private readonly IRabbitMQMB _messageBus;
+        private readonly IMessageBusProducer _messageBus;
         private readonly string? _queueName;
+        private readonly string? _exchangeName;
 
-        public AuthAPIController(Serilog.ILogger logger, IAuthService authService, IRabbitMQMB messageBus, IConfiguration configuration) : base(logger)
+        public AuthAPIController(Serilog.ILogger logger, IAuthService authService, IMessageBusProducer messageBus, IConfiguration configuration) : base(logger)
         {
             _authService = authService;
             _messageBus = messageBus;
-            _queueName = configuration.GetValue<string>(_registerQueue);
+            _queueName = configuration.GetValue<string>("TopicAndQueueNames:RegisterUserQueue");
+            _exchangeName = configuration.GetValue<string>("TopicAndQueueNames:ExchangeName");
         }
 
         [HttpPost("register")]
@@ -32,7 +34,7 @@ namespace Microservices.AuthAPI.Controllers
                 if (!string.IsNullOrWhiteSpace(errorMessage))
                     return BadRequest(errorMessage);
 
-                _messageBus.PublishMessage(model.Email, _queueName!);
+                _messageBus.PublishMessage(model.Email, _queueName!, _exchangeName!);
 
                 return Ok();
             }

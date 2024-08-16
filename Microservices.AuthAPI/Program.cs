@@ -29,7 +29,7 @@ namespace Microservices.AuthAPI
             AddIdentity(builder);
 
             //=================Adding Services========================
-            builder.Services.AddScoped<IUserManagerService, UserManagerService>(); 
+            builder.Services.AddScoped<IUserManagerService, UserManagerService>();
             builder.Services.AddScoped<IRoleManagerService, RoleManagerService>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -37,7 +37,7 @@ namespace Microservices.AuthAPI
             AddMassTransit(builder);
 
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IRabbitMQMB, RabbitMQMB>();
+            builder.Services.AddScoped<IMessageBusProducer, MessageBusProducer>();
 
             //=================Adding Services========================
 

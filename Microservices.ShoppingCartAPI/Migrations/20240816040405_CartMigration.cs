@@ -5,7 +5,7 @@
 namespace Microservices.ShoppingCartAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigrationCartDB : Migration
+    public partial class CartMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

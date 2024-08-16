@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Microservices.ShoppingCartAPI.Migrations
 {
     [DbContext(typeof(MsDbContext))]
-    [Migration("20230919184851_initialMigrationCartDB")]
-    partial class initialMigrationCartDB
+    [Migration("20240816040405_CartMigration")]
+    partial class CartMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

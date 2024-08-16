@@ -6,7 +6,6 @@ using Microservices.EmailAPI.Messaging;
 using Serilog;
 using Microservices.EmailAPI.Repositories;
 using RabbitMQ.Client;
-using Microservices.EmailAPI.Utility;
 using Microservices.MessageBus;
 using MassTransit;
 
@@ -26,14 +25,13 @@ namespace Microservices.EmailAPI
 
             AddMassTransit(builder);
 
-            AssignBusValues(builder);
+            AssignMessageBusValues(builder);
 
             builder.Services.AddScoped<IEmailRepository, EmailRepository>();
             builder.Services.AddScoped<IEmailService, EmailService>();
-            builder.Services.AddScoped<IMessageBusConfig, MessageBusConfig>();
 
             //automatically starts the consumer
-            builder.Services.AddHostedService<RabbitMQConsumer>();
+            builder.Services.AddHostedService<BackgroundSvcConsumer>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -105,13 +103,18 @@ namespace Microservices.EmailAPI
                 });
             }
 
-            void AssignBusValues(WebApplicationBuilder builder)
+            void AssignMessageBusValues(WebApplicationBuilder builder)
             {
 
-                MessageBusConfig.Host = builder.Configuration["RabbitMQLogin:host"]!;
-                MessageBusConfig.UserName = builder.Configuration["RabbitMQLogin:user"]!;
-                MessageBusConfig.Password = builder.Configuration["RabbitMQLogin:password"]!;
-                MessageBusConfig.QueueName = builder.Configuration.GetValue<string>("TopicAndQueueNames:RegisterUserQueue")!;
+                MessageBusConfig.Host = builder.Configuration["RabbitMQSettings:host"]!;
+                var port = int.TryParse(builder.Configuration["RabbitMQSettings:port"]!, out var portValue) ? portValue : 0;
+                MessageBusConfig.Port = portValue;
+                MessageBusConfig.VirtualHost = builder.Configuration["RabbitMQSettings:virtualHost"]!;
+                MessageBusConfig.UserName = builder.Configuration["RabbitMQSettings:user"]!;
+                MessageBusConfig.Password = builder.Configuration["RabbitMQSettings:password"]!;
+                MessageBusConfig.QueueName = builder.Configuration["RabbitMQSettings:queueName"]!;
+                MessageBusConfig.ExchangeName = builder.Configuration["RabbitMQSettings:exchangeName"]!;
+
             }
 
         }

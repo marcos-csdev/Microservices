@@ -22,7 +22,7 @@ namespace Microservices.ShoppingCartAPI
             AddDbContext(builder);
 
             AddAutoMapper(builder);
-            AddMassTransit(builder);
+            AddMessageBus(builder);
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICouponService, CouponService>();
@@ -32,7 +32,7 @@ namespace Microservices.ShoppingCartAPI
             builder.Services
                 .AddScoped<AuthenticationHandler>();
 
-            builder.Services.AddScoped<IMessageBusConsumer, MessageBusConsumer>();
+            builder.Services.AddScoped<IMessageBusProducer, MessageBusProducer>();
 
             SetAPIsUrls(builder);
 
@@ -126,12 +126,17 @@ namespace Microservices.ShoppingCartAPI
 
         }
 
-        private static void AddMassTransit(WebApplicationBuilder builder)
+        private static void AddMessageBus(WebApplicationBuilder builder)
         {
             builder.Services.AddMassTransit(x =>
             {
                 x.UsingRabbitMq((context, config) =>
                 {
+                    config.Host(builder.Configuration["MessageBusSettings:HostAddress"], "/", host =>
+                    {
+                        host.Username(builder.Configuration["MessageBusSettings:UserName"]);
+                        host.Password(builder.Configuration["MessageBusSettings:Password"]);
+                    });
                     config.ConfigureEndpoints(context);
                 });
             });

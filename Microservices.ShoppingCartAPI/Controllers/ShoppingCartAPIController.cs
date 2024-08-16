@@ -14,15 +14,18 @@ namespace Microservices.ShoppingCartAPI.Controllers
         private readonly IShoppingCartRepository _cartRepository;
         private readonly IProductService _productService;
         private readonly ICouponService _couponService;
+        private readonly IMessageBusProducer _messageBusProducer; private readonly string? _queueName;
+        private readonly string? _exchangeName;
 
-        private readonly IRabbitMQMB _rabbitMQMB;
-
-        public ShoppingCartAPIController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService, ICouponService couponService, IRabbitMQMB rabbitMQMB) : base(logger)
+        public ShoppingCartAPIController(Serilog.ILogger logger, IShoppingCartRepository cartsRepository, IProductService productService, ICouponService couponService,
+            IMessageBusProducer messageBusProducer, IConfiguration configuration) : base(logger)
         {
             _cartRepository = cartsRepository;
             _productService = productService;
             _couponService = couponService;
-            _rabbitMQMB = rabbitMQMB;
+            _messageBusProducer = messageBusProducer;
+            _queueName = configuration.GetValue<string>("TopicAndQueueNames:RegisterUserQueue");
+            _exchangeName = configuration.GetValue<string>("TopicAndQueueNames:ExchangeName");
         }
 
         private async Task CalculateTotal(CartDto cartDto)
@@ -186,18 +189,20 @@ namespace Microservices.ShoppingCartAPI.Controllers
             return Problem("An error happened removing the cart");
         }
 
-        [HttpPost("EmailCartRequest")]
-        public async Task<IActionResult> EmailCartRequest([FromBody] CartDto cartDto)
+        [HttpPost("SendCartRequestEmail")]
+        public IActionResult SendCartRequestEmail([FromBody] CartDto cartDto)
         {
             try
             {
-                await _rabbitMQMB.PublishMessage(cartDto);
-                return Ok(cartDto);
+                _messageBusProducer.PublishMessage(cartDto, _queueName!, _exchangeName!);
+                return Ok("Email sent");
             }
             catch (Exception ex)
             {
                 LogError(ex);
             }
+
+            return Problem("An error happened sending the email");
         }
 
     }
