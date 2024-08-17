@@ -14,7 +14,6 @@ public class BackgroundSvcConsumer : BackgroundService, IDisposable
     private IModel? _channel;
     private IServiceScopeFactory _serviceScopeFactory;
 
-
     public BackgroundSvcConsumer(IServiceScopeFactory serviceScopeFactory)
     {
         _serviceScopeFactory = serviceScopeFactory;

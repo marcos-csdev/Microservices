@@ -83,7 +83,8 @@ namespace Microservices.ShoppingCartAPI
             {
                 builder.Host.UseSerilog((fileContext, loggingConfig) =>
                 {
-                    loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+                    var filePath = Path.Join("logs", "log.log");
+                    loggingConfig.WriteTo.File(filePath, rollingInterval: RollingInterval.Day);
 
                 });
 

@@ -6,7 +6,7 @@ using Microservices.CouponAPI.Extensions;
 
 namespace Microservices.CouponAPI
 {
-    
+
     public class Program
     {
         public static void Main(string[] args)
@@ -69,7 +69,8 @@ namespace Microservices.CouponAPI
             {
                 builder.Host.UseSerilog((fileContext, loggingConfig) =>
                 {
-                    loggingConfig.WriteTo.File("logs\\log.log", rollingInterval: RollingInterval.Day);
+                    var filePath = Path.Join("logs", "log.log");
+                    loggingConfig.WriteTo.File(filePath, rollingInterval: RollingInterval.Day);
                 });
             }
 
