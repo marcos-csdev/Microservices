@@ -1,4 +1,4 @@
-using Microservices.MessageBus;
+
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitMQ.Client;

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
 
-namespace Microservices.MessageBus;
+namespace Microservices.EventBus;
 
 public abstract class RabbitMQConfig : IDisposable
 {

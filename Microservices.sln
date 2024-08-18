@@ -5,8 +5,6 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrontEnd", "FrontEnd", "{E546E7D7-A768-4C24-9FE4-BBCBD1D4F20C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{547A2259-C019-4A33-A415-01B34AA930C1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.CouponAPI", "Microservies.Coupon.API\Microservices.CouponAPI.csproj", "{B2DFCE2C-21F9-4074-AC31-9D32C25C39FA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.AuthAPI", "Microservices.AuthAPI\Microservices.AuthAPI.csproj", "{2EA4187E-5467-4B75-9EE7-C481F4CB17FC}"
@@ -27,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02BDA87C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microservices.EmailAPI", "Microservices.EmailAPI\Microservices.EmailAPI.csproj", "{275D2978-D532-49A5-B70F-FF98C9CF95DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.MessageBus", "Microservices.MessageBus\Microservices.MessageBus.csproj", "{E94DBB5D-D6E3-4793-A306-616C729D6A8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microservices.EventBus", "Microservices.EventBus\Microservices.EventBus.csproj", "{B1EDAA63-CB14-4423-8AEE-B7E410AB2AD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,10 +65,10 @@ Global
 		{275D2978-D532-49A5-B70F-FF98C9CF95DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{275D2978-D532-49A5-B70F-FF98C9CF95DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{275D2978-D532-49A5-B70F-FF98C9CF95DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E94DBB5D-D6E3-4793-A306-616C729D6A8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E94DBB5D-D6E3-4793-A306-616C729D6A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E94DBB5D-D6E3-4793-A306-616C729D6A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E94DBB5D-D6E3-4793-A306-616C729D6A8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1EDAA63-CB14-4423-8AEE-B7E410AB2AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1EDAA63-CB14-4423-8AEE-B7E410AB2AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1EDAA63-CB14-4423-8AEE-B7E410AB2AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1EDAA63-CB14-4423-8AEE-B7E410AB2AD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,7 +82,6 @@ Global
 		{8F253E24-C529-480D-AF41-3C8B3A501AD1} = {81889C54-F1F7-44B5-BC9F-F2C714ED2B76}
 		{AFA0ADAA-DE7E-4B95-AACB-41C225B58ECA} = {02BDA87C-5B6D-4A26-A577-13CEC5D13F96}
 		{275D2978-D532-49A5-B70F-FF98C9CF95DC} = {81889C54-F1F7-44B5-BC9F-F2C714ED2B76}
-		{E94DBB5D-D6E3-4793-A306-616C729D6A8B} = {547A2259-C019-4A33-A415-01B34AA930C1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {117C8C03-F09A-4DE4-B533-F17255BE0B06}
